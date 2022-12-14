@@ -1,0 +1,112 @@
+---
+title: "Cell-DNA Standard Curves"
+date-modified: today
+format: html
+---
+
+```{r}
+#| label: setup
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  std <- tar_read(dna_per_cell_std)
+  sample <- tar_read(dna_per_cell_clean)
+  cells_per_dna <- tar_read(cells_per_dna)
+})
+```
+
+## Overview
+
+Cell counts were estimated from total cellular DNA measured by PicoGreen fluorescence (Quant-iT PicoGreen dsDNA Assay Kit, P11496, Thermo). Here, we determine the relationship between total DNA and cell count by quantifying DNA extracted from cells seeded at different densities in basal growth medium. For the lung fibroblasts, cells were extracted with 100 μL or 200 μL of TE buffer with 0.2% Triton X-100. Earlier experiments used the smaller volume of extraction buffer and this is adjusted for during the extracellular flux calculations.
+
+# Analysis
+
+## Standard Curves
+
+```{r}
+#| label: standard-curves
+
+std |> 
+  unnest(c(summary)) |> 
+  ggplot() +
+  aes(y = reorder(date, desc(date)), x = r.squared) +
+  geom_point() +
+  labs(
+    y = "Date", 
+    x = expression(paste("R"^2))
+  )
+```
+
+## Samples
+
+```{r}
+#| label: samples
+
+sample |> 
+  ggplot() +
+  aes(
+    x = cells, 
+    y = conc
+    ) +
+  facet_wrap(
+    ~ cell_type * volume, 
+    labeller = as_labeller(toupper)
+    ) +
+   geom_smooth(
+    method = "lm", 
+    formula = y ~ 0 + x, 
+    se = FALSE
+  ) +
+  geom_point(alpha = 0.3) +
+  stat_summary(
+    geom = "pointrange", 
+    fun.data = "mean_se"
+  ) +
+  labs(
+    x = "Cell count", 
+    y = "DNA (ng)"
+  ) +
+  scale_x_continuous(
+    labels = scales::label_number(scale_cut = scales::cut_short_scale())
+  )
+```
+
+These plots suggest that, for the 100 μL extraction buffer, the maximum cell count is ~ 250,000. We will exclude the 300,000 value prior to calculating the slopes of the curves. For the PASMC samples, the 400,000 cell sample is quite high compared to the other samples. I will also remove these values prior to calculation of the slopes.
+
+```{r}
+#| label: save-data
+usethis::use_data(cells_per_dna, overwrite = TRUE)
+```
+
+```{r}
+#| label: output
+
+gt::gt(cells_per_dna) |> 
+  gt::cols_label(
+    cell_type = "Cell type", 
+    volume = "Lysis volume (μL)", 
+    slope = "Cells / DNA (ng)"
+  ) |> 
+  gt::fmt_number(
+    columns = "slope", 
+    decimals = 0
+  ) |> 
+  gt::text_transform(
+    locations = gt::cells_body(columns = cell_type), 
+    fn = toupper
+  ) |> 
+  gt::opt_all_caps() |> 
+  gt::cols_align(align = "center")
+```

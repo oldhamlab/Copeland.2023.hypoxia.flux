@@ -1,0 +1,16 @@
+# _quarto.yml
+
+project:
+  type: default
+
+format:
+  html:
+    embed-resources: true
+    html-math-method: katex
+    theme: cosmo
+    df-print: kable
+
+execute:
+  echo: false
+  warning: false
+  error: false
