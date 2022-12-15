@@ -1,6 +1,6 @@
 # utils.R
 
-'%nin' <- function(x, table) {
+"%nin%" <- function(x, table) {
   match(x, table, nomatch = 0L) == 0L
 }
 
@@ -25,9 +25,9 @@ read_multi_excel <- function(excel_file) {
     rlang::set_names(sheets)
 }
 
-clean_technical_replicates <- function(df) {
+clean_technical_replicates <- function(tbl) {
   tidyr::pivot_longer(
-    data = df,
+    data = tbl,
     cols = "a":"c",
     names_to = "replicate",
     values_to = "value"
@@ -51,20 +51,18 @@ replace_outliers <- function(vec) {
 
 make_std_curves <- function(df, fo = NULL) {
   if (is.null(fo)){
-    fo <- ~stats::lm(value ~ conc, data = .x, na.action = modelr::na.warn)
+    fo <- ~lm(value ~ conc, data = .x, na.action = modelr::na.warn)
   }
 
   df |>
     dplyr::filter(!is.na(.data$conc)) |>
-    dplyr::select(tidyselect::where(~all(!is.na(.)))) |>
+    dplyr::select(tidyselect::where(\(x) all(!is.na(x)))) |>
     dplyr::group_by(dplyr::across(-c("conc", "value"))) |>
     tidyr::nest() |>
-    {\(x)
-      dplyr::mutate(
-        x,
-        title = stringr::str_c(!!!rlang::syms(dplyr::groups(x)), sep = "_")
-      )
-    }() |>
+    {\(x) dplyr::mutate(
+      x,
+      title = stringr::str_c(!!!rlang::syms(dplyr::groups(x)), sep = "_")
+    )}() |>
     dplyr::ungroup() |>
     dplyr::mutate(
       model = furrr::future_map(.data$data, fo),
@@ -109,8 +107,8 @@ make_std_plots <- function(df, title = NULL) {
     )
 }
 
-interp_data <- function(df, std) {
-  df |>
+interp_data <- function(tbl, std) {
+  tbl |>
     dplyr::filter(is.na(.data$conc)) |>
     dplyr::select(-"conc") |>
     dplyr::group_by(dplyr::across(dplyr::group_vars(std))) |>
