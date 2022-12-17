@@ -27,7 +27,7 @@ clean_fluxes <- function(data_list, cells_per_dna){
     data_list[c("dna", "glc", "lac", "pyr")] |>
     dplyr::bind_rows(.id = "metabolite") |>
     dplyr::filter(!is.na(.data$a)) |>
-    dplyr::select(where(~any(!is.na(.)))) |>
+    dplyr::select(tidyselect::where(\(x) any(!is.na(x)))) |>
     clean_technical_replicates() |>
     tidyr::separate(.data$experiment, c("cell_type", "experiment", "batch", "date"), "_")
 
@@ -37,7 +37,7 @@ clean_fluxes <- function(data_list, cells_per_dna){
     dplyr::mutate(volume = dplyr::if_else(.data$date <= "2018-05-25", 100, 200)) |>
     dplyr::left_join(cells_per_dna, by = c("cell_type", "volume")) |>
     dplyr::mutate(
-      conc = .data$conc * slope,
+      conc = .data$conc * .data$slope,
       metabolite = "dna",
       detector = "picogreen"
     ) |>
@@ -67,7 +67,7 @@ clean_fluxes <- function(data_list, cells_per_dna){
     tidyr::separate("experiment", c("cell_type", "experiment", "batch", "date"), "_") |>
     dplyr::mutate(istd = dplyr::coalesce(.data$KV, .data$`d8-valine`)) |>
     dplyr::mutate(
-      detector = case_when(
+      detector = dplyr::case_when(
         !is.na(.data$KV) ~ "hplc",
         !is.na(.data$`d8-valine`) ~ "lcms",
         TRUE ~ "enzyme"
@@ -76,7 +76,7 @@ clean_fluxes <- function(data_list, cells_per_dna){
         experiment == "05" & batch == "a" & run == "a" & !is.na(.data$conc) ~ istd * 25,
         TRUE ~ .data$istd
       ),
-      value = pyruvate / istd,
+      value = .data$pyruvate / .data$istd,
       metabolite = "pyruvate"
     ) |>
     dplyr::select("metabolite", "cell_type":"conc", "value", "detector")
@@ -104,9 +104,13 @@ clean_fluxes <- function(data_list, cells_per_dna){
         ~ . /.data$`2 Sarcosine`
       ),
     ) |>
-    tidyr::pivot_longer(matches("\\d .*"), names_to = "metabolite", values_to = "value") |>
-    tidyr::separate("metabolite", c("detector", "metabolite"), " ") |>
-    tidyr::separate("experiment", c("cell_type", "experiment", "batch", "date"), "_") |>
+    tidyr::pivot_longer(
+      tidyselect::matches("\\d .*"),
+      names_to = "metabolite",
+      values_to = "value"
+    ) |>
+    tidyr::separate(.data$metabolite, c("detector", "metabolite"), " ") |>
+    tidyr::separate(.data$experiment, c("cell_type", "experiment", "batch", "date"), "_") |>
     dplyr::mutate(
       metabolite = tolower(.data$metabolite),
       detector = dplyr::if_else(.data$detector == 1, "mwd", "fld"),
@@ -137,8 +141,20 @@ clean_fluxes <- function(data_list, cells_per_dna){
 
   dplyr::bind_rows(dna, others, pyr, aa, gln) |>
     dplyr::relocate("detector", .after = "metabolite") |>
-    dplyr::arrange(metabolite, detector, cell_type, experiment, batch, date, run, conc, id) |>
+    dplyr::arrange(
+      .data$metabolite,
+      .data$detector,
+      .data$cell_type,
+      .data$experiment,
+      .data$batch,
+      .data$date,
+      .data$run,
+      .data$conc,
+      .data$id
+      ) |>
     dplyr::mutate(detector = tidyr::replace_na(.data$detector, "na")) |>
     dplyr::filter(!is.na(.data$value)) |>
-    dplyr::filter(metabolite %nin% c(tolower(istds), "hydroxyproline"))
+    dplyr::filter(.data$metabolite %nin% c(tolower(istds), "hydroxyproline"))
 }
+
+clean_glc6_fluxes <- function(path) {}

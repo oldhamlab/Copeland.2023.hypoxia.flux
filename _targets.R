@@ -33,7 +33,7 @@ list(
 
   tar_target(
     dna_per_cell_file,
-    data_path("dna-per-cell.xlsx"),
+    raw_data_path("dna-per-cell.xlsx"),
     format = "qs"
   ),
   tar_target(
@@ -52,6 +52,11 @@ list(
     cells_per_dna,
     calculate_cells_per_dna(dna_per_cell_clean)
   ),
+  tar_target(
+    cells_per_dna_data,
+    write_data(cells_per_dna),
+    format = "qs"
+  ),
   tar_quarto(
     dna_per_cell_report,
     path = report_path("dna-per-cell.qmd"),
@@ -62,7 +67,7 @@ list(
 
   tar_target(
     fluxes_meta_files,
-    data_path("(lf|pasmc)_.*_meta\\.csv"),
+    raw_data_path("(lf|pasmc)_.*_meta\\.csv"),
     format = "file",
     cue = tar_cue("always")
   ),
@@ -72,7 +77,7 @@ list(
   ),
   tar_target(
     fluxes_data_files,
-    data_path("(lf|pasmc)_.*_[a-z]_\\d{4}-\\d{2}-\\d{2}\\.xlsx"),
+    raw_data_path("(lf|pasmc)_.*_[a-z]_\\d{4}-\\d{2}-\\d{2}\\.xlsx"),
     format = "file",
     cue = tar_cue("always")
   ),
@@ -83,6 +88,14 @@ list(
   tar_target(
     conc_raw,
     clean_fluxes(fluxes_data, cells_per_dna)
+  ),
+  tar_target(
+    fluxes_glc6_files,
+    raw_data_path("lf_substrate_b_lactate\\.xlsx")
+  ),
+  tar_target(
+    fluxes_glc6_raw,
+    clean_glc6_fluxes(fluxes_glc6_files)
   ),
   NULL
 )

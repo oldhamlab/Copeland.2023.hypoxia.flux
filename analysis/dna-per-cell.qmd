@@ -1,5 +1,5 @@
 ---
-title: "Cell-DNA Standard Curves"
+title: "LC-MS ^13^C Lactate Measurements"
 date-modified: today
 format: html
 ---
@@ -84,11 +84,6 @@ sample |>
 ```
 
 These plots suggest that, for the 100 μL extraction buffer, the maximum cell count is ~ 250,000. We will exclude the 300,000 value prior to calculating the slopes of the curves. For the PASMC samples, the 400,000 cell sample is quite high compared to the other samples. I will also remove these values prior to calculation of the slopes.
-
-```{r}
-#| label: save-data
-usethis::use_data(cells_per_dna, overwrite = TRUE)
-```
 
 ```{r}
 #| label: output

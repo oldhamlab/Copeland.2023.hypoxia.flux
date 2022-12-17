@@ -4,7 +4,7 @@
   match(x, table, nomatch = 0L) == 0L
 }
 
-data_path <- function(nm) {
+raw_data_path <- function(nm) {
   dir(
     path = "data-raw",
     pattern = nm,
@@ -13,6 +13,11 @@ data_path <- function(nm) {
     recursive = TRUE,
     include.dirs = TRUE
   )
+}
+
+write_data <- function(...) {
+  targets::tar_load(...)
+  usethis::use_data(..., overwrite = TRUE)
 }
 
 report_path <- function(nm) {

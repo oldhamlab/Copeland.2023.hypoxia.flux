@@ -1,0 +1,246 @@
+---
+title: "LC-MS ^13^C Lactate Measurements"
+date-modified: today
+format: html
+excecute:
+  message: false
+---
+
+```{r}
+#| label: setup
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+here::i_am("analysis/glc6-lactate.qmd")
+here::here()
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  path <- tar_read(fluxes_glc6_files)
+})
+```
+
+## Overview
+
+To validate the results of enzymatic lactate assays suggesting decreased glycolysis in hypoxia, cells were treated with [U-^13^C~6~]-glucose (8 mM) in MCDB131 medium supplemented with glutamine (1 mM). DNA samples were collected for PicoGreen assay and medium samples were collected for LC-MS-based analysis of [u-^13^C~3~]-lactate concentration. Medium samples (10 μL) were combined with D~8~-valine (10 μL of 100 100 μM) and extracted with 180 μL MeOH pre-cooled to -80 °C. Samples were spun and the supernatants were analyzed by LC-MS using both full scan and selected ion monitoring with negative polarity. Quality control samples were interspersed across all of the samples to assess for instrument drift. 
+
+# Analysis
+
+```{r}
+#| label: raw-data
+df <-
+  read_ms_excel(here::here(path)) |> 
+  dplyr::filter(!str_detect(.data$id, "B")) |> 
+  tidyr::separate(
+    .data$sample, 
+    c("type", "number"), 
+    sep = "(?<=[[:alpha:]])(?=[[:digit:]])", 
+    fill = "left", 
+    convert = TRUE
+  ) |>
+  dplyr::mutate(
+    conc = ifelse(is.na(.data$type), .data$number, NA_character_), 
+    date = dplyr::case_when(
+      .data$type == "A" ~ "2022-11-12", 
+      .data$type == "B" ~ "2022-11-17", 
+      .data$type == "C" ~ "2022-11-22"
+    ), 
+    number = ifelse(!is.na(conc), NA, .data$number), 
+    batch = "b", 
+    cell_type = "lf", 
+    experiment = "substrate", 
+    type = dplyr::case_when(
+      .data$type == "QC" ~ "qc", 
+      is.na(.data$type) ~ "std", 
+      TRUE ~ "sample"
+    ), 
+    detector = "lcms", 
+    run = "a"
+  ) |> 
+  dplyr::select(
+    "metabolite", 
+    "detector", 
+    "mz", 
+    "rt", 
+    "cell_type",
+    "experiment", 
+    "batch", 
+    "date", 
+    "run", 
+    "id", 
+    "type", 
+    "number", 
+    "conc", 
+    "area"
+  )
+```
+
+## Drift
+
+```{r}
+#| label: drift-plot
+
+df_drift <- 
+  df |> 
+  filter(type == "qc") |> 
+  group_by(metabolite) |> 
+  mutate(norm = area / mean(area))
+
+ggplot(df_drift) +
+  aes(
+    x = number, 
+    y = norm, 
+    color = metabolite
+  ) +
+  geom_line() + 
+  labs(
+    x = "Run order", 
+    y = "Normalized peak area", 
+    color = "Metabolite", 
+    title = "QC Drift"
+  )
+```
+
+The QC peak areas suggest that correcting for experimental drift may be helpful over the time course of the experiment.
+
+```{r}
+#| label: qc-variance
+
+ggplot(df_drift) +
+  aes(
+    x = metabolite, 
+    y = norm, 
+    color = metabolite
+  ) +
+  geom_boxplot(show.legend = FALSE) +
+  geom_jitter(
+    width = 0.1, 
+    show.legend = FALSE
+  ) +
+  labs(
+    x = "Metabolite", 
+    y = "Normalized peak area", 
+    title = "QC Variance"
+  )
+```
+
+Regardless of drift, the QC peak areas are quite similar across the experimental time course.
+
+```{r}
+#| label: se
+
+se <- 
+  df |> 
+  new_tbl_se(
+    a_data = "area", 
+    f_names = "metabolite", 
+    f_data = c("metabolite", "detector", "mz", "rt"), 
+    s_names = "id", 
+    s_data = c(
+      "cell_type", 
+      "experiment", 
+      "batch", 
+      "run", 
+      "date", 
+      "type", 
+      "number", 
+      "conc"
+    )
+  ) |> 
+  tbl_to_se()
+
+se_drift <- 
+  correct_drift(se) |> 
+  se_to_tbl(rownames = "metabolite")
+```
+
+```{r}
+#| label: drift-corr-sanity-check
+
+se_drift |> 
+  filter(type == "qc") |> 
+  group_by(metabolite) |> 
+  mutate(norm = area / mean(area)) |> 
+  ggplot() +
+  aes(
+    x = number, 
+    y = norm, 
+    color = metabolite
+  ) +
+  geom_line() + 
+  labs(
+    x = "Run order", 
+    y = "Normalized peak area", 
+    color = "Metabolite", 
+    title = "Drift Corrected"
+  )
+```
+
+```{r}
+#| label: qbias-corr
+
+se_drift |> 
+  dplyr::filter(type != "qc")
+```
+
+
+## Standard Curves
+
+```{r}
+#| label: standard-curves
+
+se_drift |> 
+  dplyr::filter(type == "std" & metabolite == "LAC M0") |> 
+  dplyr::mutate(conc = as.numeric(conc)) |> 
+  ggplot() +
+  aes(
+    x = conc, 
+    y = area
+  ) +
+  geom_point()
+```
+
+## Samples
+
+```{r}
+#| label: samples
+
+pheno <- 
+  tibble::tibble(
+    number = 1:24, 
+    oxygen = rep(c("21%", "0.5%"), times = 4, each = 3), 
+    time = rep(c(0, 24, 48, 72), each = 6), 
+    rep = rep(c("x", "y", "z"), 8)
+  )
+
+se_drift |> 
+  filter(type == "sample") |> 
+  filter(metabolite == "LAC M3") |> 
+  left_join(pheno, by = "number") |> 
+  group_by(date, oxygen, time) |> 
+  wmo::remove_nested_outliers(area, remove = TRUE) |> 
+  summarize(area = mean(area)) |> 
+  ggplot() +
+  aes(
+    x = time, 
+    y = area, 
+    color = oxygen
+  ) +
+  geom_point() +
+  stat_summary(
+    geom = "line"
+  )
+```
+
+These plots suggest that, for the 100 μL extraction buffer, the maximum cell count is ~ 250,000. We will exclude the 300,000 value prior to calculating the slopes of the curves. For the PASMC samples, the 400,000 cell sample is quite high compared to the other samples. I will also remove these values prior to calculation of the slopes.
+

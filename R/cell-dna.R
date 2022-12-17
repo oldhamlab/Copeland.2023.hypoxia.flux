@@ -1,11 +1,11 @@
-# dna-per-cell.R
+# cell-dna.R
 
 clean_dna_per_cell <- function(path) {
   path |>
     read_multi_excel() |>
     purrr::map(clean_technical_replicates) |>
     dplyr::bind_rows(.id = "id") |>
-    tidyr::separate("id", c("cell_type", "volume"), sep = "_", convert = TRUE) |>
+    tidyr::separate(.data$id, c("cell_type", "volume"), sep = "_", convert = TRUE) |>
     dplyr::mutate(cells = 1000 * .data$cells)
 }
 
@@ -16,14 +16,7 @@ calculate_cells_per_dna <- function(df) {
     dplyr::group_by(.data$cell_type, .data$volume) |>
     tidyr::nest() |>
     dplyr::mutate(
-      model = purrr::map(
-        .data$data,
-        ~stats::lm(
-          conc ~ 0 + cells,
-          data = .x,
-          na.action = modelr::na.warn
-        )
-      ),
+      model = purrr::map(.data$data, \(x) stats::lm(conc ~ 0 + cells, data = x, na.action = modelr::na.warn)),
       glance = purrr::map(.data$model, broom::tidy)
     ) |>
     tidyr::unnest(c("glance")) |>
