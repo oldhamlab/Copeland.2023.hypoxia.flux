@@ -28,6 +28,7 @@ theme_set(theme_wmo())
 withr::with_dir(here::here(), {
   se_raw <- tar_read(fluxes_glc6_se)
   df_drift <- tar_read(fluxes_glc6_drift)
+  std <- tar_read(conc_std)
 })
 ```
 
@@ -165,15 +166,9 @@ df_drift |>
 ```{r}
 #| label: standard-curves
 
-df_drift |> 
-  dplyr::filter(type == "std" & metabolite == "LAC M0") |> 
-  dplyr::mutate(conc = as.numeric(conc)) |> 
-  ggplot() +
-  aes(
-    x = conc, 
-    y = area
-  ) +
-  geom_point()
+std |> 
+  filter(experiment == "substrate" & metabolite == "lactate") |> 
+  pull(plots)
 ```
 
 ## Samples

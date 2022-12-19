@@ -111,6 +111,10 @@ list(
     assemble_flux_data(fluxes_data_files)
   ),
   tar_target(
+    fluxes_dna_raw,
+    clean_dna_fluxes(fluxes_data, cells_per_dna)
+  ),
+  tar_target(
     conc_raw,
     clean_fluxes(fluxes_data, cells_per_dna)
   ),

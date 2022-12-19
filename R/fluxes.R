@@ -22,6 +22,26 @@ assemble_flux_data <- function(file_list) {
     purrr::map(dplyr::bind_rows, .id = "experiment")
 }
 
+clean_dna_fluxes <- function(data_list, cells_per_dna) {
+  data_list[["dna"]] |>
+    dplyr::mutate(metabolite = "dna") |>
+    dplyr::filter(!is.na(.data$a)) |>
+    clean_technical_replicates() |>
+    tidyr::separate(
+      .data$experiment,
+      c("cell_type", "experiment", "batch", "date"),
+      sep = "_"
+    ) |>
+    dplyr::mutate(volume = dplyr::if_else(.data$date <= "2018-05-25", 100, 200)) |>
+    dplyr::left_join(cells_per_dna, by = c("cell_type", "volume")) |>
+    dplyr::mutate(
+      conc = .data$conc * .data$slope,
+      metabolite = "dna",
+      detector = "picogreen"
+    ) |>
+    dplyr::select(-c("volume", "slope"))
+}
+
 clean_fluxes <- function(data_list, cells_per_dna){
   df <-
     data_list[c("dna", "glc", "lac", "pyr")] |>
