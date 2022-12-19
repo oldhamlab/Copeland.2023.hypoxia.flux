@@ -6,6 +6,7 @@ format: html
 
 ```{r}
 #| label: setup
+#| output: false
 
 devtools::load_all()
 suppressPackageStartupMessages({
@@ -13,6 +14,9 @@ suppressPackageStartupMessages({
   library(wmo)
   library(targets)
 })
+
+here::i_am("analysis/dna-per-cell.qmd")
+here::here()
 
 theme_set(theme_wmo())
 ```

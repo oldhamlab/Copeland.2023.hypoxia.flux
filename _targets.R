@@ -63,6 +63,31 @@ list(
     extra_files = c("_quarto.yml")
   ),
 
+  # qbias -------------------------------------------------------------------
+
+  tar_target(
+    qbias_files,
+    raw_data_path("q-bias-correction_[ab]\\.csv"),
+    format = "file"
+  ),
+  tar_target(
+    qbias_ratios,
+    read_qbias(qbias_files)
+  ),
+  tar_target(
+    qbias_correction_factors,
+    calculate_correction_factors(qbias_ratios, predicted_ratios)
+  ),
+  tar_target(
+    qbias_correction_factors_data,
+    write_data(qbias_correction_factors)
+  ),
+  tar_quarto(
+    qbias_report,
+    path = report_path("qbias.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+
   # fluxes ------------------------------------------------------------------
 
   tar_target(
@@ -94,8 +119,17 @@ list(
     raw_data_path("lf_substrate_b_lactate\\.xlsx")
   ),
   tar_target(
-    fluxes_glc6_raw,
-    clean_glc6_fluxes(fluxes_glc6_files)
+    fluxes_glc6_se,
+    format_glc6_raw(fluxes_glc6_files)
   ),
+  tar_target(
+    fluxes_glc6_drift,
+    correct_drift(fluxes_glc6_se) |>
+      se_to_tbl(rownames = "metabolite")
+  ),
+  # tar_target(
+  #   fluxes_glc6_clean,
+  #   clean_glc6_fluxes(fluxes_glc6_drift)
+  # ),
   NULL
 )
