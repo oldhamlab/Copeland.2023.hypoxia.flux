@@ -169,7 +169,7 @@ format_glc6_raw <- function(path) {
     ) |>
     dplyr::mutate(
       conc = ifelse(is.na(.data$type), .data$number, NA_character_),
-      number = ifelse(!is.na(conc), NA, .data$number),
+      number = ifelse(!is.na(.data$conc), NA, .data$number),
       type = dplyr::case_when(
         .data$type == "QC" ~ "qc",
         is.na(.data$type) ~ "std",

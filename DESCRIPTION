@@ -23,7 +23,9 @@ Imports:
     furrr,
     ggplot2,
     kableExtra,
+    MASS,
     modelr,
+    mzrtools,
     purrr,
     readr,
     readxl,
@@ -31,9 +33,11 @@ Imports:
     stats,
     stringr,
     SummarizedExperiment,
+    targets,
     tibble,
     tidyr,
     tidyselect,
+    usethis,
     wmo
 Depends: 
     R (>= 2.10)

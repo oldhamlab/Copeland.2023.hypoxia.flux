@@ -31,7 +31,7 @@ isotope_library <-
 
 calculate_ratios <- function(path) {
   readr::read_csv(path) |>
-    dplyr::filter(!is.na(area)) |>
+    dplyr::filter(!is.na(.data$area)) |>
     tidyr::separate(
       .data$filename,
       into = c(NA, "window", "replicate"),
@@ -63,7 +63,7 @@ read_qbias <- function(file_list) {
       stringr::str_extract(basename(x), pattern = "(?<=_)\\w(?=\\.csv)")
     )}() |>
     purrr::map_dfr(calculate_ratios, .id = "batch") |>
-    dplyr::group_by(batch, metabolite) |>
+    dplyr::group_by(.data$batch, .data$metabolite) |>
     dplyr::arrange(metabolite)
 }
 
@@ -81,8 +81,8 @@ calculate_correction_factors <- function(qbias_ratios, pred_ratios) {
   qbias_ratios |>
     tidyr::nest() |>
     dplyr::mutate(
-      model = purrr::map(.data$data, \(x) MASS::rlm(ratio ~ poly(window, 3), data = x, maxit = 1000)),
-      predict = purrr::map2(.data$model, .data$data, predict)
+      model = purrr::map(.data$data, \(x) MASS::rlm(ratio ~ stats::poly(window, 3), data = x, maxit = 1000)),
+      predict = purrr::map2(.data$model, .data$data, stats::predict)
     ) |>
     tidyr::unnest(c("data", "predict")) |>
     dplyr::select("batch", "metabolite", "window", "carbons", "predict") |>
@@ -105,7 +105,7 @@ calculate_correction_factors <- function(qbias_ratios, pred_ratios) {
     ) |>
     dplyr::select("batch", "metabolite", tidyselect::matches("M[0-9]+")) |>
     tidyr::pivot_longer(
-      cols = matches("M[0-9]+"),
+      cols = tidyselect::matches("M[0-9]+"),
       names_to = "M",
       values_to = "cf",
       values_drop_na = TRUE
