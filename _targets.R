@@ -111,12 +111,28 @@ list(
     assemble_flux_data(fluxes_data_files)
   ),
   tar_target(
-    fluxes_dna_raw,
+    fluxes_raw_dna,
     clean_dna_fluxes(fluxes_data, cells_per_dna)
   ),
   tar_target(
-    conc_raw,
-    clean_fluxes(fluxes_data, cells_per_dna)
+    fluxes_raw_glc,
+    clean_glc_fluxes(fluxes_data)
+  ),
+  tar_target(
+    fluxes_raw_lac,
+    clean_lac_fluxes(fluxes_data)
+  ),
+  tar_target(
+    fluxes_raw_pyr,
+    clean_pyr_fluxes(fluxes_data)
+  ),
+  tar_target(
+    fluxes_raw_gln,
+    clean_gln_fluxes(fluxes_data)
+  ),
+  tar_target(
+    fluxes_raw_aa,
+    clean_gln_fluxes(fluxes_data)
   ),
   tar_target(
     fluxes_glc6_files,
@@ -132,8 +148,20 @@ list(
       se_to_tbl(rownames = "metabolite")
   ),
   tar_target(
-    fluxes_glc6_raw,
-    clean_glc6_fluxes(fluxes_glc6_drift)
+    fluxes_raw_glc6,
+    clean_glc6_fluxes(fluxes_glc6_drift, qbias_correction_factors)
+  ),
+  tar_target(
+    conc_raw,
+    clean_fluxes(
+      fluxes_raw_dna,
+      fluxes_raw_glc,
+      fluxes_raw_lac,
+      fluxes_raw_pyr,
+      fluxes_raw_gln,
+      fluxes_raw_aa,
+      fluxes_raw_glc6
+    )
   ),
   tar_target(
     conc_std,

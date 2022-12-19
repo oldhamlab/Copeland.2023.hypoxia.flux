@@ -22,6 +22,7 @@ Imports:
     dplyr,
     furrr,
     ggplot2,
+    grDevices,
     kableExtra,
     MASS,
     modelr,
@@ -40,5 +41,5 @@ Imports:
     usethis,
     wmo
 Depends: 
-    R (>= 2.10)
+    R (>= 4.2.0)
 LazyData: true

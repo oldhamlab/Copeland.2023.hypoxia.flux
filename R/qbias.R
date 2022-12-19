@@ -64,7 +64,7 @@ read_qbias <- function(file_list) {
     )}() |>
     purrr::map_dfr(calculate_ratios, .id = "batch") |>
     dplyr::group_by(.data$batch, .data$metabolite) |>
-    dplyr::arrange(metabolite)
+    dplyr::arrange(.data$metabolite)
 }
 
 predicted_ratios <-

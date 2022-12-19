@@ -34,14 +34,14 @@ report_path <- function(nm) {
 
 read_multi_excel <- function(excel_file) {
   sheets <- readxl::excel_sheets(excel_file)
-  purrr::map(sheets, ~readxl::read_excel(excel_file, sheet = .x)) |>
+  purrr::map(sheets, \(x) readxl::read_excel(excel_file, sheet = x)) |>
     rlang::set_names(sheets)
 }
 
-clean_technical_replicates <- function(tbl) {
+clean_technical_replicates <- function(df) {
   tidyr::pivot_longer(
-    data = tbl,
-    cols = "a":"c",
+    data = df,
+    cols = letters[1:3],
     names_to = "replicate",
     values_to = "value"
   ) |>
@@ -135,7 +135,7 @@ print_plots <- function(
       filename = stringr::str_c(y, ".pdf"),
       path = path,
       plot = x,
-      device = cairo_pdf,
+      device = grDevices::cairo_pdf,
       width = width,
       height = height,
       units = "cm"
