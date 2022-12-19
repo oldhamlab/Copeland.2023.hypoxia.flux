@@ -15,6 +15,14 @@ raw_data_path <- function(nm) {
   )
 }
 
+plot_path <- function(nm) {
+  path <- stringr::str_c("analysis/figures/", nm)
+  if (dir.exists(path)) unlink(path, recursive = TRUE)
+  if (!dir.exists(path)) dir.create(path = path, recursive = TRUE)
+  path
+}
+
+
 write_data <- function(...) {
   targets::tar_load(...)
   usethis::use_data(..., overwrite = TRUE)
@@ -56,7 +64,7 @@ replace_outliers <- function(vec) {
 
 make_std_curves <- function(df, fo = NULL) {
   if (is.null(fo)){
-    fo <- ~lm(value ~ conc, data = .x, na.action = modelr::na.warn)
+    fo <- ~stats::lm(value ~ conc, data = .x, na.action = modelr::na.warn)
   }
 
   df |>
@@ -71,7 +79,7 @@ make_std_curves <- function(df, fo = NULL) {
     dplyr::ungroup() |>
     dplyr::mutate(
       model = furrr::future_map(.data$data, fo),
-      summary = furrr::future_map(.data$model, ~broom::glance(.x)),
+      summary = furrr::future_map(.data$model, \(x) broom::glance(x)),
       plots = furrr::future_map2(.data$data, .data$title, make_std_plots)
     ) |>
     dplyr::group_by(
@@ -84,8 +92,8 @@ make_std_curves <- function(df, fo = NULL) {
 make_std_plots <- function(df, title = NULL) {
   ggplot2::ggplot(df) +
     ggplot2::aes(
-      x = "conc",
-      y = "value"
+      x = .data$conc,
+      y = .data$value
     ) +
     ggplot2::geom_smooth(
       method = stats::lm,
@@ -110,6 +118,30 @@ make_std_plots <- function(df, title = NULL) {
       y = "Value",
       title = title
     )
+}
+
+print_plots <- function(
+    plot_list,
+    name_list,
+    path_name,
+    width = 20,
+    height = 15
+) {
+  path <- plot_path(path_name)
+  furrr::future_walk2(
+    plot_list,
+    name_list,
+    \(x, y) ggplot2::ggsave(
+      filename = stringr::str_c(y, ".pdf"),
+      path = path,
+      plot = x,
+      device = cairo_pdf,
+      width = width,
+      height = height,
+      units = "cm"
+    )
+  )
+  invisible(path)
 }
 
 interp_data <- function(tbl, std) {

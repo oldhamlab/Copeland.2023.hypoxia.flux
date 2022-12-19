@@ -168,12 +168,13 @@ format_glc6_raw <- function(path) {
       convert = TRUE
     ) |>
     dplyr::mutate(
-      conc = ifelse(is.na(.data$type), .data$number, NA_character_),
+      conc = ifelse(is.na(.data$type), .data$number, NA),
+      conc = as.numeric(.data$conc),
       number = ifelse(!is.na(.data$conc), NA, .data$number),
       type = dplyr::case_when(
         .data$type == "QC" ~ "qc",
         is.na(.data$type) ~ "std",
-        TRUE ~ "sample"
+        TRUE ~ tolower(.data$type)
       )
     ) |>
     new_tbl_se(
@@ -191,5 +192,32 @@ format_glc6_raw <- function(path) {
 }
 
 clean_glc6_fluxes <- function(df) {
-
+  df |>
+    dplyr::select("metabolite", "id", "type", "number", "conc", "area") |>
+    dplyr::group_by(.data$id) |>
+    dplyr::mutate(area = .data$area / .data$area[.data$metabolite == "VAL D8"]) |>
+    dplyr::filter(
+      (.data$metabolite == "LAC M0" & .data$type == "std") |
+        (.data$metabolite == "LAC M3" & .data$type %in% letters[1:3])
+    ) |>
+    tidyr::separate(.data$metabolite, c("metabolite", "isotope"), sep = " ") |>
+    dplyr::mutate(metabolite = "lactate") |>
+    dplyr::left_join(qbias_correction_factors, by = c("metabolite", "isotope" = "M")) |>
+    dplyr::filter(.data$batch == "b" & .data$isotope %in% c("M0", "M3")) |>
+    dplyr::mutate(value = .data$area * .data$cf) |>
+    dplyr::select("metabolite", "type", id = "number", "conc", "value") |>
+    dplyr::mutate(
+      detector = "lcms",
+      cell_type = "lf",
+      experiment = "substrate",
+      batch = "b",
+      date = dplyr::case_when(
+        .data$type == "a" ~ "2022-11-12",
+        .data$type == "b" ~ "2022-11-17",
+        .data$type == "c" ~ "2022-11-22"
+      ),
+      run = "a",
+      conc = .data$conc * 1000
+    ) |>
+    dplyr::select(-"type")
 }

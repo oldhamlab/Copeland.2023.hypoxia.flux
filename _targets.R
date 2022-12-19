@@ -127,9 +127,18 @@ list(
     correct_drift(fluxes_glc6_se) |>
       se_to_tbl(rownames = "metabolite")
   ),
-  # tar_target(
-  #   fluxes_glc6_clean,
-  #   clean_glc6_fluxes(fluxes_glc6_drift)
-  # ),
+  tar_target(
+    fluxes_glc6_raw,
+    clean_glc6_fluxes(fluxes_glc6_drift)
+  ),
+  tar_target(
+    conc_std,
+    make_std_curves(dplyr::bind_rows(conc_raw, fluxes_glc6_raw))
+  ),
+  tar_target(
+    conc_std_plots,
+    print_plots(conc_std$plots, conc_std$title, "fluxes/01_standard_curves"),
+    format = "file"
+  ),
   NULL
 )
