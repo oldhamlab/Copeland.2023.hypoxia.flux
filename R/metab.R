@@ -13,6 +13,9 @@ read_ms_excel <- function(path, orientation = "long") {
         mz = "Detected Mass",
         rt = "RT",
         area = "Peak Area"
+      ) |>
+      dplyr::mutate(
+        dplyr::across(c("mz", "rt", "area"), as.numeric)
       )
   }
 }
@@ -130,7 +133,7 @@ correct_drift <- function(missing){
       .data$model,
       .data$data, \(x, y) stats::predict(x, y$run_order)$y)
     ) |>
-    tidyr::unnest(c(.data$data, .data$pred)) |>
+    tidyr::unnest(c("data", "pred")) |>
     dplyr::mutate(corr = .data$value + .data$mean - .data$pred) |>
     dplyr::select("hmdb", "sample", "corr") |>
     tidyr::pivot_wider(names_from = "sample", values_from = "corr") |>

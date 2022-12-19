@@ -26,7 +26,8 @@ theme_set(theme_wmo())
 #| label: data
 
 withr::with_dir(here::here(), {
-  path <- tar_read(fluxes_glc6_files)
+  se_raw <- tar_read(fluxes_glc6_se)
+  df_drift <- tar_read(fluxes_glc6_drift)
 })
 ```
 
@@ -38,51 +39,51 @@ To validate the results of enzymatic lactate assays suggesting decreased glycoly
 
 ```{r}
 #| label: raw-data
-df <-
-  read_ms_excel(here::here(path)) |> 
-  dplyr::filter(!str_detect(.data$id, "B")) |> 
-  tidyr::separate(
-    .data$sample, 
-    c("type", "number"), 
-    sep = "(?<=[[:alpha:]])(?=[[:digit:]])", 
-    fill = "left", 
-    convert = TRUE
-  ) |>
-  dplyr::mutate(
-    conc = ifelse(is.na(.data$type), .data$number, NA_character_), 
-    date = dplyr::case_when(
-      .data$type == "A" ~ "2022-11-12", 
-      .data$type == "B" ~ "2022-11-17", 
-      .data$type == "C" ~ "2022-11-22"
-    ), 
-    number = ifelse(!is.na(conc), NA, .data$number), 
-    batch = "b", 
-    cell_type = "lf", 
-    experiment = "substrate", 
-    type = dplyr::case_when(
-      .data$type == "QC" ~ "qc", 
-      is.na(.data$type) ~ "std", 
-      TRUE ~ "sample"
-    ), 
-    detector = "lcms", 
-    run = "a"
-  ) |> 
-  dplyr::select(
-    "metabolite", 
-    "detector", 
-    "mz", 
-    "rt", 
-    "cell_type",
-    "experiment", 
-    "batch", 
-    "date", 
-    "run", 
-    "id", 
-    "type", 
-    "number", 
-    "conc", 
-    "area"
-  )
+# df <-
+#   read_ms_excel(here::here(path)) |> 
+#   dplyr::filter(!str_detect(.data$id, "B")) |> 
+#   tidyr::separate(
+#     .data$sample, 
+#     c("type", "number"), 
+#     sep = "(?<=[[:alpha:]])(?=[[:digit:]])", 
+#     fill = "left", 
+#     convert = TRUE
+#   ) |>
+#   dplyr::mutate(
+#     conc = ifelse(is.na(.data$type), .data$number, NA_character_), 
+#     date = dplyr::case_when(
+#       .data$type == "A" ~ "2022-11-12", 
+#       .data$type == "B" ~ "2022-11-17", 
+#       .data$type == "C" ~ "2022-11-22"
+#     ), 
+#     number = ifelse(!is.na(conc), NA, .data$number), 
+#     batch = "b", 
+#     cell_type = "lf", 
+#     experiment = "substrate", 
+#     type = dplyr::case_when(
+#       .data$type == "QC" ~ "qc", 
+#       is.na(.data$type) ~ "std", 
+#       TRUE ~ "sample"
+#     ), 
+#     detector = "lcms", 
+#     run = "a"
+#   ) |> 
+#   dplyr::select(
+#     "metabolite", 
+#     "detector", 
+#     "mz", 
+#     "rt", 
+#     "cell_type",
+#     "experiment", 
+#     "batch", 
+#     "date", 
+#     "run", 
+#     "id", 
+#     "type", 
+#     "number", 
+#     "conc", 
+#     "area"
+#   )
 ```
 
 ## Drift
@@ -90,13 +91,14 @@ df <-
 ```{r}
 #| label: drift-plot
 
-df_drift <- 
-  df |> 
+df_raw <- 
+  se_raw |> 
+  se_to_tbl(rownames = "metabolite") |> 
   filter(type == "qc") |> 
   group_by(metabolite) |> 
   mutate(norm = area / mean(area))
 
-ggplot(df_drift) +
+ggplot(df_raw) +
   aes(
     x = number, 
     y = norm, 
@@ -116,7 +118,7 @@ The QC peak areas suggest that correcting for experimental drift may be helpful 
 ```{r}
 #| label: qc-variance
 
-ggplot(df_drift) +
+ggplot(df_raw) +
   aes(
     x = metabolite, 
     y = norm, 
@@ -137,37 +139,9 @@ ggplot(df_drift) +
 Regardless of drift, the QC peak areas are quite similar across the experimental time course.
 
 ```{r}
-#| label: se
-
-se <- 
-  df |> 
-  new_tbl_se(
-    a_data = "area", 
-    f_names = "metabolite", 
-    f_data = c("metabolite", "detector", "mz", "rt"), 
-    s_names = "id", 
-    s_data = c(
-      "cell_type", 
-      "experiment", 
-      "batch", 
-      "run", 
-      "date", 
-      "type", 
-      "number", 
-      "conc"
-    )
-  ) |> 
-  tbl_to_se()
-
-se_drift <- 
-  correct_drift(se) |> 
-  se_to_tbl(rownames = "metabolite")
-```
-
-```{r}
 #| label: drift-corr-sanity-check
 
-se_drift |> 
+df_drift |> 
   filter(type == "qc") |> 
   group_by(metabolite) |> 
   mutate(norm = area / mean(area)) |> 

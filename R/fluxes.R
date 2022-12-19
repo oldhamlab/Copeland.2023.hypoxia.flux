@@ -151,10 +151,45 @@ clean_fluxes <- function(data_list, cells_per_dna){
       .data$run,
       .data$conc,
       .data$id
-      ) |>
+    ) |>
     dplyr::mutate(detector = tidyr::replace_na(.data$detector, "na")) |>
     dplyr::filter(!is.na(.data$value)) |>
     dplyr::filter(.data$metabolite %nin% c(tolower(istds), "hydroxyproline"))
 }
 
-clean_glc6_fluxes <- function(path) {}
+format_glc6_raw <- function(path) {
+  read_ms_excel(path) |>
+    dplyr::filter(!stringr::str_detect(.data$id, "B")) |>
+    tidyr::separate(
+      .data$sample,
+      c("type", "number"),
+      sep = "(?<=[[:alpha:]])(?=[[:digit:]])",
+      fill = "left",
+      convert = TRUE
+    ) |>
+    dplyr::mutate(
+      conc = ifelse(is.na(.data$type), .data$number, NA_character_),
+      number = ifelse(!is.na(conc), NA, .data$number),
+      type = dplyr::case_when(
+        .data$type == "QC" ~ "qc",
+        is.na(.data$type) ~ "std",
+        TRUE ~ "sample"
+      )
+    ) |>
+    new_tbl_se(
+      a_data = "area",
+      f_names = "metabolite",
+      f_data = c("metabolite", "mz", "rt"),
+      s_names = "id",
+      s_data = c(
+        "type",
+        "number",
+        "conc"
+      )
+    ) |>
+    tbl_to_se()
+}
+
+clean_glc6_fluxes <- function(df) {
+
+}
