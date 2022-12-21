@@ -191,6 +191,10 @@ format_glc6_raw <- function(path) {
 }
 
 clean_glc6_fluxes <- function(df, cf) {
+  new_id <-
+    outer(10:12, 12 * 0:7, `+`) |>
+    as.vector()
+
   df |>
     dplyr::select("metabolite", "id", "type", "number", "conc", "area") |>
     dplyr::group_by(.data$id) |>
@@ -216,7 +220,8 @@ clean_glc6_fluxes <- function(df, cf) {
         .data$type == "c" ~ "2022-11-22"
       ),
       run = "a",
-      conc = .data$conc * 1000
+      conc = .data$conc * 1000,
+      id = replace(.data$id, !is.na(.data$id), new_id)
     ) |>
     dplyr::select(-"type")
 }
@@ -251,6 +256,7 @@ clean_flux_std <- function(df) {
 
   df |>
     dplyr::filter(!(.data$detector == "fld" & .data$conc > 900)) |>
+    dplyr::filter(!(.data$experiment == "substrate" & .data$conc == 10000)) |>
     dplyr::anti_join(
       outliers,
       by = c(
@@ -363,6 +369,7 @@ filter_assays <- function(df) {
         .data$metabolite %nin% mwd & .data$detector == "fld" ~ TRUE,
         .data$detector %in% c("enzyme", "picogreen") ~ TRUE,
         .data$metabolite == "pyruvate" & .data$experiment == "02" ~ TRUE,
+        .data$metabolite == "lactate" & .data$detector == "lcms" ~ TRUE,
         TRUE ~ FALSE
       )
     ) |>
