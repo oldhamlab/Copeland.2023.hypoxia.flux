@@ -528,3 +528,131 @@ assemble_flux_measurements <- function(conc_clean, evap_clean) {
     dplyr::filter(!(.data$experiment == "05-simyc" & .data$time > 48)) |>
     dplyr::filter(!(.data$experiment == "bay-myc" & .data$time > 48))
 }
+
+plot_raw_curves <- function(data, title, y, xlab = "Time (h)", ylab, ...) {
+  ggplot2::ggplot(data) +
+    ggplot2::aes(
+      x = .data$time,
+      y = {{y}},
+      color = interaction(.data$oxygen, .data$treatment, .data$virus, sep = " | ")
+    ) +
+    ggplot2::geom_point(
+      ggplot2::aes(shape = .data$well),
+      size = 3,
+      alpha = 0.3
+    ) +
+    geom_fit(...) +
+    ggplot2::stat_summary(
+      fun = "mean",
+      size = 4,
+      geom = "point",
+      alpha = 0.8
+    ) +
+    ggplot2::labs(
+      title = title,
+      x = xlab,
+      y = ylab,
+      color = "condition"
+    ) +
+    wmo::theme_wmo()
+}
+
+geom_fit <- function(fit = "line", fo = NULL, method = NULL, ...) {
+  if (fit == "reg"){
+    ggplot2::geom_smooth(
+      method = method,
+      formula = fo,
+      se = FALSE,
+      ...
+    )
+  } else if (fit == "line"){
+    ggplot2::stat_summary(
+      fun = "mean",
+      geom = "line",
+      ...
+    )
+  }
+}
+
+plot_masses <- function(df, plot_function, ...) {
+  df |>
+    dplyr::group_by(
+      .data$cell_type,
+      .data$experiment,
+      .data$batch,
+      .data$date,
+      .data$metabolite,
+      .data$abbreviation
+    ) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      title = stringr::str_c(
+        .data$metabolite,
+        .data$cell_type,
+        .data$experiment,
+        .data$batch,
+        .data$date,
+        sep = "_"),
+      plots = purrr::map2(
+        .data$data,
+        .data$title,
+        plot_function,
+        ...
+      )
+    )
+}
+
+plot_growth_curves <- function(flux_measurements) {
+  flux_measurements |>
+    dplyr::filter(.data$metabolite == "cells") |>
+    plot_masses(
+      plot_raw_curves,
+      y = .data$conc,
+      fit = "line",
+      ylab = "Cell count"
+    )
+}
+
+calculate_growth_rates <- function(growth_curves) {
+  growth_m <- function(df){
+    fit <- MASS::rlm(log(conc) ~ time, data = df, maxit = 1000)
+    names(fit$coefficients) <- c("X0", "mu")
+    fit
+  }
+
+  growth_curves |>
+    dplyr::select(-c("title", "plots")) |>
+    tidyr::unnest(c("data")) |>
+    dplyr::filter(.data$time < 96) |>
+    dplyr::group_by(
+      .data$cell_type,
+      .data$experiment,
+      .data$batch,
+      .data$date,
+      .data$oxygen,
+      .data$treatment,
+      .data$virus
+    ) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      model = purrr::map(.data$data, growth_m),
+      summary = purrr::map(.data$model, broom::tidy)
+    ) |>
+    tidyr::unnest(c("summary")) |>
+    dplyr::select(-c("std.error", "statistic")) |>
+    tidyr::pivot_wider(names_from = "term", values_from = "estimate") |>
+    dplyr::mutate(
+      X0 = exp(.data$X0),
+      group = dplyr::case_when(
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "None" & .data$oxygen == "21%" ~ "21%",
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "DMSO" ~ "DMSO",
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
+        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
+        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
+      ),
+      group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY"))
+    ) |>
+    dplyr::arrange(dplyr::desc(.data$experiment), .data$oxygen, .data$treatment) |>
+    dplyr::select(-c("data", "model")) |>
+    dplyr::relocate("group", .before = "X0")
+}

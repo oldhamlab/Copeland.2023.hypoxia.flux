@@ -200,5 +200,18 @@ list(
     flux_measurements,
     assemble_flux_measurements(conc_clean, evap_clean)
   ),
+  tar_target(
+    growth_curves,
+    plot_growth_curves(flux_measurements)
+  ),
+  tar_target(
+    growth_curve_plots,
+    print_plots(growth_curves$plots, growth_curves$title, "fluxes/02_growth_curves"),
+    format = "file"
+  ),
+  tar_target(
+    growth_rates,
+    calculate_growth_rates(growth_curves)
+  ),
   NULL
 )
