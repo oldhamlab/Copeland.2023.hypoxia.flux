@@ -240,4 +240,291 @@ clean_fluxes <- function(...) {
     dplyr::filter(.data$metabolite %nin% c("norvaline", "sarcosine", "hydroxyproline"))
 }
 
+clean_flux_std <- function(df) {
+  outliers <-
+    tibble::tribble(
+      ~metabolite, ~experiment, ~date, ~batch, ~run, ~detector, ~conc,
+      "lactate", "bay", "2018-06-02", "a", "a", "enzyme", 10500,
+      "pyruvate", "bay", "2018-11-02", "b", "a", "enzyme", 1500,
+      "glycine", "05", "2017-11-06", "a", "b", "fld", 10
+    )
 
+  df |>
+    dplyr::filter(!(.data$detector == "fld" & .data$conc > 900)) |>
+    dplyr::anti_join(
+      outliers,
+      by = c(
+        "metabolite",
+        "experiment",
+        "date",
+        "batch",
+        "run",
+        "detector",
+        "conc"
+      )
+    ) |>
+    make_std_curves()
+}
+
+fill_missing_fluxes <- function(df, meta) {
+  metabolite <- type <- detector <- time <- well <- NULL
+
+  df_meta <-
+    dplyr::left_join(df, meta, by = c("cell_type", "experiment", "id"))
+
+  missing_data <-
+    df_meta |>
+    dplyr::group_by(.data$cell_type, .data$experiment, .data$batch) |>
+    tidyr::complete(
+      .data$date,
+      .data$treatment,
+      .data$oxygen,
+      .data$virus,
+      tidyr::nesting(
+        metabolite,
+        type,
+        detector,
+        time,
+        well
+      )
+    ) |>
+    dplyr::filter(is.na(.data$conc))
+
+  empty_05_t0 <-
+    missing_data |>
+    dplyr::filter(
+      .data$experiment == "05" &
+        .data$oxygen == "0.5%" &
+        .data$time == 0 &
+        .data$type == "empty"
+    ) |>
+    dplyr::select(-c("run", "id", "conc")) |>
+    dplyr::mutate(oxygen = forcats::fct_recode(.data$oxygen, "21%" = "0.5%")) |>
+    dplyr::left_join(
+      df_meta,
+      by = c(
+        "cell_type",
+        "experiment",
+        "batch",
+        "date",
+        "virus",
+        "treatment",
+        "oxygen",
+        "metabolite",
+        "type",
+        "detector",
+        "time",
+        "well"
+      )
+    ) |>
+    dplyr::mutate(oxygen = forcats::fct_recode(.data$oxygen, "0.5%" = "21%"))
+
+  empty_simyc_t0 <-
+    missing_data |>
+    dplyr::filter(.data$experiment == "05-simyc" & .data$time == 0) |>
+    dplyr::select(-c("run", "id", "conc")) |>
+    dplyr::left_join(
+      df_meta,
+      by = c(
+        "cell_type",
+        "experiment",
+        "batch",
+        "date",
+        "oxygen",
+        "virus",
+        "metabolite",
+        "type",
+        "detector",
+        "time",
+        "well"
+      )
+    ) |>
+    dplyr::select(-"treatment.y") |>
+    dplyr::rename(treatment = "treatment.x")
+
+  dplyr::bind_rows(df_meta, empty_05_t0, empty_simyc_t0)
+}
+
+filter_assays <- function(df) {
+  mwd <-
+    c(
+      "cystine",
+      "glutamine",
+      "isoleucine",
+      "leucine",
+      "lysine",
+      "valine"
+    )
+
+  df |>
+    dplyr::mutate(
+      keep = dplyr::case_when(
+        .data$metabolite %in% mwd & .data$detector == "mwd" ~ TRUE,
+        .data$metabolite %nin% mwd & .data$detector == "fld" ~ TRUE,
+        .data$detector %in% c("enzyme", "picogreen") ~ TRUE,
+        .data$metabolite == "pyruvate" & .data$experiment == "02" ~ TRUE,
+        TRUE ~ FALSE
+      )
+    ) |>
+    dplyr::filter(.data$keep) |>
+    dplyr::select(-"keep") |>
+    dplyr::ungroup()
+}
+
+assemble_evap_data <- function(data_list) {
+  data_list[["evap"]] |>
+    dplyr::group_by(.data$experiment, .data$oxygen) |>
+    dplyr::mutate(plate_mass = .data$mass - .data$mass[[1]]) |>
+    dplyr::filter(.data$time != -24) |>
+    dplyr::mutate(volume = 2 * .data$plate_mass / .data$plate_mass[[1]]) |>
+    dplyr::filter(!is.na(.data$volume)) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      model = purrr::map(.data$data, ~stats::lm(volume ~ time, data = .x))
+    ) |>
+    dplyr::mutate(pred_vol = purrr::map2(.data$model, .data$data, stats::predict)) |>
+    dplyr::select(-"model") |>
+    tidyr::unnest(c("data", "pred_vol")) |>
+    dplyr::select(-c("volume", "plate_mass", "mass")) |>
+    dplyr::rename(volume = "pred_vol") |>
+    tidyr::separate("experiment", c("cell_type", "experiment", "batch", "date"), "_")
+}
+
+fill_missing_evap <- function(evap, samples) {
+  evap_dup_bay <-
+    evap |>
+    dplyr::filter(.data$experiment == "bay") |>
+    dplyr::group_by(.data$oxygen, .data$time) |>
+    dplyr::summarize(volume = mean(.data$volume, na.rm = TRUE))
+
+  evap_bay_a <-
+    samples |>
+    dplyr::filter(.data$experiment == "bay" & .data$batch == "a") |>
+    dplyr::select(
+      "cell_type",
+      "experiment",
+      "batch",
+      "date",
+      "oxygen"
+    ) |>
+    dplyr::distinct() |>
+    dplyr::left_join(evap_dup_bay, by = "oxygen")
+
+  evap_dup_hyp <-
+    evap |>
+    dplyr::filter(.data$experiment == "05") |>
+    dplyr::group_by(.data$oxygen, .data$time) |>
+    dplyr::summarize(volume = mean(.data$volume, na.rm = TRUE)) |>
+    dplyr::mutate(oxygen = replace(.data$oxygen, .data$oxygen == "0.5%", "0.2%"))
+
+  evap_02 <-
+    samples |>
+    dplyr::filter(.data$experiment == "02") |>
+    dplyr::select(
+      "cell_type",
+      "experiment",
+      "batch",
+      "date",
+      "oxygen"
+    ) |>
+    dplyr::distinct() |>
+    dplyr::left_join(evap_dup_hyp, by = "oxygen")
+
+  dplyr::bind_rows(evap, evap_02, evap_bay_a)
+}
+
+assemble_flux_measurements <- function(conc_clean, evap_clean) {
+  abbreviations <-
+    tibble::tibble(metabolite = unique(conc_clean$metabolite)) |>
+    dplyr::mutate(
+      abbreviation = dplyr::case_when(
+        .data$metabolite == "dna" ~ "cells",
+        .data$metabolite == "glucose" ~ "glc",
+        .data$metabolite == "asparagine" ~ "asn",
+        .data$metabolite == "cystine" ~ "cyx",
+        .data$metabolite == "glutamine" ~ "gln",
+        .data$metabolite == "isoleucine" ~ "ile",
+        .data$metabolite == "tryptophan" ~ "trp",
+        TRUE ~ stringr::str_extract(.data$metabolite, "^[a-z]{3}")
+      )
+    )
+
+  conc_clean |>
+    dplyr::left_join(
+      evap_clean,
+      by = c(
+        "cell_type",
+        "experiment",
+        "batch",
+        "date",
+        "oxygen",
+        "time"
+      )
+    ) |>
+    dplyr::left_join(abbreviations, by = "metabolite") |>
+    dplyr::filter(!is.na(.data$conc)) |>
+    dplyr::select(
+      "cell_type",
+      "experiment",
+      "batch",
+      "date",
+      "metabolite",
+      "abbreviation",
+      "detector",
+      "type",
+      "oxygen",
+      "virus",
+      "treatment",
+      "time",
+      "well",
+      "conc",
+      "volume"
+    ) |>
+    dplyr::mutate(
+      treatment = factor(
+        .data$treatment,
+        levels = c(
+          "none",
+          "DMSO",
+          "BAY",
+          "siCTL",
+          "siMYC",
+          "siHIF1A",
+          "siHIF2A",
+          "siPHD2",
+          "-GLC",
+          "-GLN",
+          "GLC6"
+        ),
+        labels = c(
+          "None",
+          "DMSO",
+          "BAY",
+          "siCTL",
+          "siMYC",
+          "siHIF1A",
+          "siHIF2A",
+          "siPHD2",
+          "-GLC",
+          "-GLN",
+          "GLC6"
+        )
+      ),
+      oxygen = factor(.data$oxygen, levels = c("21%", "0.5%", "0.2%")),
+      virus = factor(.data$virus, levels = c("YFP", "MYC", "none"), labels = c("YFP", "MYC", "None")),
+      group = dplyr::case_when(
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "None" & .data$oxygen == "21%" ~ "21%",
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "DMSO" ~ "DMSO",
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
+        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
+        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
+      ),
+      group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY")),
+      metabolite = replace(.data$metabolite, .data$metabolite == "dna", "cells"),
+      nmol = .data$conc * .data$volume,
+      abbreviation = toupper(.data$abbreviation)
+    ) |>
+    dplyr::relocate("group", .before = "time") |>
+    dplyr::filter(!(.data$experiment == "05-simyc" & .data$time > 48)) |>
+    dplyr::filter(!(.data$experiment == "bay-myc" & .data$time > 48))
+}

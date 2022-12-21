@@ -20,6 +20,7 @@ Imports:
     clustermq,
     devtools,
     dplyr,
+    forcats,
     furrr,
     ggplot2,
     grDevices,

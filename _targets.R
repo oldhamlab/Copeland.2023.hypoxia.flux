@@ -165,12 +165,40 @@ list(
   ),
   tar_target(
     conc_std,
-    make_std_curves(dplyr::bind_rows(conc_raw, fluxes_glc6_raw))
+    make_std_curves(conc_raw)
   ),
   tar_target(
     conc_std_plots,
     print_plots(conc_std$plots, conc_std$title, "fluxes/01_standard_curves"),
     format = "file"
+  ),
+  tar_target(
+    conc_std_clean,
+    clean_flux_std(conc_raw)
+  ),
+  tar_target(
+    conc_interp,
+    interp_data(conc_raw, conc_std_clean)
+  ),
+  tar_target(
+    conc_with_missing,
+    fill_missing_fluxes(conc_interp, fluxes_meta)
+  ),
+  tar_target(
+    conc_clean,
+    filter_assays(conc_with_missing)
+  ),
+  tar_target(
+    evap_raw,
+    assemble_evap_data(fluxes_data)
+  ),
+  tar_target(
+    evap_clean,
+    fill_missing_evap(evap_raw, conc_clean)
+  ),
+  tar_target(
+    flux_measurements,
+    assemble_flux_measurements(conc_clean, evap_clean)
   ),
   NULL
 )
