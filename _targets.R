@@ -230,5 +230,27 @@ list(
     k,
     clean_degradation_rates(degradation_rates)
   ),
+  tar_target(
+    mass_curves,
+    plot_mass_curves(flux_measurements)
+  ),
+  tar_target(
+    mass_curve_plots,
+    print_plots(mass_curves$plots, mass_curves$title, "fluxes/04_mass_curves"),
+    format = "file"
+  ),
+  tar_target(
+    flux_curves,
+    plot_flux_curves(mass_curves, k, growth_rates)
+  ),
+  tar_target(
+    flux_curve_plots,
+    print_plots(flux_curves$plots, flux_curves$title, "fluxes/05_flux_curves"),
+    format = "file"
+  ),
+  tar_target(
+    fluxes,
+    calculate_fluxes(flux_curves)
+  ),
   NULL
 )

@@ -719,7 +719,7 @@ clean_degradation_rates <- function(degradation_rates) {
       .data$oxygen,
       .data$treatment,
       .data$virus
-      ) |>
+    ) |>
     wmo::remove_nested_outliers("k", remove = TRUE) |>
     tidyr::nest() |>
     dplyr::mutate(
@@ -749,4 +749,114 @@ clean_degradation_rates <- function(degradation_rates) {
   dplyr::bind_rows(k, hyp_02, bay) |>
     dplyr::mutate(k = -.data$k) |>
     dplyr::arrange(.data$metabolite, .data$oxygen, .data$virus, .data$treatment)
+}
+
+plot_mass_curves <- function(flux_measurements) {
+  flux_measurements |>
+    dplyr::filter(.data$type == "cells" & .data$metabolite != "cells") |>
+    plot_masses(
+      plot_raw_curves,
+      y = log(.data$nmol),
+      ylab = "ln(Mass (nmol))",
+      fit = "line"
+    )
+}
+
+plot_flux_curves <- function(mass_curves, k, growth_rates) {
+  mass_curves |>
+    dplyr::select(-c("title", "plots")) |>
+    tidyr::unnest(c("data")) |>
+    dplyr::left_join(k, by = c("metabolite", "oxygen", "treatment", "virus")) |>
+    dplyr::left_join(
+      growth_rates,
+      by = c(
+        "cell_type",
+        "experiment",
+        "batch",
+        "date",
+        "oxygen",
+        "treatment",
+        "virus"
+      )
+    ) |>
+    dplyr::mutate(
+      k = tidyr::replace_na(.data$k, 0),
+      x = exp((.data$mu + .data$k) * .data$time) - 1,
+      y = .data$nmol * exp(.data$k * .data$time)
+    ) |>
+    plot_masses(
+      plot_raw_curves,
+      y = .data$y,
+      xlab = expression(e^{(mu+k)*t} - 1),
+      ylab = expression(M*e^{k*t}),
+      fit = "reg",
+      method = MASS::rlm,
+      method.args = list(maxit = 100),
+      fo = y ~ x
+    )
+}
+
+calculate_fluxes <- function(flux_curves) {
+  flux_m <- function(df){
+    fit <- MASS::rlm(y ~ x, data = df, maxit = 1000)
+    names(fit$coefficients) <- c("M0", "m")
+    fit
+  }
+
+  flux_curves |>
+    dplyr::select(-c("title", "plots")) |>
+    tidyr::unnest(c("data")) |>
+    dplyr::filter(.data$time < 96) |>
+    dplyr::group_by(
+      .data$cell_type,
+      .data$experiment,
+      .data$batch,
+      .data$date,
+      .data$metabolite,
+      .data$abbreviation,
+      .data$oxygen,
+      .data$treatment,
+      .data$virus,
+      .data$k,
+      .data$X0,
+      .data$mu
+    ) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      model = purrr::map(.data$data, flux_m),
+      summary = purrr::map(.data$model, broom::tidy)
+    ) |>
+    tidyr::unnest(c("summary")) |>
+    dplyr::ungroup() |>
+    dplyr::filter(.data$term == "m") |>
+    dplyr::select(
+      -c(
+        "term",
+        "model",
+        "data",
+        "std.error",
+        "statistic"
+      )
+    ) |>
+    dplyr::rename(m = "estimate") |>
+    dplyr::mutate(
+      flux = .data$m * (.data$mu + .data$k) / .data$X0 * 1E6,
+      group = dplyr::case_when(
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "None" & .data$oxygen == "21%" ~ "21%",
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "DMSO" ~ "DMSO",
+        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
+        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
+        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
+      ),
+      group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY"))
+    ) |>
+    dplyr::select(-c("k", "X0", "mu", "m")) |>
+    dplyr::relocate("metabolite", "abbreviation") |>
+    dplyr::relocate("group", .after = "treatment") |>
+    dplyr::arrange(
+      .data$metabolite,
+      .data$oxygen,
+      .data$treatment,
+      .data$date
+    )
 }
