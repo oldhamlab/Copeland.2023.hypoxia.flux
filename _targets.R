@@ -173,6 +173,10 @@ list(
     format = "file"
   ),
   tar_target(
+    conc_std_clean_fld,
+    make_std_curves(dplyr::filter(conc_raw, !(detector == "fld" & conc > 900)))
+  ),
+  tar_target(
     conc_std_clean,
     clean_flux_std(conc_raw)
   ),
@@ -251,6 +255,11 @@ list(
   tar_target(
     fluxes,
     calculate_fluxes(flux_curves)
+  ),
+  tar_quarto(
+    glc6_report,
+    path = report_path("glc6-lactate.qmd"),
+    extra_files = c("_quarto.yml")
   ),
   NULL
 )

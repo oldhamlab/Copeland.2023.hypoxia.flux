@@ -125,31 +125,41 @@ std |>
   pull(plots)
 ```
 
+Lactate peak areas were normalized to the internal standard peak area to generate a standard curve. Sample concentrations were interpolated after correcting the M3 peak areas for quadrupole bias prior to flux calculations.
+
 ## Samples
 
 ```{r}
 #| label: samples
 
 fluxes |> 
-  filter(experiment == "substrate")
-df_drift |> 
-  filter(type %in% letters[1:3]) |> 
-  filter(metabolite == "LAC M0") |> 
-  left_join(pheno, by = "number") |> 
-  group_by(type, oxygen, time) |> 
-  wmo::remove_nested_outliers(area, remove = TRUE) |> 
-  summarize(area = mean(area)) |> 
+  filter(experiment == "substrate") |> 
   ggplot() +
   aes(
-    x = time, 
-    y = area, 
-    color = oxygen
+    x = oxygen, 
+    y = flux, 
+    fill = oxygen
   ) +
-  geom_point() +
+   stat_summary(
+    geom = "col", 
+    fun = "mean", 
+    show.legend = FALSE
+  ) +
+  geom_point(
+    color = "white", 
+    pch = 21, 
+    show.legend = FALSE
+  ) + 
   stat_summary(
-    geom = "line"
+    geom = "errorbar", 
+    width = 0.2, 
+    fun.data = "mean_se", 
+    linewidth = 0.25
+  ) +
+  labs(
+    x = "Oxygen", 
+    y = "Flux (fmol/cell/h)"
   )
 ```
 
-These plots suggest that, for the 100 μL extraction buffer, the maximum cell count is ~ 250,000. We will exclude the 300,000 value prior to calculating the slopes of the curves. For the PASMC samples, the 400,000 cell sample is quite high compared to the other samples. I will also remove these values prior to calculation of the slopes.
-
+These data are consistent with the results obtained from enzymatic measurements of extracellular lactate demonstrating decreased lactate efflux from glycolysis in hypoxia compared to normoxia.
