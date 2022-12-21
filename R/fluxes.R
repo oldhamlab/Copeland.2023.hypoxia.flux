@@ -656,3 +656,97 @@ calculate_growth_rates <- function(growth_curves) {
     dplyr::select(-c("data", "model")) |>
     dplyr::relocate("group", .before = "X0")
 }
+
+plot_degradation_curves <- function(flux_measurements) {
+  flux_measurements |>
+    dplyr::filter(.data$type == "empty") |>
+    plot_masses(
+      plot_raw_curves,
+      y = log(.data$nmol),
+      ylab = "ln(Mass (nmol))",
+      fit = "reg",
+      method = MASS::rlm,
+      method.args = list(maxit = 100),
+      fo = y ~ x
+    )
+}
+
+calculate_degradation_rates <- function(df){
+  degradation_m <- function(df){
+    fit <- MASS::rlm(log(nmol) ~ time, data = df, maxit = 1000)
+    names(fit$coefficients) <- c("intercept", "k")
+    fit
+  }
+
+  df |>
+    dplyr::select(-c("title", "plots")) |>
+    tidyr::unnest(c("data")) |>
+    dplyr::group_by(
+      .data$cell_type,
+      .data$experiment,
+      .data$batch,
+      .data$date,
+      .data$metabolite,
+      .data$abbreviation,
+      .data$oxygen,
+      .data$virus,
+      .data$treatment
+    ) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      model = purrr::map(.data$data, degradation_m),
+      summary = purrr::map(.data$model, broom::tidy)
+    ) |>
+    tidyr::unnest(c("summary")) |>
+    dplyr::filter(.data$term == "k") |>
+    dplyr::select(
+      -c(
+        "term",
+        "model",
+        "data",
+        "std.error",
+        "statistic"
+      )
+    ) |>
+    dplyr::rename(k = "estimate")
+}
+
+clean_degradation_rates <- function(degradation_rates) {
+  k <-
+    degradation_rates |>
+    dplyr::group_by(
+      .data$metabolite,
+      .data$oxygen,
+      .data$treatment,
+      .data$virus
+      ) |>
+    wmo::remove_nested_outliers("k", remove = TRUE) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      ttest = purrr::map(.data$data, ~ t.test(.x$k, mu = 0)),
+      summary = purrr::map(.data$ttest, broom::tidy)
+    ) |>
+    tidyr::unnest(c("summary")) |>
+    dplyr::filter(.data$p.value < 0.01) |>
+    dplyr::select(
+      "metabolite",
+      "oxygen",
+      "virus",
+      "treatment",
+      k = "estimate"
+    )
+
+  hyp_02 <-
+    k |>
+    dplyr::filter(.data$oxygen == "0.5%") |>
+    dplyr::mutate(oxygen = forcats::fct_recode(.data$oxygen, "0.2%" = "0.5%"))
+
+  bay <-
+    k |>
+    dplyr::filter(.data$treatment == "DMSO") |>
+    dplyr::mutate(treatment = forcats::fct_recode(.data$treatment, "BAY" = "DMSO"))
+
+  dplyr::bind_rows(k, hyp_02, bay) |>
+    dplyr::mutate(k = -.data$k) |>
+    dplyr::arrange(.data$metabolite, .data$oxygen, .data$virus, .data$treatment)
+}

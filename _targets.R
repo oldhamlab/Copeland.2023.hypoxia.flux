@@ -132,7 +132,7 @@ list(
   ),
   tar_target(
     fluxes_raw_aa,
-    clean_gln_fluxes(fluxes_data)
+    clean_aa_fluxes(fluxes_data)
   ),
   tar_target(
     fluxes_glc6_files,
@@ -212,6 +212,23 @@ list(
   tar_target(
     growth_rates,
     calculate_growth_rates(growth_curves)
+  ),
+  tar_target(
+    degradation_curves,
+    plot_degradation_curves(flux_measurements)
+  ),
+  tar_target(
+    degradation_curve_plots,
+    print_plots(degradation_curves$plots, degradation_curves$title, "fluxes/03_degradation_curves"),
+    format = "file"
+  ),
+  tar_target(
+    degradation_rates,
+    calculate_degradation_rates(degradation_curves)
+  ),
+  tar_target(
+    k,
+    clean_degradation_rates(degradation_rates)
   ),
   NULL
 )
