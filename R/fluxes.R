@@ -195,7 +195,8 @@ clean_glc6_fluxes <- function(df, cf) {
     outer(10:12, 12 * 0:7, `+`) |>
     as.vector()
 
-  df |>
+  x <-
+    df |>
     dplyr::select("metabolite", "id", "type", "number", "conc", "area") |>
     dplyr::group_by(.data$id) |>
     dplyr::mutate(area = .data$area / .data$area[.data$metabolite == "VAL D8"]) |>
@@ -224,6 +225,19 @@ clean_glc6_fluxes <- function(df, cf) {
       id = replace(.data$id, !is.na(.data$id), new_id)
     ) |>
     dplyr::select(-"type")
+
+  samples <-
+    x |>
+    dplyr::filter(is.na(.data$conc))
+
+  std <-
+    x |>
+    dplyr::filter(is.na(.data$id))
+
+  dplyr::bind_rows(std, std, std) |>
+    dplyr::mutate(date = rep(c("2022-11-12", "2022-11-17", "2022-11-22"), each = 12)) |>
+    dplyr::bind_rows(samples) |>
+    dplyr::arrange(.data$date)
 }
 
 clean_fluxes <- function(...) {
@@ -533,7 +547,8 @@ assemble_flux_measurements <- function(conc_clean, evap_clean) {
     ) |>
     dplyr::relocate("group", .before = "time") |>
     dplyr::filter(!(.data$experiment == "05-simyc" & .data$time > 48)) |>
-    dplyr::filter(!(.data$experiment == "bay-myc" & .data$time > 48))
+    dplyr::filter(!(.data$experiment == "bay-myc" & .data$time > 48)) |>
+    dplyr::filter(!(.data$experiment == "05-siphd" & .data$time > 48))
 }
 
 plot_raw_curves <- function(data, title, y, xlab = "Time (h)", ylab, ...) {

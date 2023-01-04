@@ -69,7 +69,7 @@ make_std_curves <- function(df, fo = NULL) {
 
   df |>
     dplyr::filter(!is.na(.data$conc)) |>
-    dplyr::select(tidyselect::where(\(x) all(!is.na(x)))) |>
+    dplyr::select(!tidyselect::where(\(x) all(is.na(x)))) |>
     dplyr::group_by(dplyr::across(-c("conc", "value"))) |>
     tidyr::nest() |>
     {\(x) dplyr::mutate(

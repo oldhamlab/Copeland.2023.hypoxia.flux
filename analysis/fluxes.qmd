@@ -1,0 +1,151 @@
+---
+title: "Extracellular Fluxes"
+date-modified: today
+format: html
+excecute:
+  message: false
+---
+
+```{r}
+#| label: setup
+#| output: false
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+here::i_am("analysis/fluxes.qmd")
+here::here()
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  data_raw <- tar_read(conc_raw)
+  std <- tar_read(conc_std)
+  std_fld <- tar_read(conc_std_clean_fld)
+  std_clean <- tar_read(conc_std_clean)
+  conc <- tar_read(conc_with_missing)
+  evap <- tar_read(evap_raw)
+  flux_measurements <- tar_read(flux_measurements)
+  growth_curves <- tar_read(growth_curves)
+  growth_rates <- tar_read(growth_rates)
+  degradation_rates <- tar_read(degradation_rates)
+  k <- tar_read(k)
+  fluxes <- tar_read(fluxes)
+})
+```
+
+# Overview
+
+Extracellular fluxes are determined from serial measurements of cell count and metabolite mass in conditioned medium accounting for evaporation and metabolite degradation/accumulation. Here, we calculate the extracellular fluxes included in the manuscript. Metabolic flux models assume metabolic steady state associated with exponential cell growth. Pilot experiments yielded the following conditions to monitor this time period:  
+
+*Lung fibroblasts.* Lung fibroblasts (LFs) were seeded at 25,000 cells per well of six-well plates on Day -1. Treatment was initiated on this day by placing plates in hypoxia (0.2% or 0.5% ambient oxygen) or treating with the prolyl hydroxylase inhibitor molidustat (10 μM, BAY, BAY85-3934, Cayman) with 0.1% DMSO as the vehicle control. The medium was changed on Day 0 and samples were collected this day and every 24 h for 72 h. The cell culture medium was MCDB131 (genDepot) supplemented with glucose (8 mM) and glutamine (1 mM), similar to medium used for isotope labeling experiments.
+
+*Pulmonary artery smooth muscle cells.* Pulmonary artery smooth muscle cells (PASMCs) were seeded at 25,000 cells per well of six-well plates on Day -1. Treatment was initiated on this day by placing plates in hypoxia (0.5% ambient oxygen). The medium was changed on Day 0 and samples were collected at this time and every 12 h for 48 h. The cell culture medium was MCDB131 (genDepot) supplemented with glucose (5.551 mM) and glutamine (10 mM), similar to medium used for isotope labeling experiments. 
+
+For extracellular flux measurements that were not incorporated into the metabolic model, cells were cultured in complete growth medium (*e.g.*, FGM-2 and SmGM-2 for LFs and PASMCs, respectively).
+
+```{r}
+#| label: replicate-summary
+
+df <- 
+  data_raw |> 
+  filter(!is.na(id)) |> 
+  select(cell_type, experiment, date) |>
+  distinct() |>
+  group_by(cell_type, experiment) |> 
+  summarise(count = n()) |> 
+  ungroup()
+
+gt::gt(df) |> 
+  gt::cols_label(
+    cell_type = "Cell type", 
+    experiment = "Experiment", 
+    count = "N"
+  ) |> 
+  gt::text_transform(
+    locations = gt::cells_body(columns = cell_type), 
+    fn = toupper
+  ) |> 
+  gt::tab_header(title = "Biological replicates") |> 
+  gt::opt_all_caps() |> 
+  gt::opt_align_table_header(align = "left")
+```
+
+# Data Acquisition
+
+Raw data are indexed to metadata by sample number, which corresponds to a unique combination of measurement type, treatment, time, and well. The sample type, `cells` or `empty`, refers to whether the medium was obtained from wells containing cells for flux measurements (`cells`) or from empty wells for degradation rate measurements (`empty`). The raw data for each experiment are contained in multi-sheet Excel files.
+
+## Cell count
+
+Cell counts were estimated from total cellular DNA measured by PicoGreen fluorescence (Quant-iT PicoGreen dsDNA Assay Kit, P11496, Thermo). The relationship between total DNA and cell count was determined by measuring DNA from cells seeded at different densities in basal growth medium. In the table below, the DNA standards were adjusted to incorporate the conversion from [DNA] to cell count. Lysis buffer volume changed between the two experimental batches, which affected the slope of the [DNA] *v*. cell count standard curve. Here, `conc` refers to cell count. 
+
+## Lactate
+
+Lactate concentration was determined using an enzymatic assay (\textsc{l}-Lactate Assay Kit, 700510, Cayman). For batch `a`, samples were deproteinized with MPA per the manufacturer's protocol (2.1-fold dilution) and then diluted 5-fold prior to analysis (10.5-fold dilution total). Control experiments indicated that, for medium samples, deproteinization is not necessary (*i.e.*, signal intensities for unconditioned and conditioned medium were the same regardless of the deproteinization step). For subsequent batches, samples were diluted 10-fold in PBS prior to analysis. As for cell count, the lactate standard concentrations were adjusted to account for sample dilution. 
+
+Lactate derived from [U-^13^C~6~]-glucose was also measured directly using an LC-MS-based assay. Samples (10 μL) were combined with D~8~-valine internal standard (10 μL of 100 μM) and extracted with 180 μL of 100% LC-MS-grade methanol precooled to -80 °C. Insoluble material was removed by centrifugation and the samples were analyzed by LC-MS. Concentrations were determined by interpolating the peak area ratio of lactate to the internal standard against a standard curve of naturally labeled lactate dissolved in MCDB131 medium.
+
+## Glucose
+
+Glucose concentration was determined using an enzymatic assay (Glucose Colorimetric Assay Kit, 10009582, Cayman). All samples were diluted 10-fold in water (batch `a`) or PBS (batches `b` and `c`) prior to analysis. Preliminary studies suggested no significant degradation of glucose. Glucose standard concentrations were adjusted to reflect unit conversion from mg/dL to μM and sample dilution prior to analysis.
+
+## Pyruvate
+
+Pyruvate concentration was measured multiple ways. For hypoxia batch `a` samples, it was determined by HPLC analysis of deproteinized OPD-derivatized samples. This analysis utilized ketovalerate (`KV`) as an internal standard (10 μL, 100 μM final concentration), which was added at the same time as the amino acid internal standards. For `bay` batch `a`, pyruvate concentration was determined by LC-MS analysis with `d8-valine` as an internal standard. For all batch `b` and `c` samples, pyruvate concentration was determined by enzymatic assay (Pyruvate Assay Kit, 700470, Cayman). For the enzymatic assay, samples were diluted 20-fold in PBS. 
+
+## Amino acids
+
+Amino acid concentrations were determined by HPLC analysis of FMOC- and OPA-derivatized samples, producing chemicals detectable by fluorescent or UV/visible spectrophotometery, respectively. Prior to HPLC, internal standards (norvaline and sarcosine, 10 μL, 100 μM final concentration) were added to the samples (180 μL for batch `a` samples where pyruvate was measured by chromatography or 190 μL for all other samples) and they were deproteinized using ice-cold acetone (400 μL). Insoluble material was removed by centrifugation and the supernatant was evaporated to < 50% of the initial volume (< 100 μL) prior to HPLC. 
+
+# Data Processing
+
+All measured values are interpolated to concentration in μM for metabolites or cell count for DNA measurements.
+
+## Standard curves
+
+A review of the r^2^ values for the standard curves will identify problematic fits. 
+
+```{r}
+#| label: r-squared
+#| results: hide
+#| layout-ncol: 3
+
+plot_r_squared <- function(df, title) {
+  ggplot(df) +
+    aes(
+      y = reorder(metabolite, desc(metabolite)), 
+      x = r.squared, 
+      color = interaction(batch, run, sep = ".")
+    ) +
+    geom_point(
+      aes(shape = detector), 
+      size = 3, 
+      alpha = 0.6
+    ) +
+    labs(
+      title = title, 
+      x = expression(paste("r"^2)), 
+      y = "Metabolite"
+    ) +
+    guides(color = guide_legend(title = NULL, nrow = 10))
+}
+
+std |> 
+  select(metabolite:run, summary) |> 
+  unnest(c(summary)) |> 
+  group_by(cell_type, experiment) |> 
+  nest() |> 
+  mutate(
+    title = str_c(cell_type, experiment, sep = " "), 
+    plots = map2(data, title, plot_r_squared)
+  ) |> 
+  pull(plots)
+```
