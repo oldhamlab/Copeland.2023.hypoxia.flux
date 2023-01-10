@@ -770,7 +770,8 @@ clean_degradation_rates <- function(degradation_rates) {
 
   dplyr::bind_rows(k, hyp_02, bay) |>
     dplyr::mutate(k = -.data$k) |>
-    dplyr::arrange(.data$metabolite, .data$oxygen, .data$virus, .data$treatment)
+    dplyr::arrange(.data$metabolite, .data$oxygen, .data$virus, .data$treatment) |>
+    dplyr::ungroup()
 }
 
 plot_mass_curves <- function(flux_measurements) {
@@ -863,18 +864,18 @@ calculate_fluxes <- function(flux_curves) {
     dplyr::rename(m = "estimate") |>
     dplyr::mutate(
       flux = .data$m * (.data$mu + .data$k) / .data$X0 * 1E6,
-      group = dplyr::case_when(
-        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "None" & .data$oxygen == "21%" ~ "21%",
-        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "DMSO" ~ "DMSO",
-        .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
-        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
-        .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
-      ),
-      group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY"))
+      # group = dplyr::case_when(
+      #   .data$experiment %in% c("02", "05", "bay") & .data$treatment == "None" & .data$oxygen == "21%" ~ "21%",
+      #   .data$experiment %in% c("02", "05", "bay") & .data$treatment == "DMSO" ~ "DMSO",
+      #   .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
+      #   .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
+      #   .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
+      # ),
+      # group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY"))
     ) |>
     dplyr::select(-c("k", "X0", "mu", "m")) |>
     dplyr::relocate("metabolite", "abbreviation") |>
-    dplyr::relocate("group", .after = "treatment") |>
+    # dplyr::relocate("group", .after = "treatment") |>
     dplyr::arrange(
       .data$metabolite,
       .data$oxygen,

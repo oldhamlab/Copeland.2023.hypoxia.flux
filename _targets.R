@@ -107,32 +107,32 @@ list(
     cue = tar_cue("always")
   ),
   tar_target(
-    fluxes_data,
+    fluxes_raw_data,
     assemble_flux_data(fluxes_data_files)
   ),
   tar_target(
     fluxes_raw_dna,
-    clean_dna_fluxes(fluxes_data, cells_per_dna)
+    clean_dna_fluxes(fluxes_raw_data, cells_per_dna)
   ),
   tar_target(
     fluxes_raw_glc,
-    clean_glc_fluxes(fluxes_data)
+    clean_glc_fluxes(fluxes_raw_data)
   ),
   tar_target(
     fluxes_raw_lac,
-    clean_lac_fluxes(fluxes_data)
+    clean_lac_fluxes(fluxes_raw_data)
   ),
   tar_target(
     fluxes_raw_pyr,
-    clean_pyr_fluxes(fluxes_data)
+    clean_pyr_fluxes(fluxes_raw_data)
   ),
   tar_target(
     fluxes_raw_gln,
-    clean_gln_fluxes(fluxes_data)
+    clean_gln_fluxes(fluxes_raw_data)
   ),
   tar_target(
     fluxes_raw_aa,
-    clean_aa_fluxes(fluxes_data)
+    clean_aa_fluxes(fluxes_raw_data)
   ),
   tar_target(
     fluxes_glc6_files,
@@ -194,7 +194,7 @@ list(
   ),
   tar_target(
     evap_raw,
-    assemble_evap_data(fluxes_data)
+    assemble_evap_data(fluxes_raw_data)
   ),
   tar_target(
     evap_clean,
@@ -203,6 +203,10 @@ list(
   tar_target(
     flux_measurements,
     assemble_flux_measurements(conc_clean, evap_clean)
+  ),
+  tar_target(
+    flux_measurements_data,
+    write_data(flux_measurements)
   ),
   tar_target(
     growth_curves,
@@ -216,6 +220,10 @@ list(
   tar_target(
     growth_rates,
     calculate_growth_rates(growth_curves)
+  ),
+  tar_target(
+    growth_rates_data,
+    write_data(growth_rates)
   ),
   tar_target(
     degradation_curves,
@@ -233,6 +241,10 @@ list(
   tar_target(
     k,
     clean_degradation_rates(degradation_rates)
+  ),
+  tar_target(
+    k_data,
+    write_data(k)
   ),
   tar_target(
     mass_curves,
@@ -256,9 +268,18 @@ list(
     fluxes,
     calculate_fluxes(flux_curves)
   ),
+  tar_target(
+    fluxes_data,
+    write_data(fluxes)
+  ),
   tar_quarto(
     glc6_report,
     path = report_path("glc6-lactate.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+  tar_quarto(
+    fluxes_report,
+    path = report_path("fluxes.qmd"),
     extra_files = c("_quarto.yml")
   ),
   NULL

@@ -149,3 +149,495 @@ std |>
   ) |> 
   pull(plots)
 ```
+
+These data suggest worse fits from fluorescence detection. 
+
+```{r}
+#| label: fld-std-curves
+#| results: hide
+#| layout-ncol: 3
+
+std |> 
+  filter(detector == "fld", date == "2018-02-12", experiment == "02") |> 
+  pull(plots)
+```
+
+The fluorescence signal is plateauing between 250 and 1000 μM. The highest standard concentration will be removed from the curves.
+
+In addition, there were a few standard curves that had poor fits:
+
+```{r}
+#| label: poor-fits
+#| results: hide
+#| layout-ncol: 3
+
+std_fld |> 
+  select(metabolite:run, summary) |> 
+  unnest(c(summary)) |> 
+  group_by(cell_type, experiment) |> 
+  nest() |> 
+  mutate(
+    title = str_c(cell_type, experiment, sep = " "), 
+    plots = map2(data, title, plot_r_squared)
+  ) |> 
+  pull(plots)
+```
+
+After removing the high fluorescence standard, the remaining poorest fits were:
+
+```{r}
+#| label: non-fld-poor-fits
+#| results: hide
+#| layout-ncol: 3
+
+poor_fits <- 
+  std_fld |> 
+  ungroup() |> 
+  select(metabolite:run, summary, plots) |> 
+  unnest(c(summary)) |> 
+  slice_min(order_by = r.squared, n = 7)
+
+poor_fits |> 
+  select(metabolite:r.squared) |> 
+  gt::gt() |> 
+  gt::tab_header(title = "Poor standard curve fit") |>
+  gt::opt_all_caps() |>
+  gt::opt_align_table_header(align = "left") 
+```
+
+```{r}
+#| label: review-poor-fits
+#| results: hide
+#| layout-ncol: 3
+
+poor_fits |> 
+  pull(plots)
+```
+
+When an apparent outlier was identified, it was removed from the standard curve. 
+
+```{r}
+#| label: remove-apparent-outliers
+#| results: hide
+#| layout-ncol: 4
+
+std_clean |> 
+  semi_join(poor_fits, by = c("metabolite", "experiment", "date", "batch", "run", "detector")) |> 
+  pull(plots)
+```
+
+## Missing data
+
+The sample data frame was expanded to identify missing samples. 
+
+- For the 0.5% oxygen experiments, only three `empty` time 0 samples were collected and analyzed. The measurements from these samples will be used as time 0 to calculate degradation and accumulation rates for both treatments, 21% and 0.5%. 
+- For the LF 0.5% oxygen experiment performed 2017-11-06, the 48 h 21% `empty` sample was lost.
+
+- Specific `empty` samples were not collected for the BAY treatment condition, only for the DMSO condition. Thus, the DMSO degradation rates will be duplicated and used for BAY treatment in the flux calculations. 
+
+- For the LF BAY experiment performed 2018-11-02, only one of three time 0 `empty` samples were collected. 
+
+# Analysis
+
+## Pyruvate assays
+
+Pyruvate was ultimately measured by three different methods, HPLC, LC-MS, and enzymatic assay. 
+
+```{r}
+#| label: pyruvate-assay
+
+pyruvate <- 
+  conc |> 
+  filter(metabolite == "pyruvate") |>
+  mutate(detector = factor(
+    detector, 
+    levels = c("enzyme", "hplc", "lcms"), 
+    labels = c("Enzyme", "HPLC", "LC-MS")
+  ))
+
+pyruvate |> 
+  filter(conc < 1500) |> 
+  filter(time == 0) |> 
+  ggplot() + 
+  aes(x = detector, y = conc, color = detector) +
+  geom_jitter(show.legend = FALSE) +
+  labs(
+    title = "Pyruvate concentrations at time 0", 
+    x = "Detection method", 
+    y = "Concentration (μM)"
+  )
+```
+
+Compared to the enzymatic assay, the HPLC measurements tended to underestimate the pyruvate concentration while the LC-MS measurements tended to overestimate the pyruvate concentration. I suspect the pyruvate determination using the enzymatic assay is more accurate and we will preferentially use these measurements to determine the fluxes. Unfortunately, for the 0.2% oxygen experiments, the only pyruvate measurements available were obtained using the HPLC assay, and so this assay will be used to estimate fluxes from those experiments. 
+
+## Amino acid measurements
+
+Amino acid metabolites were measured using two detectors, fluorescence (`fld`) and multi-wavelength (`mwd`). We need to decide which detector is optimal for which amino acids based on the metabolite and its concentration in medium. Cystine is derivatized poorly by FMOC, and so it not detectable by the fluorescence detector. 
+
+The fluorescence response is linear up to a concentration of ~250 μM on the basis of the standard curves. First, we will assess the metabolite concentrations across all of the samples. 
+
+```{r}
+#| label: fld-vs-mwd
+#| results: hide
+#| layout-ncol: 2
+
+amino_acids <-
+  conc |> 
+  filter(detector %in% c("mwd", "fld"))
+
+plot_aa <- function(df) {
+  df |> 
+    filter(!is.na(conc)) |> 
+    ggplot() + 
+    aes(y = conc, x = metabolite, color = detector) + 
+    geom_hline(yintercept = 300, linetype = 2, color = "gray") +
+    geom_jitter(alpha = 0.1) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+    labs(
+      x = "Amino acid", 
+      y = "Concentration (μM)"
+    ) + 
+    scale_color_discrete(name = "Detector", labels = c("FLD", "MWD")) +
+    guides(color = guide_legend(override.aes = list(alpha = 1)))
+}
+
+amino_acids |> 
+  filter(cell_type == "lf") |> 
+  plot_aa() + 
+  labs(
+    title = "LF amino acids"
+  ) +
+  theme(
+    legend.position = "bottom"
+  )
+
+amino_acids |> 
+  filter(cell_type == "pasmc") |> 
+  plot_aa() + 
+  labs(
+    title = "PASMC amino acids"
+  ) +
+  theme(
+    legend.position = "bottom"
+  )
+```
+
+Fluorescence detection appears to be associated with smaller variance when amino acid concentration is low. At higher concentrations, fluorescence detection is likely underestimating the true concentration based on the standard curve analysis performed above. Based on these data, we will use concentrations determined by fluorescence detection for metabolites with an average concentration < 300 μM.
+
+```{r}
+#| label: mwd-amino-acids
+
+amino_acids |> 
+  group_by(metabolite) |> 
+  summarise(conc = mean(conc, na.rm = TRUE)) |> 
+  mutate(detector = case_when(
+    metabolite == "cystine" ~ "mwd", 
+    conc > 300 ~ "mwd", 
+    conc <= 300 ~ "fld"
+  )) |> 
+  filter(detector == "mwd") |> 
+  select(metabolite) |> 
+  gt::gt() |> 
+  gt::cols_label(
+    metabolite = "Metabolite", 
+  ) |> 
+  gt::tab_header(title = "MWD detection") |> 
+  gt::opt_all_caps() |> 
+  gt::opt_align_table_header(align = "left")
+```
+
+## Evaporation
+
+Preliminary experiments suggested that medium evaporation rates would have a significant impact on the interpretation of metabolite concentration measurements and that the evaporation rates differed between the normoxia and hypoxia incubators. To determine evaporation rate, a six-well plate was filled with medium and weighed during each sample collection. For 0.2% oxygen experiments, no evaporation controls were measured and so 0.5% oxygen evaporation rates were used instead. For BAY experiments, only one evaporation plate containing medium supplemented with 0.1% DMSO was used and this evaporation rate was applied to both conditions. Evaporation was not measured for the first batch of BAY experiments (`a`), and so evaporation rates from the second batch (`b`) were utliized in their place. Predicted well volumes were calculated from experimental measurements of plate mass assuming a starting volume of 2 mL per well.
+
+```{r}
+#| label: evaporation
+
+evap |> 
+  ggplot() +
+  aes(
+    x = time, 
+    y = volume, 
+    color = interaction(oxygen, experiment, sep = " | ")
+  ) +
+  geom_point(
+    alpha = 0.3, 
+    size = 2
+  ) +
+  geom_smooth(
+    method = "lm", 
+    formula = y ~ x, 
+    se = FALSE, 
+    show.legend = FALSE
+  ) +
+  stat_summary(
+    geom = "pointrange", 
+    fun.data = "mean_se", 
+    alpha = 1, 
+    fatten = 1, 
+    show.legend = FALSE
+  ) +
+  guides(color = guide_legend(
+    title = "Treatment", 
+    override.aes = list(alpha = 1)
+  )) +
+  labs(
+    tite = "Predicted well volumes", 
+    x = "Time (h)", 
+    y = "Volume (ml)"
+  )
+```
+
+# Flux Calculations
+
+Determination of fluxes is based on the solution of the following differential equations: 
+
+$$ 
+\begin{aligned}
+\frac{dX}{dt} &= \mu X \\[6 pt]
+\frac{dM}{dt} &= -kM+vX 
+\end{aligned}
+$$ 
+
+where $X$ is the cell number, $\mu$ is cell growth rate, $M$ is moles of substrate, $k$ is the metabolite degradation rate, and $v$ is the extracellular flux rate. 
+
+These equations are solved as follows:
+
+$$
+\begin{aligned}
+X &= X_0e^{\mu t} \\[6 pt]
+Me^{k t} &= \frac{v X_0}{\mu + k} (e^{(\mu + k)t}-1) + M_0
+\end{aligned}
+$$
+
+The data can be fit to a linear equation and the slope is used to calculate $v$. 
+
+## Growth rates
+
+```{r}
+#| label: growth-curves
+#| results: hide
+#| layout-ncol: 3
+
+growth_curves |> 
+  select(cell_type:data) |> 
+  unnest(c(data)) |> 
+  group_by(cell_type, experiment, batch, date, oxygen, virus, treatment, time) |>
+  summarize(conc = mean(conc, na.rm = TRUE)) |> 
+  filter(!is.na(time)) |> 
+  group_by(cell_type, experiment) |> 
+  nest() |> 
+  mutate(plot = map2(
+    data, 
+    cell_type, 
+    ~ggplot(.x) + 
+      aes(
+        x = time, 
+        y = conc/1000, 
+        color = interaction(oxygen, treatment, virus, sep = " | ")
+      ) +
+      stat_summary(
+        geom = "pointrange", 
+        fun.data = "mean_se"
+      ) +
+      stat_summary(
+        geom = "line", 
+        fun.data = "mean_se", 
+        show.legend = FALSE
+      ) +
+      labs(
+        title = toupper(.y), 
+        x = "Time (h)", 
+        y = expression(paste("Cell count (\U00D7", "10"^3, ")")), 
+        color = "condition"
+      )
+  )) |> 
+  pull(plot)
+```
+
+Robust linear models were fit to the logarithm of cell count *v*. time to determine growth rate (μ) and initial cell count (X0).
+
+```{r}
+#| label: growth-rates
+#| results: hide
+#| layout-ncol: 1
+
+plot_growth_info <- function(df, y){
+  ggplot(df) +
+    aes(
+      x = interaction(oxygen, treatment, virus, sep = " | "), 
+      y = .data[[y]], 
+      color = interaction(oxygen, treatment)
+    ) +
+    facet_grid(
+      ~ cell_type, 
+      scales = "free_x", 
+      space = "free_x", 
+      labeller = as_labeller(toupper)
+    ) +
+    geom_point(
+      aes(shape = batch), 
+      size = 4, 
+      alpha = 0.5, 
+      show.legend = FALSE
+    ) +
+    stat_summary(
+      fun.data = "mean_se", 
+      geom = "crossbar", 
+      width = 0.3, 
+      show.legend = FALSE
+    ) +
+    labs(
+      x = "Treatment", 
+      y = y
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 1)
+    )
+}
+
+plot_growth_info(growth_rates, "mu") + ylab(expression(paste("Growth rate (h"^-1, ")")))
+plot_growth_info(growth_rates, "X0") + ylab("Cell count at time 0")
+```
+
+## Degradation rates
+
+Metabolite concentrations from unconditioned medium (`type == empty`) were used to calculate metabolite degradation or accumulation rates. Glutamine, for example, is known to degrade over time. When available, 96 h samples were included in these analyses to improve fits. Metabolite concentration was multiplied by predicted well volume to determine metabolite mass in nanomoles. 
+
+```{r}
+#| label: degradation-rates
+
+ggplot(degradation_rates) +
+  aes(
+    x = reorder(abbreviation, k), 
+    y = k, 
+    color = interaction(oxygen, treatment, sep = " | ")
+  ) +
+  geom_hline(yintercept = 0) +
+  geom_point(
+    aes(shape = batch), 
+    alpha = 0.3
+  ) +
+  guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+  labs(
+    title = "Degradation and accumulation rates", 
+    x = "Metabolite", 
+    y = expression(paste("Rate constant (h"^"-1", ")")), 
+    color = "condition"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+There appears to be some treatment-dependent effects on degradation rates. Will group rates by treatment, remove outliers, and determine if the mean rates are statistically significantly different from 0. If so, these rates will be included in the metabolic flux calculations. 
+
+```{r}
+#| label: k
+
+k |> 
+  group_by(metabolite) |> 
+  filter(treatment != "BAY") |> 
+  gt::gt() |> 
+  gt::tab_stubhead("Metabolite") |> 
+  gt::tab_options(
+    row_group.as_column = TRUE
+  ) |> 
+  gt::tab_header(title = "Degradation rates") |>
+  gt::opt_all_caps() |>
+  gt::opt_align_table_header(align = "left") |> 
+  gt::fmt_number(
+    columns = k, 
+    decimals = 4
+  )
+```
+
+## Fluxes
+
+```{r}
+#| label: high-fluxes
+
+plot_fluxes <- function(df, title) {
+  ggplot(df) + 
+    aes(
+      x = reorder(abbreviation, flux),
+      y = flux,
+      color = interaction(oxygen, treatment, sep = " | ")
+    ) +
+    geom_hline(yintercept = 0) +
+    geom_point(
+      aes(group = interaction(oxygen, treatment)),
+      position = position_dodge(width = 0.5),
+      size = 2,
+      alpha = 0.3
+    ) +
+    stat_summary(
+      fun.data = "mean_se",
+      geom = "crossbar",
+      width = 0.3,
+      position = position_dodge(width = 0.5),
+      show.legend = FALSE
+    ) +
+    labs(
+      title = title,
+      x = "Metabolite",
+      y = "Flux (fmol / cell / h)",
+      color = "Condition"
+    ) +
+    guides(colour = guide_legend(override.aes = list(alpha = 1))) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+
+fluxes |>
+  filter(metabolite %in% c("glucose", "lactate")) |>
+  plot_fluxes("Metabolite flux") + 
+  facet_grid(~cell_type)
+```
+
+```{r}
+#| label: low-fluxes
+#| results: hide
+#| layout-ncol: 1
+
+fluxes |> 
+  filter(!(metabolite %in% c("glucose", "lactate"))) |> 
+  group_by(cell_type, experiment) |> 
+  nest() |> 
+  mutate(plots = map2(data, toupper(cell_type), plot_fluxes)) |> 
+  pull(plots)
+```
+
+```{r}
+#| label: fluxes-table
+
+fluxes |>
+  ungroup() |>
+  group_by(metabolite, cell_type, oxygen, treatment, virus) |>
+  summarise(
+    v = mean(flux, na.rm = TRUE),
+    sd = sd(flux, na.rm = TRUE),
+    n = n(),
+    se = sd / sqrt(n()),
+    cv = sd / abs(v)
+  ) |>
+  group_by(metabolite) |> 
+  arrange(cell_type, metabolite, oxygen, treatment, virus) |>
+  gt::gt() |> 
+  gt::tab_stubhead("Metabolite") |> 
+  gt::tab_options(
+    row_group.as_column = TRUE
+  ) |> 
+  gt::tab_header(title = "Extracellular fluxes") |>
+  gt::cols_label(
+    cell_type = "cell", 
+    v = "Flux", 
+  ) |> 
+  gt::cols_align_decimal(
+    # align = "center", 
+    columns = c(v, sd, n, se, cv)
+  ) |> 
+  gt::opt_all_caps() |> 
+  gt::opt_align_table_header(align = "left") |>
+  gt::fmt_number(
+    columns = c(v, sd, se, cv),
+    decimals = 2
+  ) 
+```
