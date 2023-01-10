@@ -67,7 +67,7 @@ list(
 
   tar_target(
     qbias_files,
-    raw_data_path("q-bias-correction_[ab]\\.csv"),
+    raw_data_path("qbias_[ab]\\.csv"),
     format = "file"
   ),
   tar_target(
@@ -282,5 +282,8 @@ list(
     path = report_path("fluxes.qmd"),
     extra_files = c("_quarto.yml")
   ),
+
+# mids --------------------------------------------------------------------
+
   NULL
 )

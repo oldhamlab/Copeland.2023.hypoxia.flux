@@ -30,7 +30,10 @@ isotope_library <-
   )
 
 calculate_ratios <- function(path) {
-  readr::read_csv(path) |>
+  readr::read_csv(
+    path,
+    show_col_types = FALSE
+  ) |>
     dplyr::filter(!is.na(.data$area)) |>
     tidyr::separate(
       .data$filename,
