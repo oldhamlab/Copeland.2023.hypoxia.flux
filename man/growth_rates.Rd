@@ -17,36 +17,36 @@ cell count data.
 \details{
 \describe{
 \item{cell_type}{
-\code{lf} = lung fibroblasts \cr
+\code{lf}    = lung fibroblasts \cr
 \code{pasmc} = pulmonary artery smooth muscle cells}
 \item{experiment}{
-\code{02} = 0.2\% oxygen for hypoxia \cr
-\code{05} = 0.5\% oxygen for hypoxia \cr
-\code{bay} = molidustat treatment \cr
-\code{05-bay} = 0.5\% oxygen plus molidustat \cr
-\code{05-simyc} = 0.5\% oxygen plus siMYC \cr
-\code{05-siphd} = 0.5\% oxygen plus siPHD2 \cr
-\code{bay-myc} = molidustat plus MYC overexpression \cr
+\code{02}        = 0.2\% oxygen for hypoxia \cr
+\code{05}        = 0.5\% oxygen for hypoxia \cr
+\code{bay}       = molidustat treatment \cr
+\code{05-bay}.   = 0.5\% oxygen plus molidustat \cr
+\code{05-simyc}  = 0.5\% oxygen plus siMYC \cr
+\code{05-siphd}  = 0.5\% oxygen plus siPHD2 \cr
+\code{bay-myc}   = molidustat plus MYC overexpression \cr
 \code{substrate} = glucose or glutamine dropout and \if{html}{\out{<sup>}}13\if{html}{\out{</sup>}}C-glucose labeling}
 \item{batch}{a group of biological replicates analyzed similarly}
 \item{date}{start date of an experiment}
 \item{oxygen}{ambient oxygen level}
 \item{virus}{
-\code{None} = no virus \cr
-\code{YFP} = YFP control virus \cr
-\code{MYC} = MYC overexpression virus}
+\code{None}    = no virus \cr
+\code{YFP}     = YFP control virus \cr
+\code{MYC}     = MYC overexpression virus}
 \item{treatment}{
-\code{None} = no treatment \cr
-\code{DMSO} = 0.1\% DMSO \cr
-\code{BAY} = 10 μM molidustat \cr
-\code{siCTL} = non-targeting control siRNA \cr
+\code{None}    = no treatment \cr
+\code{DMSO}    = 0.1\% DMSO \cr
+\code{BAY}     = 10 μM molidustat \cr
+\code{siCTL}   = non-targeting control siRNA \cr
 \code{siHIF1A} = siRNA targeting HIF1A \cr
 \code{siHIF2A} = siRNA targeting HIF2A \cr
-\code{siMYC} = siRNA targeting MYC \cr
-\code{siPHD2} = siRNA targeting PHD2 \cr
-\code{-GLC} = MCDB131 medium lacking glucose \cr
-\code{-GLN} = MCDB131 medium lacking glutamine \cr
-\code{GLC6} = MDCB131 medium supplemented with [U-\if{html}{\out{<sup>}}13\if{html}{\out{</sup>}}C\if{html}{\out{<sub>}}6\if{html}{\out{</sub>}}]-glucose}
+\code{siMYC}   = siRNA targeting MYC \cr
+\code{siPHD2}  = siRNA targeting PHD2 \cr
+\code{-GLC}    = MCDB131 medium lacking glucose \cr
+\code{-GLN}.   = MCDB131 medium lacking glutamine \cr
+\code{GLC6}    = MDCB131 medium supplemented with [U-\if{html}{\out{<sup>}}13\if{html}{\out{</sup>}}C\if{html}{\out{<sub>}}6\if{html}{\out{</sub>}}]-glucose}
 \item{X0}{cell count at time 0}
 \item{mu}{growth rate per hour}
 }

@@ -21,7 +21,7 @@ degradation in cell-free medium.
 \item{treatment}{
 \code{None} = no treatment \cr
 \code{DMSO} = 0.1\% DMSO \cr
-\code{BAY} = 10 μM molidustat}
+\code{BAY}  = 10 μM molidustat}
 \item{k}{accumulation or decay rate per hour, positive values indicate decay}
 }
 }

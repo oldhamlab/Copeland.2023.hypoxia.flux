@@ -36,27 +36,27 @@
 #'
 #' \describe{
 #'   \item{cell_type}{
-#'   `lf` = lung fibroblasts \cr
+#'   `lf`    = lung fibroblasts \cr
 #'   `pasmc` = pulmonary artery smooth muscle cells}
 #'   \item{experiment}{
-#'   `02` = 0.2% oxygen for hypoxia \cr
-#'   `05` = 0.5% oxygen for hypoxia \cr
-#'   `bay` = molidustat treatment \cr
-#'   `05-bay` = 0.5% oxygen plus molidustat \cr
-#'   `05-simyc` = 0.5% oxygen plus siMYC \cr
-#'   `05-siphd` = 0.5% oxygen plus siPHD2 \cr
-#'   `bay-myc` = molidustat plus MYC overexpression \cr
+#'   `02`        = 0.2% oxygen for hypoxia \cr
+#'   `05`        = 0.5% oxygen for hypoxia \cr
+#'   `bay`       = molidustat treatment \cr
+#'   `05-bay`    = 0.5% oxygen plus molidustat \cr
+#'   `05-simyc`  = 0.5% oxygen plus siMYC \cr
+#'   `05-siphd`  = 0.5% oxygen plus siPHD2 \cr
+#'   `bay-myc`   = molidustat plus MYC overexpression \cr
 #'   `substrate` = glucose or glutamine dropout and <sup>13</sup>C-glucose labeling}
 #'   \item{batch}{a group of biological replicates analyzed similarly}
 #'   \item{date}{start date of an experiment}
 #'   \item{metabolite}{name of measurement}
 #'   \item{abbreviation}{abbreviated metabolite name}
 #'   \item{detector}{
-#'   `fld` = HPLC fluorescence detector \cr
-#'   `mwd` = HPLC multi-wavelength detector \cr
-#'   `enzyme` = enzymatic assay \cr
-#'   `hplc` = OPD-derivatized HPLC detection \cr
-#'   `lcms` = liquid chromatography-mass spectrometry assay \cr
+#'   `fld`       = HPLC fluorescence detector \cr
+#'   `mwd`       = HPLC multi-wavelength detector \cr
+#'   `enzyme`    = enzymatic assay \cr
+#'   `hplc`      = OPD-derivatized HPLC detection \cr
+#'   `lcms`      = liquid chromatography-mass spectrometry assay \cr
 #'   `picogreen` = fluorescence dye labeling of DNA}
 #'   \item{type}{
 #'   `cells` = conditioned medium \cr
@@ -64,20 +64,20 @@
 #'   \item{oxygen}{ambient oxygen level}
 #'   \item{virus}{
 #'   `None` = no virus \cr
-#'   `YFP` = YFP control virus \cr
-#'   `MYC` = MYC overexpression virus}
+#'   `YFP`  = YFP control virus \cr
+#'   `MYC`  = MYC overexpression virus}
 #'   \item{treatment}{
-#'   `None` = no treatment \cr
-#'   `DMSO` = 0.1% DMSO \cr
-#'   `BAY` = 10 μM molidustat \cr
-#'   `siCTL` = non-targeting control siRNA \cr
+#'   `None`    = no treatment \cr
+#'   `DMSO`    = 0.1% DMSO \cr
+#'   `BAY`     = 10 μM molidustat \cr
+#'   `siCTL`   = non-targeting control siRNA \cr
 #'   `siHIF1A` = siRNA targeting HIF1A \cr
 #'   `siHIF2A` = siRNA targeting HIF2A \cr
-#'   `siMYC` = siRNA targeting MYC \cr
-#'   `siPHD2` = siRNA targeting PHD2 \cr
-#'   `-GLC` = MCDB131 medium lacking glucose \cr
-#'   `-GLN` = MCDB131 medium lacking glutamine \cr
-#'   `GLC6` = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
+#'   `siMYC`   = siRNA targeting MYC \cr
+#'   `siPHD2`  = siRNA targeting PHD2 \cr
+#'   `-GLC`    = MCDB131 medium lacking glucose \cr
+#'   `-GLN`    = MCDB131 medium lacking glutamine \cr
+#'   `GLC6`    = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
 #'   \item{time}{hours}
 #'   \item{well}{denotes technical replicates in each experiment}
 #'   \item{conc}{measured in number for cells and μM for metabolites}
@@ -93,36 +93,36 @@
 #'
 #' \describe{
 #'   \item{cell_type}{
-#'   `lf` = lung fibroblasts \cr
+#'   `lf`    = lung fibroblasts \cr
 #'   `pasmc` = pulmonary artery smooth muscle cells}
 #'   \item{experiment}{
-#'   `02` = 0.2% oxygen for hypoxia \cr
-#'   `05` = 0.5% oxygen for hypoxia \cr
-#'   `bay` = molidustat treatment \cr
-#'   `05-bay` = 0.5% oxygen plus molidustat \cr
-#'   `05-simyc` = 0.5% oxygen plus siMYC \cr
-#'   `05-siphd` = 0.5% oxygen plus siPHD2 \cr
-#'   `bay-myc` = molidustat plus MYC overexpression \cr
+#'   `02`        = 0.2% oxygen for hypoxia \cr
+#'   `05`        = 0.5% oxygen for hypoxia \cr
+#'   `bay`       = molidustat treatment \cr
+#'   `05-bay`.   = 0.5% oxygen plus molidustat \cr
+#'   `05-simyc`  = 0.5% oxygen plus siMYC \cr
+#'   `05-siphd`  = 0.5% oxygen plus siPHD2 \cr
+#'   `bay-myc`   = molidustat plus MYC overexpression \cr
 #'   `substrate` = glucose or glutamine dropout and <sup>13</sup>C-glucose labeling}
 #'   \item{batch}{a group of biological replicates analyzed similarly}
 #'   \item{date}{start date of an experiment}
 #'   \item{oxygen}{ambient oxygen level}
 #'   \item{virus}{
-#'   `None` = no virus \cr
-#'   `YFP` = YFP control virus \cr
-#'   `MYC` = MYC overexpression virus}
+#'   `None`    = no virus \cr
+#'   `YFP`     = YFP control virus \cr
+#'   `MYC`     = MYC overexpression virus}
 #'   \item{treatment}{
-#'   `None` = no treatment \cr
-#'   `DMSO` = 0.1% DMSO \cr
-#'   `BAY` = 10 μM molidustat \cr
-#'   `siCTL` = non-targeting control siRNA \cr
+#'   `None`    = no treatment \cr
+#'   `DMSO`    = 0.1% DMSO \cr
+#'   `BAY`     = 10 μM molidustat \cr
+#'   `siCTL`   = non-targeting control siRNA \cr
 #'   `siHIF1A` = siRNA targeting HIF1A \cr
 #'   `siHIF2A` = siRNA targeting HIF2A \cr
-#'   `siMYC` = siRNA targeting MYC \cr
-#'   `siPHD2` = siRNA targeting PHD2 \cr
-#'   `-GLC` = MCDB131 medium lacking glucose \cr
-#'   `-GLN` = MCDB131 medium lacking glutamine \cr
-#'   `GLC6` = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
+#'   `siMYC`   = siRNA targeting MYC \cr
+#'   `siPHD2`  = siRNA targeting PHD2 \cr
+#'   `-GLC`    = MCDB131 medium lacking glucose \cr
+#'   `-GLN`.   = MCDB131 medium lacking glutamine \cr
+#'   `GLC6`    = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
 #'   \item{X0}{cell count at time 0}
 #'   \item{mu}{growth rate per hour}
 #'   }
@@ -139,7 +139,7 @@
 #'   \item{treatment}{
 #'   `None` = no treatment \cr
 #'   `DMSO` = 0.1% DMSO \cr
-#'   `BAY` = 10 μM molidustat}
+#'   `BAY`  = 10 μM molidustat}
 #'   \item{k}{accumulation or decay rate per hour, positive values indicate decay}
 #'   }
 "k"
@@ -152,39 +152,69 @@
 #'   \item{metabolite}{name of measurement}
 #'   \item{abbreviation}{abbreviated metabolite name}
 #'   \item{cell_type}{
-#'   `lf` = lung fibroblasts \cr
+#'   `lf`    = lung fibroblasts \cr
 #'   `pasmc` = pulmonary artery smooth muscle cells}
 #'   \item{experiment}{
-#'   `02` = 0.2% oxygen for hypoxia \cr
-#'   `05` = 0.5% oxygen for hypoxia \cr
-#'   `bay` = molidustat treatment \cr
-#'   `05-bay` = 0.5% oxygen plus molidustat \cr
-#'   `05-simyc` = 0.5% oxygen plus siMYC \cr
-#'   `05-siphd` = 0.5% oxygen plus siPHD2 \cr
-#'   `bay-myc` = molidustat plus MYC overexpression \cr
+#'   `02`        = 0.2% oxygen for hypoxia \cr
+#'   `05`        = 0.5% oxygen for hypoxia \cr
+#'   `bay`       = molidustat treatment \cr
+#'   `05-bay`    = 0.5% oxygen plus molidustat \cr
+#'   `05-simyc`  = 0.5% oxygen plus siMYC \cr
+#'   `05-siphd`  = 0.5% oxygen plus siPHD2 \cr
+#'   `bay-myc`   = molidustat plus MYC overexpression \cr
 #'   `substrate` = glucose or glutamine dropout and <sup>13</sup>C-glucose labeling}
 #'   \item{batch}{a group of biological replicates analyzed similarly}
 #'   \item{date}{start date of an experiment}
 #'   \item{oxygen}{ambient oxygen level}
 #'   \item{virus}{
 #'   `None` = no virus \cr
-#'   `YFP` = YFP control virus \cr
-#'   `MYC` = MYC overexpression virus}
+#'   `YFP`  = YFP control virus \cr
+#'   `MYC`  = MYC overexpression virus}
 #'   \item{treatment}{
-#'   `None` = no treatment \cr
-#'   `DMSO` = 0.1% DMSO \cr
-#'   `BAY` = 10 μM molidustat \cr
-#'   `siCTL` = non-targeting control siRNA \cr
+#'   `None`    = no treatment \cr
+#'   `DMSO`    = 0.1% DMSO \cr
+#'   `BAY`     = 10 μM molidustat \cr
+#'   `siCTL`   = non-targeting control siRNA \cr
 #'   `siHIF1A` = siRNA targeting HIF1A \cr
 #'   `siHIF2A` = siRNA targeting HIF2A \cr
-#'   `siMYC` = siRNA targeting MYC \cr
-#'   `siPHD2` = siRNA targeting PHD2 \cr
-#'   `-GLC` = MCDB131 medium lacking glucose \cr
-#'   `-GLN` = MCDB131 medium lacking glutamine \cr
-#'   `GLC6` = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
+#'   `siMYC`   = siRNA targeting MYC \cr
+#'   `siPHD2`  = siRNA targeting PHD2 \cr
+#'   `-GLC`    = MCDB131 medium lacking glucose \cr
+#'   `-GLN`    = MCDB131 medium lacking glutamine \cr
+#'   `GLC6`    = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
 #'   \item{group}{
 #'   }
 #'   \item{flux}{fmol / cell / h, positive fluxes indicate secretion, negative fluxes
 #'   indicate uptake}
 #'   }
 "fluxes"
+
+#' Mass isotope distributions
+#'
+#' A data set containing the mass isotope distributions corrected for natural
+#' abundance for all experiments.
+#'
+#'  \describe{
+#'   \item{method}{
+#'   `fs`  = full scan \cr
+#'   `sim` = selected ion monitoring}
+#'   \item{cell_type}{
+#'   `lf`    = lung fibroblasts \cr
+#'   `pasmc` = pulmonary artery smooth muscle cells}
+#'   \item{date}{start date of an experiment}
+#'   \item{tracer}{
+#'   `glc2` = \[1,2-<sup>13</sup>C<sub>2</sub>\]-glucose \cr
+#'   `glc6` = \[U-<sup>13</sup>C<sub>6</sub>\]-glucose \cr
+#'   `q5`   = \[U-<sup>13</sup>C<sub>5</sub>\]-glutamine \cr
+#'   `lac3` = \[U-<sup>13</sup>C<sub>3</sub>\]-lactate}
+#'   \item{oxygen}{ambient oxygen level}
+#'   \item{treatment}{
+#'   `None` = no treatment \cr
+#'   `DMSO` = 0.1% DMSO \cr
+#'   `BAY`  = 10 μM molidustat \cr}
+#'   \item{time}{hours}
+#'   \item{metabolite}{name of measurement}
+#'   \item{isotope}{}
+#'   \item{mid}{mole fraction of the isotope}
+#'   }
+"mids"

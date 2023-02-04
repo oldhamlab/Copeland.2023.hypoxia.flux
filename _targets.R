@@ -214,7 +214,11 @@ list(
   ),
   tar_target(
     growth_curve_plots,
-    print_plots(growth_curves$plots, growth_curves$title, "fluxes/02_growth_curves"),
+    print_plots(
+      growth_curves$plots,
+      growth_curves$title,
+      "fluxes/02_growth_curves"
+    ),
     format = "file"
   ),
   tar_target(
@@ -231,7 +235,11 @@ list(
   ),
   tar_target(
     degradation_curve_plots,
-    print_plots(degradation_curves$plots, degradation_curves$title, "fluxes/03_degradation_curves"),
+    print_plots(
+      degradation_curves$plots,
+      degradation_curves$title,
+      "fluxes/03_degradation_curves"
+    ),
     format = "file"
   ),
   tar_target(
@@ -283,7 +291,65 @@ list(
     extra_files = c("_quarto.yml")
   ),
 
-# mids --------------------------------------------------------------------
+  # mids --------------------------------------------------------------------
+
+  tar_target(
+    mid_files,
+    raw_data_path("(a|b)_(fs|sim)_(lf|pasmc)_.*\\.csv"),
+    format = "file",
+    cue = tar_cue("always")
+  ),
+  tar_target(
+    mid_clean,
+    clean_mids(mid_files)
+  ),
+  tar_target(
+    mid_correct,
+    correct_mid(mid_clean)
+  ),
+  tar_target(
+    mids,
+    remove_mid_outliers(mid_correct)
+  ),
+  tar_target(
+    mids_data,
+    write_data(mids)
+  ),
+  tar_target(
+    mid_curves,
+    plot_mid_curves(mids)
+  ),
+  tar_target(
+    mid_curve_plots,
+    print_plots(mid_curves$plots, mid_curves$title, "mids"),
+    format = "file"
+  ),
+  tar_quarto(
+    mids_report,
+    path = report_path("mids.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+
+  # nadp --------------------------------------------------------------------
+
+  tar_target(
+    nad_files,
+    raw_data_path("nadp?_.*\\.xlsx"),
+    format = "file",
+    cue = tar_cue("always")
+  ),
+  tar_target(
+    nad_data,
+    assemble_flux_data(nad_files)
+  ),
+  # tar_target(
+  #   nad_raw,
+  #   clean_nad(nad_data)
+  # ),
+  # tar_target(
+  #   nad_conc_std,
+  #   make_std_curves(nad_raw, fo = ~MASS::rlm(value ~ poly(conc, 2, raw = TRUE), data = .x, , maxit = 1000))
+  # ),
 
   NULL
 )
