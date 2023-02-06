@@ -330,6 +330,36 @@ list(
     extra_files = c("_quarto.yml")
   ),
 
+  # biomass -----------------------------------------------------------------
+
+  tar_target(
+    biomass_file,
+    raw_data_path("cell-mass.csv"),
+    format = "file"
+  ),
+  tar_target(
+    biomass_clean,
+    clean_biomass(biomass_file)
+  ),
+  tar_target(
+    biomass,
+    calculate_biomass(biomass_clean)
+  ),
+  tar_target(
+    biomass_equations,
+    calculate_biomass_equations(biomass)
+  ),
+  tar_target(
+    biomass_equations_out,
+    write_matlab_input(biomass_equations, coefs, "_biomass.csv"),
+    format = "file"
+  ),
+  tar_quarto(
+    biomass_report,
+    path = report_path("biomass.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+
   # nadp --------------------------------------------------------------------
 
   tar_target(

@@ -57,7 +57,10 @@ clean_mids <- function(mid_files) {
 
 correct_mid <- function(mid_clean) {
   correction_factors <-
-    dplyr::mutate(qbias_correction_factors, method = "sim")
+    dplyr::mutate(
+      Copeland.2023.hypoxia.flux::qbias_correction_factors,
+      method = "sim"
+    )
 
   mid_q <-
     mid_clean |>

@@ -16,7 +16,6 @@ suppressPackageStartupMessages({
 })
 
 here::i_am("analysis/dna-per-cell.qmd")
-here::here()
 
 theme_set(theme_wmo())
 ```
