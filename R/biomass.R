@@ -80,7 +80,12 @@ metabolite_composition <-
   tidyr::unnest(c("component", "stoichiometry"))
 
 umol_per_mass <-
-  dplyr::left_join(cell_composition, metabolite_composition, by = "class") |>
+  dplyr::left_join(
+    cell_composition,
+    metabolite_composition,
+    by = "class",
+    multiple = "all"
+  ) |>
   dplyr::mutate(
     component = dplyr::if_else(is.na(.data$component), .data$metabolite, .data$component),
     stoichiometry = tidyr::replace_na(stoichiometry, 1),

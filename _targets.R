@@ -360,6 +360,44 @@ list(
     extra_files = c("_quarto.yml")
   ),
 
+  # matlab ------------------------------------------------------------------
+
+  tar_target(
+    reactions_file,
+    report_path("modeling/matlab-input/reactions.csv"),
+    format = "file"
+  ),
+  tar_target(
+    model_reactions,
+    format_reactions(reactions_file)
+  ),
+  tar_target(
+    model_reactions_data,
+    write_data(model_reactions)
+  ),
+  tar_target(
+    model_fluxes,
+    format_fluxes(growth_rates, fluxes)
+  ),
+  tar_target(
+    model_fluxes_out,
+    write_matlab_input(model_fluxes, data, "_fluxes.csv"),
+    format = "file"
+  ),
+  tar_target(
+    pruned_mids,
+    format_mids(mids)
+  ),
+  tar_target(
+    model_mids,
+    summarize_mids(pruned_mids)
+  ),
+  tar_target(
+    model_mids_out,
+    write_matlab_input(model_mids, data, "_mids.csv"),
+    format = "file"
+  ),
+
   # nadp --------------------------------------------------------------------
 
   tar_target(
