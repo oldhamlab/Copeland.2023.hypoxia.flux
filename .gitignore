@@ -7,3 +7,6 @@
 /.quarto/
 *.html
 analysis/figures
+
+*.scn
+*.tif

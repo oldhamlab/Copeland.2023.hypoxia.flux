@@ -410,6 +410,40 @@ list(
     clean_viability(viability_file)
   ),
 
+  # blots -------------------------------------------------------------------
+
+  tar_target(
+    blot_files,
+    raw_data_path("blots"),
+    format = "file",
+    cue = tar_cue("always")
+  ),
+  tar_target(
+    blot_raw,
+    read_data(blot_files)
+  ),
+  tar_target(
+    blot_norm,
+    normalize_densities(blot_raw)
+  ),
+
+  # mrna --------------------------------------------------------------------
+
+  tar_target(
+    mrna_files,
+    raw_data_path("mrna"),
+    format = "file",
+    cue = tar_cue("always")
+  ),
+  tar_target(
+    mrna_raw,
+    read_data(mrna_files)
+  ),
+  tar_target(
+    mrna_norm,
+    normalize_qpcr(mrna_raw)
+  ),
+
   # nadp --------------------------------------------------------------------
 
   tar_target(
