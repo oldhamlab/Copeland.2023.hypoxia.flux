@@ -398,6 +398,18 @@ list(
     format = "file"
   ),
 
+  # viability ---------------------------------------------------------------
+
+  tar_target(
+    viability_file,
+    raw_data_path("cell-viability.csv"),
+    format = "file"
+  ),
+  tar_target(
+    viability,
+    clean_viability(viability_file)
+  ),
+
   # nadp --------------------------------------------------------------------
 
   tar_target(
