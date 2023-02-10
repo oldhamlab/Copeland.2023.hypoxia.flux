@@ -380,6 +380,10 @@ list(
     format_fluxes(growth_rates, fluxes)
   ),
   tar_target(
+    model_fluxes_data,
+    write_data(model_fluxes)
+  ),
+  tar_target(
     model_fluxes_out,
     write_matlab_input(model_fluxes, data, "_fluxes.csv"),
     format = "file"
@@ -443,6 +447,93 @@ list(
     mrna_norm,
     normalize_qpcr(mrna_raw)
   ),
+
+  # model -------------------------------------------------------------------
+
+  tar_target(
+    graph_flux_files,
+    raw_data_path("model\\.csv"),
+    format = "file"
+  ),
+  tar_target(
+    graph_fluxes,
+    clean_model_fluxes(graph_flux_files, model_reactions)
+  ),
+  tar_target(
+    flux_differences,
+    assemble_flux_differences(graph_fluxes)
+  ),
+  tar_target(
+    flux_differences_data,
+    write_data(flux_differences)
+  ),
+  tar_quarto(
+    flux_differences_report,
+    path = report_path("flux-differences.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+  # tar_render(
+  #   map_flux_difference_report,
+  #   path = path_to_reports("flux-differences.Rmd"),
+  #   output_dir = system.file("analysis/pdfs", package = "Copeland.2022.hypoxia.flux")
+  # ),
+  # tar_target(
+  #   node_file,
+  #   path_to_data("nodes\\.csv"),
+  #   format = "file"
+  # ),
+  # tar_target(
+  #   nodes,
+  #   readr::read_csv(node_file)
+  # ),
+  # tar_target(
+  #   lf_hypoxia_graph,
+  #   make_graph(map_flux_differences, nodes, cell = "lf", treat = "21%", normalizer = "none")
+  # ),
+  # tar_target(
+  #   lf_hypoxia_graph_ratio_plot,
+  #   plot_ratio_network(lf_hypoxia_graph, "Hypoxia/Normoxia")
+  # ),
+  # tar_target(
+  #   bay_graph,
+  #   make_graph(map_flux_differences, nodes, cell = "lf", treat = "DMSO", normalizer = "none")
+  # ),
+  # tar_target(
+  #   bay_graph_ratio_plot,
+  #   plot_ratio_network(bay_graph, "BAY/DMSO")
+  # ),
+  # tar_target(
+  #   lf_normoxia_graph_plot,
+  #   plot_normoxia_network(lf_hypoxia_graph, "LF\nNormoxia")
+  # ),
+  # tar_target(
+  #   lf_hypoxia_growth_graph,
+  #   make_graph(map_flux_differences, nodes, cell = "lf", treat = "0.5%", normalizer = "growth")
+  # ),
+  # tar_target(
+  #   lf_hypoxia_growth_graph_plot,
+  #   plot_ratio_network(lf_hypoxia_growth_graph, "Hypoxia/Normoxia\nGrowth Rate Normalized", edges = FALSE)
+  # ),
+  # tar_target(
+  #   pasmc_hypoxia_graph,
+  #   make_graph(map_flux_differences, nodes, cell = "pasmc", treat = "21%", normalizer = "none")
+  # ),
+  # tar_target(
+  #   pasmc_normoxia_graph_plot,
+  #   plot_normoxia_network(pasmc_hypoxia_graph, "PASMC\nNormoxia")
+  # ),
+  # tar_target(
+  #   pasmc_hypoxia_graph_plot,
+  #   plot_ratio_network(pasmc_hypoxia_graph, "PASMC\nHypoxia/Normoxia")
+  # ),
+  # tar_target(
+  #   lf_pasmc_normoxia_ratio_fluxes,
+  #   make_cell_ratio_graph(map_fluxes, nodes)
+  # ),
+  # tar_target(
+  #   lf_pasmc_normoxia_ratio_plot,
+  #   plot_ratio_network(lf_pasmc_normoxia_ratio_fluxes, "PASMC/LF")
+  # ),
 
   # nadp --------------------------------------------------------------------
 

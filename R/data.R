@@ -230,3 +230,57 @@
 #'   \item{pathway}{metabolic pathway}
 #'   }
 "model_reactions"
+
+#' Model fluxes
+#'
+#' A data table of experimentally determined extracellular fluxes used to
+#' constrain the metabolic model.
+#'
+#'  \describe{
+#'   \item{cell_type}{
+#'   `lf`    = lung fibroblasts \cr
+#'   `pasmc` = pulmonary artery smooth muscle cells}
+#'   \item{data}{
+#'   `metabolite` = metabolite name \cr
+#'   `oxygen` = ambient oxygen level \cr
+#'   `treatment` = `None`, `DMSO`, `BAY` \cr
+#'   `mean` = average flux from multiple biological replicates \cr
+#'   `se` = standard error of flux from multiple biological replicates \cr
+#'   `name` = corresponds to name of model reaction}
+#'   }
+"model_fluxes"
+
+#' Flux differences
+#'
+#' A data table of summarized fluxes and significant differences. This also
+#' includes data for flux differences normalized to growth rate or glucose
+#' consumptions.
+#'
+#'  \describe{
+#'   \item{normalization}{
+#'   `none` = no normalization \cr
+#'   `glucose` = fluxes normalized to GLUT flux \cr
+#'   `growth` = fluxed normalized to biomass flux}
+#'   \item{cell_type}{
+#'   `lf`    = lung fibroblasts \cr
+#'   `pasmc` = pulmonary artery smooth muscle cells}
+#'   \item{pathway}{metabolic pathway}
+#'   \item{index}{numeric ID for a metabolic reaction}
+#'   \item{id}{name for a metabolic reaction}
+#'   \item{type}{
+#'   `net` = net flux \cr
+#'   `exch` = exchange flux}
+#'   \item{equation}{flux reaction equation}
+#'   \item{ctl}{control condition}
+#'   \item{exp}{experimental condition}
+#'   \item{flux_ctl}{flux in the control condition}
+#'   \item{lb_ctl}{lower bound of the control flux}
+#'   \item{ub_ctl}{upper bound of the control flux}
+#'   \item{flux_exp}{flux in the experimental condition}
+#'   \item{lb_exp}{lower bound of the experimental flux}
+#'   \item{ub_flux}{upper bound of the experimental flux}
+#'   \item{ratio}{ratio of the experimental flux to the control flux}
+#'   }
+"flux_differences"
+
+

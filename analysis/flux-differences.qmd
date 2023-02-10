@@ -1,0 +1,115 @@
+---
+title: "Flux Differences"
+date-modified: today
+format: html
+excecute:
+  message: false
+---
+
+```{r}
+#| label: setup
+#| output: false
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+here::i_am("analysis/flux-differences.qmd")
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  model_fluxes <- tar_read(model_fluxes)
+  flux_differences <- tar_read(map_flux_differences)
+})
+```
+
+# Overview
+
+In this document, we will analyze the output from the metabolic flux maps.
+
+# Analysis
+
+## Significant Differences
+
+Identify reactions that are significantly different based on whether the confidence intervals overlap. This is more conservative than p < 0.05. 
+
+```{r}
+#| label: functions
+
+calculate_ratio <- function(norm) {
+  flux_differences |> 
+    filter(normalization == norm) |> 
+    # filter(!is.na(ratio)) |> 
+    select(-c(normalization, equation, ctl, contains(c("flux", "lb", "ub")))) |> 
+    pivot_wider(names_from = exp, values_from = ratio)
+}
+
+print_flux_table <- function(df, caption) {
+  df |> 
+    # mutate(across(c(`0.5%`, BAY), ~as.character(signif(., 3)))) |> 
+    gt::gt() |> 
+    gt::cols_label(
+      cell_type = "Cell type", 
+      pathway = "Pathway", 
+      index = "Index", 
+      id = "ID", 
+      type = "Type", 
+      `0.5%` = "0.5%", 
+    ) |> 
+    gt::fmt_scientific(c(`0.5%`, BAY)) |> 
+    gt::tab_header(title = caption) |> 
+    gt::cols_align(
+      "left", 
+      c(pathway, id, type)
+    ) |> 
+    gt::opt_all_caps() |> 
+    gt::opt_align_table_header(align = "left") |> 
+    gt::tab_options(row_group.as_column = TRUE)
+}
+```
+
+```{r}
+#| label: significant-flux-differences
+
+calculate_ratio("none") |> 
+  print_flux_table("Significant Flux Differences")
+```
+
+Do any of these differences have a negative ratio?
+
+```{r}
+#| label: reversed-fluxes
+
+calculate_ratio("none") |> 
+  filter(`0.5%` < 0 | BAY < 0) |> 
+  print_flux_table("Reversed fluxes")
+```
+
+For both of these models, some of the PPP fluxes reverse. 
+
+## Normalized differences
+
+It doesn't look like there is any dramatic reprogramming of the intracellular metabolic pathways secondary to hypoxia or BAY treatment. In other words, most of the differences are related to absolute rates rather than differential usage. Another way to look at this might be to normalize the fluxes to glucose uptake or biomass fluxes. This would show all fluxes in terms of total glucose use or growth rate, for example.
+
+```{r}
+#| label: growth-normalized
+
+calculate_ratio("growth") |> 
+  print_flux_table("Significant differences in growth-normalized fluxes")
+```
+
+```{r}
+#| label: glucose-normalized
+
+calculate_ratio("glucose") |> 
+  print_flux_table("Significant differences in glucose-normalized fluxes")
+```
+
