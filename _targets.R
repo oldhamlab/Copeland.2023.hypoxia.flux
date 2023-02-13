@@ -472,89 +472,134 @@ list(
     path = report_path("flux-differences.qmd"),
     extra_files = c("_quarto.yml")
   ),
-  # tar_render(
-  #   map_flux_difference_report,
-  #   path = path_to_reports("flux-differences.Rmd"),
-  #   output_dir = system.file("analysis/pdfs", package = "Copeland.2022.hypoxia.flux")
-  # ),
-  # tar_target(
-  #   node_file,
-  #   path_to_data("nodes\\.csv"),
-  #   format = "file"
-  # ),
-  # tar_target(
-  #   nodes,
-  #   readr::read_csv(node_file)
-  # ),
-  # tar_target(
-  #   lf_hypoxia_graph,
-  #   make_graph(map_flux_differences, nodes, cell = "lf", treat = "21%", normalizer = "none")
-  # ),
-  # tar_target(
-  #   lf_hypoxia_graph_ratio_plot,
-  #   plot_ratio_network(lf_hypoxia_graph, "Hypoxia/Normoxia")
-  # ),
-  # tar_target(
-  #   bay_graph,
-  #   make_graph(map_flux_differences, nodes, cell = "lf", treat = "DMSO", normalizer = "none")
-  # ),
-  # tar_target(
-  #   bay_graph_ratio_plot,
-  #   plot_ratio_network(bay_graph, "BAY/DMSO")
-  # ),
-  # tar_target(
-  #   lf_normoxia_graph_plot,
-  #   plot_normoxia_network(lf_hypoxia_graph, "LF\nNormoxia")
-  # ),
-  # tar_target(
-  #   lf_hypoxia_growth_graph,
-  #   make_graph(map_flux_differences, nodes, cell = "lf", treat = "0.5%", normalizer = "growth")
-  # ),
-  # tar_target(
-  #   lf_hypoxia_growth_graph_plot,
-  #   plot_ratio_network(lf_hypoxia_growth_graph, "Hypoxia/Normoxia\nGrowth Rate Normalized", edges = FALSE)
-  # ),
-  # tar_target(
-  #   pasmc_hypoxia_graph,
-  #   make_graph(map_flux_differences, nodes, cell = "pasmc", treat = "21%", normalizer = "none")
-  # ),
-  # tar_target(
-  #   pasmc_normoxia_graph_plot,
-  #   plot_normoxia_network(pasmc_hypoxia_graph, "PASMC\nNormoxia")
-  # ),
-  # tar_target(
-  #   pasmc_hypoxia_graph_plot,
-  #   plot_ratio_network(pasmc_hypoxia_graph, "PASMC\nHypoxia/Normoxia")
-  # ),
-  # tar_target(
-  #   lf_pasmc_normoxia_ratio_fluxes,
-  #   make_cell_ratio_graph(map_fluxes, nodes)
-  # ),
-  # tar_target(
-  #   lf_pasmc_normoxia_ratio_plot,
-  #   plot_ratio_network(lf_pasmc_normoxia_ratio_fluxes, "PASMC/LF")
-  # ),
-
-  # nadp --------------------------------------------------------------------
-
   tar_target(
-    nad_files,
-    raw_data_path("nadp?_.*\\.xlsx"),
-    format = "file",
-    cue = tar_cue("always")
+    node_file,
+    raw_data_path("nodes\\.csv"),
+    format = "file"
   ),
   tar_target(
-    nad_data,
-    assemble_flux_data(nad_files)
+    nodes,
+    readr::read_csv(node_file, show_col_types = FALSE)
   ),
-  # tar_target(
-  #   nad_raw,
-  #   clean_nad(nad_data)
-  # ),
-  # tar_target(
-  #   nad_conc_std,
-  #   make_std_curves(nad_raw, fo = ~MASS::rlm(value ~ poly(conc, 2, raw = TRUE), data = .x, , maxit = 1000))
-  # ),
+  tar_map(
+    values = list(
+      names = list(
+        "lf_norm_none",
+        "lf_hyp_none",
+        "lf_norm_growth",
+        "lf_hyp_growth",
+        "lf_norm_glc",
+        "lf_hyp_glc",
+        "pasmc_norm_none",
+        "pasmc_hyp_none",
+        "pasmc_norm_growth",
+        "pasmc_hyp_growth",
+        "pasmc_norm_glc",
+        "pasmc_hyp_glc",
+        "lf_dmso_none",
+        "lf_bay_none",
+        "lf_dmso_growth",
+        "lf_bay_growth",
+        "lf_dmso_glc",
+        "lf_bay_glc"
+      ),
+      cell = rep(c("lf", "pasmc", "lf"), each = 6),
+      treat = c(rep(c("21%", "0.5%"), 6), rep(c("DMSO", "BAY"), 3)),
+      normalizer = rep(c("none", "growth", "glucose"), each = 2, 3)
+    ),
+    names = names,
+    tar_target(
+      graph,
+      make_graph(flux_differences, nodes, cell = cell, treat = treat, normalizer = normalizer)
+    )
+  ),
+  tar_target(
+    graph_cells_norm_none,
+    make_cell_ratio_graph(graph_fluxes, nodes)
+  ),
+  tar_map(
+    values = list(
+      names = list(
+        "lf_hyp_ratio",
+        "lf_hyp_growth_ratio",
+        "pasmc_hyp_ratio",
+        "lf_bay_ratio",
+        "cells_norm_none_ratio"
+      ),
+      graphs = rlang::syms(
+        c(
+          "graph_lf_hyp_none",
+          "graph_lf_hyp_growth",
+          "graph_pasmc_hyp_none",
+          "graph_lf_bay_none",
+          "graph_cells_norm_none"
+        )
+      ),
+      captions = list(
+        "Hypoxia/Normoxia",
+        "Hypoxia/Normoxia\nGrowth Rate Normalized",
+        "PASMC\nHypoxia/Normoxia",
+        "BAY/DMSO",
+        "PASMC/LF"
+      ),
+      edges = list(
+        TRUE,
+        FALSE,
+        TRUE,
+        TRUE,
+        TRUE
+      )
+    ),
+    names = names,
+    tar_target(
+      graph_ratio,
+      plot_ratio_network(graphs, captions, edges)
+    )
+  ),
+  tar_map(
+    values = list(
+      names = list(
+        "lf_norm",
+        "pasmc_norm"
+      ),
+      gr = rlang::syms(
+        c(
+          "graph_lf_norm_none",
+          "graph_pasmc_norm_none"
+        )
+      ),
+      caption = list(
+        "LF\nNormoxia",
+        "PASMC\nNormoxia"
+      )
+    ),
+    names = names,
+    tar_target(
+      graph_raw,
+      plot_network(gr, caption)
+    )
+  ),
 
-  NULL
+# nadp --------------------------------------------------------------------
+
+tar_target(
+  nad_files,
+  raw_data_path("nadp?_.*\\.xlsx"),
+  format = "file",
+  cue = tar_cue("always")
+),
+tar_target(
+  nad_data,
+  assemble_flux_data(nad_files)
+),
+# tar_target(
+#   nad_raw,
+#   clean_nad(nad_data)
+# ),
+# tar_target(
+#   nad_conc_std,
+#   make_std_curves(nad_raw, fo = ~MASS::rlm(value ~ poly(conc, 2, raw = TRUE), data = .x, , maxit = 1000))
+# ),
+
+NULL
 )
