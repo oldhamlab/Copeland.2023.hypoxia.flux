@@ -64,7 +64,7 @@ replace_outliers <- function(vec) {
 
 make_std_curves <- function(df, fo = NULL) {
   if (is.null(fo)){
-    fo <- ~stats::lm(value ~ conc, data = .x, na.action = modelr::na.warn)
+    fo <- \(x) stats::lm(value ~ conc, data = x, na.action = modelr::na.warn)
   }
 
   df |>
@@ -163,3 +163,5 @@ my_kable <- function(data, ...) {
       font_size = 9
     )
 }
+
+annot_p <- function(num) dplyr::if_else(num < 0.05, "*", NA_character_)

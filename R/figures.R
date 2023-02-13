@@ -1,5 +1,15 @@
 # figures.R
 
+clrs <- c(
+  "21%"   = "#E41A1C",
+  "0.5%"  = "#377EB8",
+  "0.2%"  = "#08306b",
+  "DMSO"  = "#4DAF4A",
+  "BAY"   = "#984EA3",
+  "siCTL" = "#999999",
+  "siMYC" = "#F781BF"
+)
+
 theme_plots <- function() {
   list(
     wmo::theme_wmo(

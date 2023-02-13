@@ -580,26 +580,79 @@ list(
     )
   ),
 
-# nadp --------------------------------------------------------------------
+  # nadp --------------------------------------------------------------------
 
-tar_target(
-  nad_files,
-  raw_data_path("nadp?_.*\\.xlsx"),
-  format = "file",
-  cue = tar_cue("always")
-),
-tar_target(
-  nad_data,
-  assemble_flux_data(nad_files)
-),
-# tar_target(
-#   nad_raw,
-#   clean_nad(nad_data)
-# ),
-# tar_target(
-#   nad_conc_std,
-#   make_std_curves(nad_raw, fo = ~MASS::rlm(value ~ poly(conc, 2, raw = TRUE), data = .x, , maxit = 1000))
-# ),
+  tar_target(
+    nad_files,
+    raw_data_path("nadp?_.*\\.xlsx"),
+    format = "file",
+    cue = tar_cue("always")
+  ),
+  tar_target(
+    nad_data,
+    assemble_flux_data(nad_files)
+  ),
+  tar_target(
+    nad_raw,
+    clean_nad(nad_data)
+  ),
+  tar_target(
+    nad_conc_std,
+    make_std_curves(
+      nad_raw,
+      fo = \(x) MASS::rlm(value ~ poly(conc, 2, raw = TRUE), data = x, maxit = 1000)
+    )
+  ),
+  tar_target(
+    nad_conc_std_plots,
+    print_plots(nad_conc_std$plots, nad_conc_std$title, "nad/01_standard_curves"),
+    format = "file"
+  ),
+  tar_target(
+    nad_interp,
+    interp_data(nad_raw, nad_conc_std)
+  ),
+  tar_target(
+    nad_final,
+    finalize_nad(nad_interp, cells_per_dna)
+  ),
+  tar_target(
+    nad_annot,
+    annot_nad(nad_final)
+  ),
+  tar_map(
+    values = list(
+      names = list(
+        "nad",
+        "nadh",
+        "nadh_ratio",
+        "nadp",
+        "nadph",
+        "nadph_ratio"
+      ),
+      metab = list(
+        "NAD",
+        "NADH",
+        "NADH/NAD",
+        "NADP",
+        "NADPH",
+        "NADPH/NADP"
+      ),
+      ylab = list(
+        "NAD\n(nmol/cell)",
+        "NADH\n(nmol/cell)",
+        "NADH/NAD ratio",
+        "NADP\n(nmol/cell)",
+        "NADPH\n(nmol/cell)",
+        "NADPH/NADP ratio"
+      )
+    ),
+    names = names,
+    tar_target(
+      plot,
+      plot_nad(nad_final, nad_annot, metab, ylab)
+    )
+  ),
 
-NULL
+  NULL
 )
