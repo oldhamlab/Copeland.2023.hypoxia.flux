@@ -16,27 +16,44 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
+    BiocParallel,
     broom,
     clustermq,
+    cowplot,
+    DESeq2,
     devtools,
+    dorothea,
     dplyr,
     emmeans,
+    fgsea,
     forcats,
     furrr,
     ggbeeswarm,
+    ggforce,
     ggplot2,
     ggraph,
+    ggrepel,
+    ggvenn,
     grDevices,
+    gt,
+    gtExtras,
     kableExtra,
+    limma,
     lmerTest,
+    magick,
+    magrittr,
     MASS,
+    methods,
     modelr,
+    msigdbr,
     mzrtools,
+    patchwork,
     purrr,
     RColorBrewer,
     readr,
     readxl,
     rlang,
+    rnaseq.lf.hypoxia.molidustat,
     scales,
     stats,
     stringr,
@@ -51,4 +68,5 @@ Imports:
     wmo
 Depends: 
     R (>= 4.2.0)
+Suggests:
 LazyData: true

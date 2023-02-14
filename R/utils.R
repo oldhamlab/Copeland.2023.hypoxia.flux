@@ -22,7 +22,6 @@ plot_path <- function(nm) {
   path
 }
 
-
 write_data <- function(...) {
   targets::tar_load(...)
   usethis::use_data(..., overwrite = TRUE)
@@ -156,12 +155,30 @@ interp_data <- function(tbl, std) {
     dplyr::select(-c("model", "value"))
 }
 
-my_kable <- function(data, ...) {
-  kableExtra::kable(data, booktabs = TRUE, linesep = "", ...) |>
-    kableExtra::kable_styling(
-      latex_options = c("hold_position"),
-      font_size = 9
+annot_p <- function(num) dplyr::if_else(num < 0.05, "*", NA_character_)
+
+plot_image <- function(img, scale = 1, hjust = 0, vjust = 0) {
+  # blot_image <- magick::image_read_pdf(blot_image)
+  img <- magick::image_read(img)
+
+  cowplot::ggdraw() +
+    cowplot::draw_image(
+      img,
+      scale = scale,
+      hjust = hjust,
+      vjust = vjust
+    ) +
+    theme_plots() +
+    ggplot2::theme(
+      panel.border = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank()
     )
 }
 
-annot_p <- function(num) dplyr::if_else(num < 0.05, "*", NA_character_)
+write_table <- function(table, path, filename) {
+  if (!dir.exists(path)) dir.create(path = path, recursive = TRUE)
+  filename <- stringr::str_c(path, filename, ".png")
+  gt::gtsave(table, filename = filename)
+  filename
+}
+

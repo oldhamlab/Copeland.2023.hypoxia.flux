@@ -1,0 +1,79 @@
+---
+title: "RNA-seq"
+date-modified: today
+format: html
+excecute:
+  message: false
+---
+
+```{r}
+#| label: setup
+#| output: false
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+here::i_am("analysis/rnaseq.qmd")
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  pca <- tar_read(rnaseq_pca)
+  deg <- tar_read(deg_int)
+  results <- tar_read(deg_int)
+  gsea_res <- tar_read(gsea_int)
+})
+```
+
+# Overview
+
+We observed that proliferating primary cells exposed to hypoxia do not increase glucose uptake and lactate efflux despite up-regulation of glucose transporters and glycolytic genes. When these cells are treated with the prolyl hydroxylase inhibitor molidustat in normoxia, the expected increases in glycolytic flux are observed. Interestingly, when molidustat-treated cells are cultured in hypoxia, hypoxia blocks molidustat-mediated increases in glycolysis. In an effort to identify the mechanism mediating this effect, we performed RNA-seq on lung fibroblasts treated for three days with 0.5% oxygen or molidustat (10 μM) with 21% and DMSO (0.1%) controls. RNA was collected and purified and sent for RNA-seq analysis.
+
+# Analysis
+
+We will use the `DESeq2` package to identify differentially expresssed genes. We will use the model `~ experiment + oxygen * treatment`. 
+
+## PCA
+
+```{r}
+#| label: pca
+
+pca
+```
+
+## Differential Expression
+
+In this analysis, will identify those genes where the effects of hypoxia and molidustat are different, which will hopefully point to mechanisms by which hypoxia may regulate cell metabolism differently than PHD2 inhibition.
+
+```{r}
+#| label: deg
+
+deg |> 
+  dplyr::select(row, symbol, description, log2fc = log2FoldChange, padj) |> 
+  head(20) |> 
+  gt::gt() |> 
+  gt::tab_options(
+    row_group.as_column = TRUE
+  ) |> 
+  gt::tab_header(title = "Differentially expressed genes") |>
+  gt::opt_all_caps() |>
+  gt::opt_align_table_header(align = "left") |> 
+  gt::cols_align("left") |> 
+  gt::fmt_number(
+    columns = log2fc, 
+    decimals = 2
+  ) |> 
+  gt::fmt_scientific(
+    columns = padj, 
+    decimals = 0
+  )
+```
+

@@ -8,7 +8,10 @@ library(tarchetypes)
 
 # set target options
 tar_option_set(
-  packages = c("tidyverse"),
+  packages = c(
+    "tidyverse",
+    "scales"
+  ),
   format = "qs"
 )
 
@@ -653,6 +656,110 @@ list(
       plot_nad(nad_final, nad_annot, metab, ylab)
     )
   ),
+
+  # rnaseq ------------------------------------------------------------------
+
+  tar_target(
+    dds,
+    count_rnaseq()
+  ),
+  tar_target(
+    pca_data,
+    vst_rnaseq(dds)
+  ),
+  tar_target(
+    rnaseq_pca,
+    plot_rnaseq_pca(pca_data)
+  ),
+  tar_target(
+    hallmark_pathways,
+    get_msigdb_pathways(category = "H")
+  ),
+  tar_target(
+    tfea,
+    run_tfea(dds)
+  ),
+  tar_target(
+    tfea_fit,
+    fit_tfea(dds, tfea)
+  ),
+  tar_map(
+    values = list(
+      names = c("hyp", "bay", "hyp_bay", "int"),
+      comp = list(
+        "h.dmso - n.dmso",
+        "n.bay - n.dmso",
+        "h.bay - n.bay",
+        "(h.dmso - n.dmso) - (n.bay - n.dmso)"
+      ),
+      xlab = c(
+        "Hypoxia/Normoxia",
+        "BAY/DMSO",
+        "Hypoxia/Normoxia in BAY",
+        "ΔHypoxia/ΔBAY"
+      ),
+      colors = list(
+        clrs[c("0.5%", "21%")],
+        clrs[c("BAY", "DMSO")],
+        clrs[c("0.5%", "21%")],
+        clrs[c(2, 4)]
+      ),
+      filename = stringr::str_c("gsea_", c("hyp", "bay", "hyp-bay", "int"))
+    ),
+    names = names,
+    tar_target(
+      deg,
+      identify_deg(dds, comp)
+    ),
+    tar_target(
+      rnaseq_vol,
+      plot_rnaseq_volcano(deg, xlab = xlab)
+    ),
+    tar_target(
+      gsea,
+      run_gsea(deg, hallmark_pathways)
+    ),
+    tar_target(
+      gsea_table,
+      plot_gsea_table(gsea, title = xlab, clr = colors)
+    ),
+    tar_target(
+      gsea_file,
+      write_table(gsea_table, path = "analysis/figures/gsea/", filename),
+      format = "file"
+    ),
+    tar_target(
+      gsea_plot,
+      plot_table(gsea_file)
+    ),
+    tar_target(
+      tfea_res,
+      index_tfea(tfea_fit, names)
+    ),
+    tar_target(
+      tfea_plot,
+      plot_tfea_volcanoes(tfea_res, xlab = xlab, colors = colors, nudge = 10)
+    ),
+    NULL
+  ),
+  tar_target(
+    rnaseq_venn,
+    plot_rnaseq_venn(deg_hyp, deg_bay)
+  ),
+  tar_target(
+    gsea_venn,
+    plot_gsea_venn(gsea_hyp, gsea_bay)
+  ),
+  tar_target(
+    tfea_venn,
+    plot_tfea_venn(tfea_res_hyp, tfea_res_bay)
+  ),
+  tar_quarto(
+    rnaseq_report,
+    path = report_path("rnaseq.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+
 
   NULL
 )

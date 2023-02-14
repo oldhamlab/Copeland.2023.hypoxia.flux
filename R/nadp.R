@@ -167,7 +167,7 @@ plot_nad <- function(df, annot, metab, ylab) {
       fun.data = ggplot2::mean_se,
       position = ggplot2::position_dodge(width = 0.9),
       width = 0.2,
-      size = 0.25,
+      linewidth = 0.25,
       show.legend = FALSE
     ) +
     ggplot2::geom_text(
