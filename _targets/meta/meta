@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|58b922c75debbbf8|||||||||||||||
+.Random.seed|object|ba585855ddeb8814|||||||||||||||
 %nin%|function|b1eefa0a0b2c9c81|||||||||||||||
 annot_metabs|function|7b5504d2fe1c59f9|||||||||||||||
 annot_myc_fluxes|function|2fd2312d9c25e8b6|||||||||||||||
@@ -181,7 +181,7 @@ make_graph|function|1e2a4c8380715c94|||||||||||||||
 make_grid|function|bfa171289e671df4|||||||||||||||
 make_std_curves|function|4c6ab566abc4df28|||||||||||||||
 make_std_plots|function|74e1aeb4c01f5277|||||||||||||||
-manuscript|stem|d8a2fbaba88bc28a|7132db30ff6b8cbf|d84d7cdd1c3c4b08|615889701|manuscript/manuscript.docx*manuscript/manuscript.qmd|t19404.7663587888s|3ee56600bbf2338d|38005|file|local|vector|||3.216||
+manuscript|stem|6a16cc5c97c50a38|036773d7a6d078ee|d84d7cdd1c3c4b08|615889701|manuscript/copeland_2023_flux_manuscript.docx*manuscript/manuscript.qmd|t19404.7690163997s|b7c2e9645268b8d1|38057|file|local|vector|||3.215||
 manuscript_path|function|da20365e3ab90dfa|||||||||||||||
 mass_curve_plots|stem|6a11ed2a0428c59a|40551e39d972ca36|80af9581b0b4652a|-1231099982|analysis/figures/fluxes/04_mass_curves|t19404.6801202468s|6614dd40e154b10f|18336|file|local|vector|||78.952||
 mass_curves|stem|31fa0463c2f899ec|d0de26441e5cecda|4fd79f5cec158e46|-748223957||t19404.6780684465s|0134498e1d87b802|3521401|qs|local|vector|||8.469||

@@ -5,6 +5,7 @@ format:
   docx:
     reference-doc:  template.docx
     page-width: 7.5
+    output-file: copeland_2023_flux_manuscript.docx
 ---
 
 ```{r}
