@@ -32,8 +32,12 @@ format:
   docx:
     reference-doc:  template.docx
     page-width: 7.5
-
-output-file: copeland_2023_flux_manuscript.docx
+    output-file: copeland_2023_flux_manuscript.docx
+    
+bibliography: 
+- library.json
+- pkgs.bib
+csl: elife.csl
 
 filters:
     - scholarly-metadata.lua
@@ -47,7 +51,7 @@ filters:
 
 ```
 
-{{< pagebreak >}}
+\newpage
 
 # Abstract 
 
@@ -62,3 +66,10 @@ hypoxia / metabolic flux analysis / hypoxia-inducible factor / prolyl hydroxylas
 # Introduction
 
 Cellular responses to hypoxia propel many physiologic and pathologic processes from wound healing and angiogenesis to vascular remodeling and fibrosis [@semenza2012b; @lee2019]. These activities require cells to continue energetically demanding tasks, such as macromolecular biosynthesis and proliferation, despite limited oxygen availability. Since respiration is the most efficient way for cells to produce energy, cell metabolism must adapt to meet energetic needs when oxygen supply is limiting. Understanding how these metabolic adaptations sustain critical cellular processes in hypoxia is fundamentally important to our understanding of human health and disease. 
+
+\newpage 
+
+# References
+
+::: {#refs}
+:::
