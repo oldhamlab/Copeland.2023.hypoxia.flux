@@ -1,11 +1,43 @@
 ---
 title: "MYC overrides HIF-1α to regulate proliferating primary cell metabolism in hypoxia"
 
+author:
+- Courtney A. Copeland: 
+    institute: bwh, hms
+- Benjamin A. Olenchock: 
+    institute: bwh, hms
+- David R. Ziehr:
+    institute: bwh, mgh, hms
+- Sarah McGarrity: 
+    institute: bwh, hms, ui
+- Kevin Leahy: 
+    institute: bwh, hms
+- Jamey D. Young: 
+    institute: vu
+- Joseph Loscalzo: 
+    institute: bwh, hms
+- William M. Oldham:
+    institute: bwh, hms
+    correspondence: true
+    email: woldham@bwh.harvard.edu
+    
+institute:
+- bwh: Department of Medicine, Brigham and Women's Hospital, Boston, MA 02115, U.S.A.
+- hms: Department of Medicine, Harvard Medical School, Boston, MA 02115, U.S.A.
+- mgh: Department of Medicine, Massachusetts General Hospital, Boston, MA, 02114 U.S.A.
+- ui: Center for Systems Biology, School of Health Sciences, University of Iceland, Reykjavik, Iceland
+- vu: Departments of Chemical & Biomolecular Engineering and Molecular Physiology & Biophysics, Vanderbilt University, Nashville, TN 37240, U.S.A.
+
 format:
   docx:
     reference-doc:  template.docx
     page-width: 7.5
     output-file: copeland_2023_flux_manuscript.docx
+
+filters:
+    - scholarly-metadata.lua
+    - author-info-blocks.lua
+
 ---
 
 ```{r}
