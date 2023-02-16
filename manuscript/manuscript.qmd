@@ -1,0 +1,20 @@
+---
+title: "MYC overrides HIF-1α to regulate proliferating primary cell metabolism in hypoxia"
+
+format:
+  docx:
+    reference-doc:  template.docx
+    page-width: 7.5
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+
+```
+
+# Abstract 
+
+Hypoxia requires metabolic adaptations to sustain energetically demanding cellular activities. While the metabolic consequences of hypoxia have been studied extensively in cancer cell models, comparatively little is known about the metabolic response of primary cells to hypoxia. We performed metabolic flux analyses of proliferating human lung fibroblasts and pulmonary artery smooth muscle cells in hypoxia. Unexpectedly, hypoxia decreased glycolytic flux despite activation of hypoxia-inducible factor (HIF) and increased glycolytic enzyme expression. Pharmacologic activation of HIF with the prolyl hydroxylase (PHD) inhibitor molidustat in normoxia did increase glycolytic flux, but hypoxia abrogated this effect. Multi-omic profiling revealed distinct molecular responses to hypoxia and pharmacologic PHD inhibition and suggested a critical role for MYC in modulating the HIF response in hypoxia. MYC knockdown in hypoxia increased lactate efflux, while MYC overexpression in normoxia blunted the effects of molidustat treatment. Together, these data suggest that other factors, notably MYC, supersede the anticipated effects of HIF-dependent up-regulation of glycolytic gene expression on glycolytic flux in hypoxic proliferating primary cells.
+

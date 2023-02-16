@@ -930,11 +930,6 @@ list(
     manuscript,
     path = manuscript_path("manuscript.qmd"),
     # extra_files = c("_quarto.yml"),
-    pandoc_args = c(
-      "--lua-filter=scholarly-metadata.lua",
-      "--lua-filter=author-info-blocks.lua",
-      "--lua-filter=pagebreak.lua"
-    )
   ),
   # tar_quarto(
   #   metab_report,
