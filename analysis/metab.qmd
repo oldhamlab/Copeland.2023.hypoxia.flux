@@ -1,0 +1,80 @@
+---
+title: "Targeted Metabolomics"
+date-modified: today
+format: html
+excecute:
+  message: false
+---
+
+```{r}
+#| label: setup
+#| output: false
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+here::i_am("analysis/metab.qmd")
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  raw <- tar_read(metab_tar_raw)
+  clean <- tar_read(metab_tar_clean)
+  metab_pca <- tar_read(metab_tar_pca)
+  metab_limma <- tar_read(metab_tar_limma)
+  tt <- tar_read(metab_tar_res_int)
+  volcano <- tar_read(metab_tar_vol_int)
+})
+```
+
+# Overview
+
+We observed that proliferating primary cells exposed to hypoxia do not increase glucose uptake and lactate efflux despite up-regulation of glucose transporters and glycolytic genes. When these cells are treated with the prolyl hydroxylase inhibitor molidustat in normoxia, the expected increases in glycolytic flux are observed. Interestingly, when molidustat-treated cells are cultured in hypoxia, hypoxia blocks molidustat-mediated increases in glycolysis. In an effort to identify the mechanism mediating this effect, we performed metabolomics on lung fibroblasts treated for three days with 0.5% oxygen or molidustat (10 μM) with 21% and DMSO (0.1%) controls. 
+
+# Data Processing
+
+## PCA
+
+```{r}
+pcaMethods::pca(t(SummarizedExperiment::assay(raw)), scale = "uv", center = TRUE) %>% 
+  pcaMethods::scores() %>% 
+  merge(SummarizedExperiment::colData(raw), by = 0) %>% 
+  # filter(type %nin% c("qc", "blank")) %>% 
+  ggplot() +
+  aes(
+    x = PC1, 
+    y = PC2, 
+    shape = type,
+    color = interaction(oxygen, treatment, sep = "|")
+  ) + 
+  geom_point() +
+  labs(
+    color = "Group", 
+    shape = "Type"
+  )
+```
+## Cleaning
+
+1. drift correction
+1. remove low quality features (QC RSD > 0.2, dispersion ratio > 0.4)
+1. impute missing values with random forest
+1. probabilistic quotient normalization
+1. batch correction
+
+```{r}
+metab_pca
+```
+
+## Differentially regulated metabolites
+
+```{r}
+volcano
+```

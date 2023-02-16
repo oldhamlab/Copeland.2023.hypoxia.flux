@@ -206,7 +206,7 @@ clean_glc6_fluxes <- function(df, cf) {
     ) |>
     tidyr::separate(.data$metabolite, c("metabolite", "isotope"), sep = " ") |>
     dplyr::mutate(metabolite = "lactate") |>
-    dplyr::left_join(cf, by = c("metabolite", "isotope" = "M")) |>
+    dplyr::left_join(cf, by = c("metabolite", "isotope" = "M"), multiple = "all") |>
     dplyr::filter(.data$batch == "b" & .data$isotope %in% c("M0", "M3")) |>
     dplyr::mutate(value = .data$area * .data$cf) |>
     dplyr::select("metabolite", "type", id = "number", "conc", "value") |>
@@ -287,10 +287,12 @@ clean_flux_std <- function(df) {
 }
 
 fill_missing_fluxes <- function(df, meta) {
-  metabolite <- type <- detector <- time <- well <- NULL
 
   df_meta <-
     dplyr::left_join(df, meta, by = c("cell_type", "experiment", "id"))
+
+  # https://github.com/tidyverse/tidyr/issues/971
+  metabolite <- type <- detector <- time <- well <- NULL
 
   missing_data <-
     df_meta |>
@@ -357,7 +359,8 @@ fill_missing_fluxes <- function(df, meta) {
         "detector",
         "time",
         "well"
-      )
+      ),
+      multiple = "all"
     ) |>
     dplyr::select(-"treatment.y") |>
     dplyr::rename(treatment = "treatment.x")
@@ -429,7 +432,7 @@ fill_missing_evap <- function(evap, samples) {
       "oxygen"
     ) |>
     dplyr::distinct() |>
-    dplyr::left_join(evap_dup_bay, by = "oxygen")
+    dplyr::left_join(evap_dup_bay, by = "oxygen", multiple = "all")
 
   evap_dup_hyp <-
     evap |>
@@ -449,7 +452,7 @@ fill_missing_evap <- function(evap, samples) {
       "oxygen"
     ) |>
     dplyr::distinct() |>
-    dplyr::left_join(evap_dup_hyp, by = "oxygen")
+    dplyr::left_join(evap_dup_hyp, by = "oxygen", multiple = "all")
 
   dplyr::bind_rows(evap, evap_02, evap_bay_a)
 }

@@ -498,21 +498,21 @@ plot_tfea_volcanoes <- function(tf, xlab, colors, nudge = 5) {
       show.legend = FALSE
     ) +
     ggplot2::geom_point(
-      data = subset(tf, "adj.P.Val" > 0.05),
+      data = tf[tf$adj.P.Val > 0.05, ],
       pch = 21,
       color = "white",
       fill = "grey80",
       stroke = 0.2
     ) +
     ggplot2::geom_point(
-      data = subset(tf, "logFC" > 0 & "adj.P.Val" < 0.05),
+      data = tf[tf$logFC > 0 & tf$adj.P.Val < 0.05, ],
       pch = 21,
       color = "white",
       fill = colors[[1]],
       stroke = 0.2
     ) +
     ggplot2::geom_point(
-      data = subset(tf, "logFC" < 0 & "adj.P.Val" < 0.05),
+      data = tf[tf$logFC < 0 & tf$adj.P.Val < 0.05, ],
       pch = 21,
       color = "white",
       fill = colors[[2]],

@@ -31,6 +31,10 @@ report_path <- function(nm) {
   stringr::str_c("analysis/", nm)
 }
 
+manuscript_path <- function(nm) {
+  stringr::str_c("manuscript/", nm)
+}
+
 read_multi_excel <- function(excel_file) {
   sheets <- readxl::excel_sheets(excel_file)
   purrr::map(sheets, \(x) readxl::read_excel(excel_file, sheet = x)) |>
@@ -182,3 +186,9 @@ write_table <- function(table, path, filename) {
   filename
 }
 
+write_pkg_cites <- function() {
+  desc::desc_get_deps() |>
+    dplyr::pull(.data$package) |>
+    knitr::write_bib(file = manuscript_path("pkgs.bib")) |>
+    suppressWarnings()
+}

@@ -27,7 +27,7 @@ theme_set(theme_wmo())
 
 withr::with_dir(here::here(), {
   qbias_ratios <- tar_read(qbias_ratios)
-  correction_factors <- tar_read(correction_factors)
+  correction_factors <- tar_read(qbias_correction_factors)
 })
 ```
 

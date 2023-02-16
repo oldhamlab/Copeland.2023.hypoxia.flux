@@ -16,6 +16,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
+    AnnotationHub,
     BiocParallel,
     broom,
     clustermq,
@@ -37,24 +38,29 @@ Imports:
     grDevices,
     gt,
     gtExtras,
-    kableExtra,
     limma,
     lmerTest,
     magick,
     magrittr,
     MASS,
+    metaboliteIDmapping,
     methods,
+    missForest,
     modelr,
     msigdbr,
     mzrtools,
     patchwork,
+    pcaMethods,
     purrr,
+    quarto,
+    rbbt,
     RColorBrewer,
     readr,
     readxl,
     rlang,
     rnaseq.lf.hypoxia.molidustat,
     scales,
+    statmod,
     stats,
     stringr,
     SummarizedExperiment,
@@ -68,5 +74,4 @@ Imports:
     wmo
 Depends: 
     R (>= 4.2.0)
-Suggests:
 LazyData: true

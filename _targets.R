@@ -702,7 +702,7 @@ list(
         clrs[c("0.5%", "21%")],
         clrs[c("BAY", "DMSO")],
         clrs[c("0.5%", "21%")],
-        clrs[c(2, 4)]
+        clrs[c("0.5%", "BAY")]
       ),
       filename = stringr::str_c("gsea_", c("hyp", "bay", "hyp-bay", "int"))
     ),
@@ -760,6 +760,187 @@ list(
     extra_files = c("_quarto.yml")
   ),
 
+  # metab -------------------------------------------------------------------
+
+  tar_target(
+    metab_tar_file,
+    raw_data_path("lf_05-bay_metabolomics-targeted.xlsx"),
+    format = "file"
+  ),
+  tar_target(
+    metab_tar_raw,
+    format_metab_tar(metab_tar_file)
+  ),
+  tar_target(
+    metab_tar_clean,
+    remove_missing_metab(metab_tar_raw) |>
+      correct_drift() |>
+      quality_control() |>
+      impute_missing() |>
+      pqn() |>
+      log_transform() |>
+      annot_metabs()
+  ),
+  tar_target(
+    metab_tar_pca,
+    calc_metab_pca(metab_tar_clean)
+  ),
+  tar_target(
+    metab_tar_pca_plot,
+    plot_metab_pca(metab_tar_clean, metab_tar_pca)
+  ),
+  tar_target(
+    metab_tar_limma,
+    fit_metab_limma(metab_tar_clean)
+  ),
+  tar_target(
+    metab_pathways_file,
+    raw_data_path("metabolites.tab"),
+    format = "file"
+  ),
+  tar_target(
+    metab_pathways,
+    read_metab_pathways(metab_pathways_file)
+  ),
+  tar_map(
+    values = list(
+      names = list(
+        "hyp",
+        "bay",
+        "hyp_bay",
+        "int"
+      ),
+      colors = list(
+        clrs[c("0.5%", "21%")],
+        clrs[c("BAY", "DMSO")],
+        clrs[c("0.5%", "21%")],
+        clrs[c("0.5%", "BAY")]
+      ),
+      xlab = list(
+        "Hypoxia/Normoxia",
+        "BAY/DMSO",
+        "Hypoxia/Normoxia in BAY",
+        "ΔHypoxia/ΔBAY"
+      ),
+      title = list(
+        "Hypoxia/Normoxia",
+        "BAY/DMSO",
+        "Hypoxia/Normoxia in BAY",
+        "ΔHypoxia/ΔBAY"
+      ),
+      filename = stringr::str_c("msea_", list("hyp", "bay", "hyp-bay", "int"))
+    ),
+    names = names,
+    tar_target(
+      metab_tar_res,
+      index_metab_limma(metab_tar_clean, metab_tar_limma, names)
+    ),
+    tar_target(
+      metab_tar_vol,
+      plot_metab_volcano(metab_tar_res, colors = colors, xlab = xlab)
+    ),
+    tar_target(
+      metab_tar_msea,
+      run_msea(metab_tar_res, metab_pathways)
+    ),
+    tar_target(
+      metab_tar_msea_table,
+      plot_msea_table(metab_tar_msea, title, colors, names)
+    ),
+    tar_target(
+      msea_tar_file,
+      write_table(metab_tar_msea_table, path = "analysis/figures/msea/", filename),
+      format = "file"
+    ),
+    tar_target(
+      msea_tar_plot,
+      plot_table(msea_tar_file)
+    ),
+    NULL
+  ),
+  tar_target(
+    metab_venn,
+    plot_metab_venn(metab_tar_res_hyp, metab_tar_res_bay)
+  ),
+  tar_target(
+    tca_leading_edge,
+    plot_leading_edge(
+      metab_tar_res_hyp_bay,
+      metab_pathways,
+      "KEGG | Citrate cycle (TCA cycle) - Homo sapiens (human)"
+    )
+  ),
+  tar_quarto(
+    metab_report,
+    path = report_path("metab.qmd"),
+    extra_files = c("_quarto.yml")
+  ),
+
+  # myc ---------------------------------------------------------------------
+
+  tar_map(
+    values = list(
+      names = c("simyc", "oemyc"),
+      exp = list("05-simyc", "bay-myc"),
+      intervention = list("treatment", "virus"),
+      x = rlang::syms(c("treatment", "virus")),
+      y = rlang::syms(c("oxygen", "treatment"))
+    ),
+    names = names,
+    tar_target(
+      myc_fluxes,
+      combine_fluxes(growth_rates, fluxes, exp = exp)
+    ),
+    tar_target(
+      myc_fluxes_annot,
+      annot_myc_fluxes(myc_fluxes, intervention)
+    ),
+    tar_target(
+      myc_growth_plot,
+      plot_myc(myc_fluxes, myc_fluxes_annot, "growth", "Growth rate (/h)", x = x, fill = y)
+    ),
+    tar_target(
+      myc_lactate_plot,
+      plot_myc(myc_fluxes, myc_fluxes_annot, "lactate", "Lactate\n(fmol/cell/h)", x = x, fill = y)
+    ),
+    NULL
+  ),
+
+  # manuscript --------------------------------------------------------------
+
+  tar_target(
+    template,
+    system.file(
+      "manuscript/template.docx",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    pkg_citations,
+    write_pkg_cites(),
+    cue = tar_cue(mode = "always")
+  ),
+  tar_target(
+    csl,
+    system.file("manuscript/elife.csl", package = "Copeland.2023.hypoxia.flux"),
+    format = "file"
+  ),
+  tar_quarto(
+    manuscript,
+    path = manuscript_path("manuscript.qmd"),
+    # extra_files = c("_quarto.yml"),
+    pandoc_args = c(
+      "--lua-filter=scholarly-metadata.lua",
+      "--lua-filter=author-info-blocks.lua",
+      "--lua-filter=pagebreak.lua"
+    )
+  ),
+  # tar_quarto(
+  #   metab_report,
+  #   path = report_path("metab.qmd"),
+  #   extra_files = c("_quarto.yml")
+  # ),
 
   NULL
 )
