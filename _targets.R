@@ -926,6 +926,15 @@ list(
     system.file("manuscript/elife.csl", package = "Copeland.2023.hypoxia.flux"),
     format = "file"
   ),
+  tar_target(
+    refs,
+    rbbt::bbt_update_bib(
+      path = "manuscript/manuscript.qmd",
+      ignore = c("R-base"),
+      path_bib = "manuscript/library.json"
+    ),
+    cue = tar_cue("always")
+  ),
   tar_quarto(
     manuscript,
     path = manuscript_path("manuscript.qmd"),
