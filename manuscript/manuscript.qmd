@@ -32,12 +32,12 @@ format:
   docx:
     reference-doc:  template.docx
     page-width: 7.5
-    output-file: copeland_2023_flux_manuscript.docx
+
+output-file: copeland_2023_flux_manuscript.docx
 
 filters:
     - scholarly-metadata.lua
     - author-info-blocks.lua
-
 ---
 
 ```{r}
@@ -46,6 +46,8 @@ filters:
 
 
 ```
+
+{{< pagebreak >}}
 
 # Abstract 
 
