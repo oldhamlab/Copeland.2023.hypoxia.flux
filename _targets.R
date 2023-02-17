@@ -906,6 +906,42 @@ list(
     NULL
   ),
 
+  # figure1 -----------------------------------------------------------------
+
+  tar_target(
+    f1_lf_hyp_05_timeline_png,
+    system.file(
+      "manuscript/figs-raw/lf_hyp_05_timeline.png",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    f1_lf_hyp_05_timeline,
+    plot_image(f1_lf_hyp_05_timeline_png, scale = 1, hjust = 0, vjust = 0)
+  ),
+  tar_target(
+    f1_lf_hyp_05_growth_curve,
+    plot_growth_curve(flux_measurements, cell = "lf", exp = "05")
+  ),
+  tar_target(
+    f1_lf_hyp_05_growth_rate,
+    plot_growth_rates(growth_rates, cell = "lf", exp = "05")
+  ),
+  tar_target(
+    f1_growth,
+    arrange_growth(
+      f1_lf_hyp_05_timeline,
+      f1_lf_hyp_05_growth_curve,
+      f1_lf_hyp_05_growth_rate
+    )
+  ),
+  tar_target(
+    figure1,
+    write_figures(f1_growth, "Figure-1.png"),
+    format = "file"
+  ),
+
   # manuscript --------------------------------------------------------------
 
   tar_target(

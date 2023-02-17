@@ -10,3 +10,6 @@ analysis/figures
 
 *.scn
 *.tif
+*.ai
+*.png
+*.mzML
