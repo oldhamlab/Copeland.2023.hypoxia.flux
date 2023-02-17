@@ -53,8 +53,17 @@ filters:
 #| label: setup
 #| include: false
 
-#ensure refs are up-to-date
+# ensure refs are up-to-date
 targets::tar_read(refs)
+
+# ensure figures are up-to-date
+targets::tar_read(
+  c(
+    f1, 
+    f1_s1, 
+    f2
+  )
+)
 ```
 
 \newpage
@@ -85,7 +94,7 @@ To address these questions, we have developed models of bioenergetic carbon flux
 
 The goal of this study was to characterize hypoxia-induced metabolic changes in proliferating primary LFs and PASMCs. To accomplish this goal, we adopted a metabolic flux analysis technique that enabled us to link intracellular metabolic fluxes to cell proliferation rates. Metabolic flux analysis fits cell proliferation rate, extracellular flux measurements, and ^13^C intracellular isotope labeling patterns to a computational model of cell metabolism [@antoniewicz2018]. This analysis reconstructs comprehensive flux maps that depict the flow of carbon from extracellular substrates, through intracellular metabolic pathways, and into cell biomass and metabolic by-products [@young2014]. These models assume that cells are at a metabolic pseudo-steady state over the experimental time course [@buescher2015]. Exponential growth phase is thought to reflect metabolic pseudo-steady state as cells in culture steadily divide at their maximal condition-specific rate, provided nutrient supply does not become limiting [@buescher2015; @ahn2011]. Thus, we first set out to define experimental conditions to capture exponential growth phase in normoxic and hypoxic cultures. 
 
-Cells were seeded and placed into hypoxia for 24 h prior to sample collection to provide adequate time for activation of the hypoxia-dependent transcriptional program (**Figure 1A**). We selected 0.5% oxygen for hypoxia as this level yielded the most reproducible phenotypic differences compared to 21% oxygen culture, while being physiologically relevant and above the K~M~ of cytochrome *c* oxidase (electron transport chain complex IV) for oxygen [@lee2020b; @wenger2015]. From this starting point, we identified the optimal cell seeding density and time course to capture exponential cell growth (**Figure 1B**). LFs cultured in 0.5% oxygen grew more slowly than LFs cultured in 21% oxygen (**Figure 1C**), but slower growth was not associated with decreased cell viability (**Fig S1A**).
+Cells were seeded and placed into hypoxia for 24 h prior to sample collection to provide adequate time for activation of the hypoxia-dependent transcriptional program (**Figure 1A**). We selected 0.5% oxygen for hypoxia as this level yielded the most reproducible phenotypic differences compared to 21% oxygen culture, while being physiologically relevant and above the K~M~ of cytochrome *c* oxidase (electron transport chain complex IV) for oxygen [@lee2020b; @wenger2015]. From this starting point, we identified the optimal cell seeding density and time course to capture exponential cell growth (**Figure 1B**). LFs cultured in 0.5% oxygen grew more slowly than LFs cultured in 21% oxygen (**Figure 1C**), but slower growth was not associated with decreased cell viability (**Figure 1 - figure supplement 1**). As anticipated, hypoxic cells demonstrated robust stabilization of HIF-1α protein associated with up-regulation of downstream targets, such as glucose transporter 1 (GLUT1) and lactate dehydrogenase A (LDHA) (**Figure 2**). These changes persisted for the duration of the experimental time course.
 
 \newpage
 
@@ -112,7 +121,8 @@ The authors declare that they have no conflicts of interest.
 
 # Figures
 
-![**Figure 1 -  **](figs/Figure-1.png)
+![**Figure 1 -  **](figs/Figure 1.png)
 
 \newpage
 
+![**Figure 1 - figure supplement 1**](figs/Figure 1 - figure supplement 1.png)

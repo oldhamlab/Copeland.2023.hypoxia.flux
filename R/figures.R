@@ -94,13 +94,13 @@ write_figures <- function(plot, filename, path = "manuscript/figs") {
 plot_time_lines <- function(
     df,
     y,
-    ylab = prot,
+    ylab,
     clr = c("oxygen", "treatment", "group")
 ) {
   ggplot2::ggplot(df) +
     ggplot2::aes(
       x = .data$time,
-      y = {{y}},
+      y = .data[[y]],
       color = .data[[clr]],
       fill = .data[[clr]]
     ) +
@@ -137,11 +137,13 @@ plot_time_lines <- function(
       color = "white",
       size = 1.5,
       stroke = 0.4,
-      show.legend = FALSE
+      show.legend = TRUE
     ) +
     ggplot2::labs(
       x = "Time (h)",
-      y = ylab
+      y = ylab,
+      color = NULL,
+      fill = NULL
     ) +
     ggplot2::scale_x_continuous(breaks = seq(0, 72, 24)) +
     ggplot2::scale_y_continuous(limits = c(0, NA)) +
@@ -195,7 +197,7 @@ plot_growth_rates <- function(
   annot <-
     lmerTest::lmer(mu ~ group + (1 | date), data = x) |>
     emmeans::emmeans(~ group) |>
-    pairs(adjust = "mvt") |>
+    graphics::pairs(adjust = "mvt") |>
     broom::tidy() |>
     dplyr::mutate(
       group = stringr::str_extract(.data$contrast, "(?<= - ).*"),
@@ -262,14 +264,62 @@ plot_growth_rates <- function(
     NULL
 }
 
+plot_expression <- function(
+    df,
+    exp,
+    prot = c("ldha", "hif1a"),
+    ylab
+) {
+  df |>
+    dplyr::filter(.data$experiment %in% exp) |>
+    dplyr::filter(.data$protein == prot) |>
+    plot_time_lines(y = "fold_change", ylab = ylab, clr = "group")
+}
+
+
 arrange_growth <- function(p1, p2, p3) {
   p1 + p2 + p3 +
     theme_patchwork(
-      widths = unit(c(1.5, 1, 1), "in"),
-      heights = unit(1, "in"),
+      widths = ggplot2::unit(c(1.5, 1, 1), "in"),
+      heights = ggplot2::unit(1, "in")
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+arrange_viability <- function(p1) {
+  p1 +
+    theme_patchwork(
+      widths = ggplot2::unit(1, "in"),
+      heights = ggplot2::unit(1, "in"),
+      tags = NULL
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+arrange_hif_targets <- function(p1, p2, p3, p4, p5) {
+  layout <- "
+  ab#
+  cde
+  "
+
+  p1 + p2 + p3 + p4 + p5 +
+    theme_patchwork(
+      design = layout,
+      widths = ggplot2::unit(1, "in"),
+      heights = ggplot2::unit(1, "in"),
       guides = "collect"
     ) &
-    theme(
+    ggplot2::theme(
       legend.position = "bottom",
       legend.key.width = ggplot2::unit(0.5, "lines"),
       legend.key.height = ggplot2::unit(0.5, "lines"),

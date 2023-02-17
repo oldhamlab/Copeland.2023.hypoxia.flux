@@ -10,6 +10,7 @@ library(tarchetypes)
 tar_option_set(
   packages = c(
     "tidyverse",
+    "patchwork",
     "scales"
   ),
   format = "qs"
@@ -909,7 +910,7 @@ list(
   # figure1 -----------------------------------------------------------------
 
   tar_target(
-    f1_lf_hyp_05_timeline_png,
+    lf_hyp_05_timeline_png,
     system.file(
       "manuscript/figs-raw/lf_hyp_05_timeline.png",
       package = "Copeland.2023.hypoxia.flux"
@@ -917,28 +918,84 @@ list(
     format = "file"
   ),
   tar_target(
-    f1_lf_hyp_05_timeline,
-    plot_image(f1_lf_hyp_05_timeline_png, scale = 1, hjust = 0, vjust = 0)
+    lf_hyp_05_timeline,
+    plot_image(lf_hyp_05_timeline_png, scale = 1, hjust = 0, vjust = 0)
   ),
   tar_target(
-    f1_lf_hyp_05_growth_curve,
+    lf_hyp_05_growth_curve,
     plot_growth_curve(flux_measurements, cell = "lf", exp = "05")
   ),
   tar_target(
-    f1_lf_hyp_05_growth_rate,
+    lf_hyp_05_growth_rate,
     plot_growth_rates(growth_rates, cell = "lf", exp = "05")
   ),
   tar_target(
     f1_growth,
     arrange_growth(
-      f1_lf_hyp_05_timeline,
-      f1_lf_hyp_05_growth_curve,
-      f1_lf_hyp_05_growth_rate
+      lf_hyp_05_timeline,
+      lf_hyp_05_growth_curve,
+      lf_hyp_05_growth_rate
     )
   ),
   tar_target(
-    figure1,
-    write_figures(f1_growth, "Figure-1.png"),
+    f1,
+    write_figures(f1_growth, "Figure 1.png"),
+    format = "file"
+  ),
+  tar_target(
+    viability_plot,
+    plot_time_lines(viability, y = viability, ylab = "Cell viability (%)", clr = "oxygen")
+  ),
+  tar_target(
+    f1_viability,
+    arrange_viability(viability_plot)
+  ),
+  tar_target(
+    f1_s1,
+    write_figures(f1_viability, "Figure 1 - figure supplement 1.png"),
+    format = "file"
+  ),
+
+  # figure2 -----------------------------------------------------------------
+
+  tar_target(
+    lf_hyp_05_blot_png,
+    manuscript_path("figs-raw/lf_05_hif1a-ldha-blots.png"),
+    format = "file"
+  ),
+  tar_target(
+    lf_hyp_05_blot,
+    plot_image(lf_hyp_05_blot_png, scale = 1.3, hjust = 0.2, vjust = 0)
+  ),
+  tar_target(
+    lf_hyp_05_hif1a_prot,
+    plot_expression(blot_norm, "lf_05", "hif1a", "HIF-1α protein\n(normalized)")
+  ),
+  tar_target(
+    lf_hyp_05_ldha_prot,
+    plot_expression(blot_norm, "lf_05", "ldha", "LDHA protein\n(normalized)")
+  ),
+  tar_target(
+    lf_hyp_05_glut1_rna,
+    plot_expression(mrna_norm, "lf_05", "glut1", "GLUT1 mRNA\n(normalized)")
+  ),
+  tar_target(
+    lf_hyp_05_ldha_rna,
+    plot_expression(mrna_norm, "lf_05", "ldha", "LDHA mRNA\n(normalized)")
+  ),
+  tar_target(
+    f2_hif_targets,
+    arrange_hif_targets(
+      lf_hyp_05_blot,
+      lf_hyp_05_hif1a_prot,
+      lf_hyp_05_glut1_rna,
+      lf_hyp_05_ldha_rna,
+      lf_hyp_05_ldha_prot
+    )
+  ),
+  tar_target(
+    f2,
+    write_figures(f2_hif_targets, "Figure 2.png"),
     format = "file"
   ),
 
@@ -959,7 +1016,10 @@ list(
   ),
   tar_target(
     csl,
-    system.file("manuscript/elife.csl", package = "Copeland.2023.hypoxia.flux"),
+    system.file(
+      "manuscript/elife.csl",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
     format = "file"
   ),
   tar_target(
@@ -974,13 +1034,6 @@ list(
   tar_quarto(
     manuscript,
     path = manuscript_path("manuscript.qmd"),
-    # extra_files = c("_quarto.yml"),
   ),
-  # tar_quarto(
-  #   metab_report,
-  #   path = report_path("metab.qmd"),
-  #   extra_files = c("_quarto.yml")
-  # ),
-
   NULL
 )
