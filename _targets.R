@@ -944,7 +944,7 @@ list(
   ),
   tar_target(
     viability_plot,
-    plot_time_lines(viability, y = viability, ylab = "Cell viability (%)", clr = "oxygen")
+    plot_time_lines(viability, y = "viability", ylab = "Cell viability (%)", clr = "oxygen")
   ),
   tar_target(
     f1_viability,

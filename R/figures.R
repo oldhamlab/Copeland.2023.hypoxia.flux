@@ -172,7 +172,7 @@ plot_growth_curve <- function(
     ) |>
     dplyr::summarize(count = mean(.data$conc, na.rm = TRUE)) |>
     plot_time_lines(
-      y = .data$count,
+      y = "count",
       ylab = "Cell count",
       clr = "group"
     ) +

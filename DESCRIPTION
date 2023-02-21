@@ -45,6 +45,7 @@ Imports:
     magick,
     magrittr,
     MASS,
+    metaboliteIDmapping,
     methods,
     missForest,
     modelr,
@@ -74,8 +75,6 @@ Imports:
     usethis,
     viridis,
     wmo
-Suggests:
-    metaboliteIDmapping
 Depends: 
     R (>= 4.2.0)
 LazyData: true

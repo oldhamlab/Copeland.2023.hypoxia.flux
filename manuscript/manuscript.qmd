@@ -54,13 +54,13 @@ filters:
 #| include: false
 
 # ensure refs are up-to-date
-targets::tar_read(refs)
+targets::tar_load(refs)
 
 # ensure figures are up-to-date
-targets::tar_read(
+targets::tar_load(
   c(
-    f1, 
-    f1_s1, 
+    f1,
+    f1_s1,
     f2
   )
 )
