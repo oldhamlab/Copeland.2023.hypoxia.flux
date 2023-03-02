@@ -250,6 +250,7 @@ index_tfea <- function(tfea, comp) {
 }
 
 plot_rnaseq_volcano <- function(results, gois = NULL, xlab = NULL, nudge = 8) {
+  .x <- NULL
   df <-
     tibble::as_tibble(results)
 
@@ -314,7 +315,7 @@ plot_rnaseq_volcano <- function(results, gois = NULL, xlab = NULL, nudge = 8) {
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(n = 7),
       limits = c(-nudge - 0.25, nudge + 0.25),
-      labels = \(x) scales::math_format(2 ^ x)
+      labels = scales::label_math(2 ^ .x)
     ) +
     ggplot2::labs(
       x = xlab,
@@ -702,4 +703,81 @@ plot_tfea_venn <- function(hyp, bay) {
       axis.line = ggplot2::element_blank(),
       plot.title = ggplot2::element_text(size = 8),
     )
+}
+
+plot_gois <- function(dds, goi) {
+
+  goi <- toupper(goi)
+
+  idx <- which(SummarizedExperiment::rowData(dds)$hgnc_symbol %in% goi)
+  if (length(goi) != length(idx)){
+    rlang::abort(message = "Suspect one-to-many mapping of symbol to Entrez ID")
+  }
+
+  df <-
+    dds[idx, ] |>
+    SummarizedExperiment::assay() |>
+    tibble::as_tibble(rownames = "entrez") |>
+    tidyr::pivot_longer(
+      -"entrez",
+      names_to = "id",
+      values_to = "count"
+    ) |>
+    dplyr::left_join(
+      dplyr::select(tibble::as_tibble(SummarizedExperiment::colData(dds[idx, ])), "id":"group"),
+      by = "id",
+      copy = TRUE
+    ) |>
+    dplyr::left_join(
+      dplyr::select(
+        tibble::as_tibble(SummarizedExperiment::rowData(dds[idx, ]), rownames = "entrez"),
+        "entrez",
+        symbol = "hgnc_symbol"
+      ),
+      by = "entrez",
+      copy = TRUE
+    ) |>
+    dplyr::mutate(
+      symbol = factor(.data$symbol, levels = goi),
+      oxygen = factor(.data$oxygen, levels = c("N", "H"), labels = c("21%", "0.5%"))
+    )
+
+  ggplot2::ggplot(df) +
+    ggplot2::facet_wrap(~ symbol, scales = "free_y", nrow = 1) +
+    ggplot2::aes(
+      x = .data$treatment,
+      y = .data$count/1000,
+      fill = .data$oxygen
+    ) +
+    ggplot2::stat_summary(
+      geom = "col",
+      fun = "mean",
+      position = ggplot2::position_dodge(width = 0.6),
+      width = 0.6,
+      show.legend = TRUE
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(group = .data$oxygen),
+      geom = "errorbar",
+      fun.data = "mean_se",
+      position = ggplot2::position_dodge(width = 0.6),
+      width = 0.2,
+      linewidth = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::scale_fill_manual(values = clrs, limits = force) +
+    ggplot2::labs(
+      x = "Treatment",
+      y = expression(paste("Count (x", 10^3, ")")),
+      fill = NULL
+    ) +
+    ggplot2::ylim(c(0, NA)) +
+    theme_plots() +
+    ggplot2::theme(
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
+      legend.box.margin = ggplot2::margin(t = -10)
+    ) +
+    NULL
 }
