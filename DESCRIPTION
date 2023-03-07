@@ -60,6 +60,7 @@ Imports:
     RColorBrewer,
     readr,
     readxl,
+    renv,
     rlang,
     rnaseq.lf.hypoxia.molidustat,
     scales,
