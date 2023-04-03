@@ -4,21 +4,29 @@ read_data <- function(data_files) {
   data_files[stringr::str_detect(data_files, "\\.csv$")] |>
     {\(x) rlang::set_names(
       x,
-      stringr::str_extract(x, "(lf|pasmc)_(02|05-bay|05|bay|)")
+      stringr::str_extract(x, "(lf|pasmc)_(02|bay|oemyc|05-siphd|05-simyc|05)")
     )}() |>
-    purrr::map_dfr(readr::read_csv, .id = "experiment") |>
+    purrr::map_dfr(readr::read_csv, .id = "experiment", show_col_types = FALSE) |>
     dplyr::mutate(
       oxygen = factor(
         .data$oxygen,
         levels = c("21%", "0.5%", "0.2%"),
         ordered = TRUE
       ),
+      virus = replace(.data$virus, is.na(.data$virus), "None"),
+      virus = factor(
+        .data$virus,
+        levels = c("None", "YFP", "MYC"),
+        ordered = TRUE
+      ),
+      treatment = replace(.data$treatment, is.na(.data$virus), "None"),
       treatment = factor(
         .data$treatment,
-        levels = c("None", "DMSO", "BAY"),
+        levels = c("None", "DMSO", "BAY", "siCTL", "siMYC", "siPHD2"),
         ordered = TRUE
       )
-    )
+    ) |>
+    dplyr::relocate("virus", .after = "oxygen")
 }
 
 normalize_densities <- function(blot_raw) {
@@ -71,33 +79,40 @@ normalize_densities <- function(blot_raw) {
 }
 
 normalize_qpcr <- function(raw_mrna) {
-  raw_mrna |>
+  dct <-
+    raw_mrna |>
     dplyr::mutate(gene = tolower(.data$gene)) |>
     dplyr::group_by(dplyr::across(c("experiment":"gene"))) |>
     dplyr::summarize(ct = mean(.data$ct, na.rm = TRUE)) |>
-    tidyr::pivot_wider(
-      names_from = "gene",
-      values_from = "ct"
+    dplyr::mutate(dct = .data$ct - .data$ct[.data$gene == "actin"]) |>
+    dplyr::filter(.data$gene != "actin") |>
+    dplyr::group_by(experiment) |>
+    dplyr::arrange(
+      .data$gene,
+      .data$oxygen,
+      .data$virus,
+      .data$treatment,
+      .data$time,
+      .data$date,
+      .by_group = TRUE
+    )
+
+  ctl <-
+    dct |>
+    dplyr::filter(
+      .data$oxygen == min(.data$oxygen) &
+        .data$treatment == min(.data$treatment) &
+        .data$virus == min(.data$virus) &
+        .data$time == min(.data$time)
     ) |>
+    dplyr::group_by(dplyr::across(c("experiment", "plate", "oxygen":"gene"))) |>
+    dplyr::summarise(ctl = mean(.data$dct)) |>
     dplyr::ungroup() |>
+    dplyr::select("experiment", "plate", "gene", "ctl")
+
+  dplyr::left_join(dct, ctl, by = c("experiment", "plate", "gene")) |>
     dplyr::mutate(
-      dplyr::across(-c("experiment":"time", "actin"), \(x) x - .data$actin)
-    ) |>
-    dplyr::select(-"actin") |>
-    tidyr::pivot_longer(
-      -c("experiment":"time"),
-      names_to = "protein",
-      values_to = "dct"
-    ) |>
-    dplyr::filter(!is.na(.data$dct)) |>
-    dplyr::group_by(.data$experiment, .data$protein) |>
-    dplyr::mutate(
-      ddct = .data$dct -
-        mean(.data$dct[
-          .data$oxygen == min(.data$oxygen) &
-            .data$treatment %in% c("None", "DMSO") &
-            .data$time == 0
-        ]),
+      ddct = .data$dct - .data$ctl,
       fold_change = 2 ^ -.data$ddct,
       group = dplyr::case_when(
         .data$experiment %in% c("lf_02", "lf_05", "lf_bay", "pasmc_05") & .data$treatment == "None" & .data$oxygen == "21%" ~ "21%",
@@ -114,8 +129,9 @@ normalize_qpcr <- function(raw_mrna) {
       .data$treatment,
       .data$group,
       .data$time,
-      .data$protein
+      .data$gene
     ) |>
     wmo::remove_nested_outliers("fold_change", remove = TRUE) |>
-    dplyr::relocate("group", .after = "treatment")
+    dplyr::relocate("group", .after = "treatment") |>
+    dplyr::rename(protein = "gene")
 }
