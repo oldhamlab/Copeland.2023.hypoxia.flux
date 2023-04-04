@@ -4,7 +4,7 @@ read_data <- function(data_files) {
   data_files[stringr::str_detect(data_files, "\\.csv$")] |>
     {\(x) rlang::set_names(
       x,
-      stringr::str_extract(x, "(lf|pasmc)_(02|bay|oemyc|05-siphd|05-simyc|05)")
+      stringr::str_extract(x, "(lf|pasmc)_(02|bay-myc|bay|05-siphd|05-simyc|05)")
     )}() |>
     purrr::map_dfr(readr::read_csv, .id = "experiment", show_col_types = FALSE) |>
     dplyr::mutate(
@@ -19,7 +19,7 @@ read_data <- function(data_files) {
         levels = c("None", "YFP", "MYC"),
         ordered = TRUE
       ),
-      treatment = replace(.data$treatment, is.na(.data$virus), "None"),
+      treatment = replace(.data$treatment, is.na(.data$treatment), "None"),
       treatment = factor(
         .data$treatment,
         levels = c("None", "DMSO", "BAY", "siCTL", "siMYC", "siPHD2"),
@@ -49,7 +49,8 @@ normalize_densities <- function(blot_raw) {
       fold_change = .data$density /
         mean(.data$density[
           .data$oxygen == min(.data$oxygen) &
-            .data$treatment %in% c("None", "DMSO") &
+            .data$treatment == min(.data$treatment) &
+            .data$virus == min(.data$virus) &
             .data$time == min(.data$time)
         ]),
       fold_change = replace(
@@ -69,6 +70,7 @@ normalize_densities <- function(blot_raw) {
     dplyr::group_by(
       .data$experiment,
       .data$oxygen,
+      .data$virus,
       .data$treatment,
       .data$group,
       .data$time,
@@ -126,6 +128,7 @@ normalize_qpcr <- function(raw_mrna) {
     dplyr::group_by(
       .data$experiment,
       .data$oxygen,
+      .data$virus,
       .data$treatment,
       .data$group,
       .data$time,

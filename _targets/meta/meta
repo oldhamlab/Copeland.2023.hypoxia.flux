@@ -1,5 +1,5 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
-.Random.seed|object|b2e040bb649c00e4|||||||||||||||
+.Random.seed|object|3445e5c07e2ce532|||||||||||||||
 %nin%|function|b1eefa0a0b2c9c81|||||||||||||||
 annot_metabs|function|7b5504d2fe1c59f9|||||||||||||||
 annot_myc_fluxes|function|2fd2312d9c25e8b6|||||||||||||||
@@ -18,9 +18,9 @@ biomass_equations|stem|72f433cdf4f36243|c7f0795fa886289a|9652eed2132d041a|-17376
 biomass_equations_out|stem|84eb2c1c0b215611|7a9c6b8eaa81b38e|a863109af9bacb93|-1986875523|analysis/modeling/matlab-input/lf_biomass.csv*analysis/modeling/matlab-input/pasmc_biomass.csv|t19404.6571175729s|55f9013d654faf58|654|file|local|vector|||0.625||
 biomass_file|stem|5141bf6cb78599f0|6e7a77eb34fe4c16|1f1b433262b484bd|834311045|data-raw/cell-mass.csv|t18708.660625s|32a8804bee50ec2f|885|file|local|vector|||0.479||
 biomass_report|stem|a827b39007f25582|fb8aa7029bf326c3|68b0c8bd59b571bc|-1517291360|analysis/biomass.html*analysis/biomass.qmd*_quarto.yml|t19423.1395138889s|6b6d48d087274832|1774410|file|local|vector|||28.867||
-blot_files|stem|cf154592bb0ec14f|2f746f0a5597332f|1f1b433262b484bd|1784125424|data-raw/blots*data-raw/blots/lf_02_hif1a_ldha_immunoblots_2018-04-24.csv*data-raw/blots/lf_05_hif1a_ldha_immunoblots_2018-04-24.csv*data-raw/blots/lf_05-bay_hif2a_myc_immunoblots_2021-01-04.csv*data-raw/blots/lf_bay_hif1a_ldha_immunoblots_2018-12-17.csv*data-raw/blots/pasmc_05_hif1a_ldha_immunoblots_2020-10-08.csv|t19397.8081271199s|322823da330d5d40|1425864863|file|local|vector|||0.004||
-blot_norm|stem|37fc42daca019743|50759731e2ed97f6|f618c6212fbb6f1f|909302314||t19423.0583796296s|1bf74737b6c7e2c4|8355|qs|local|vector|||1.886||
-blot_raw|stem|47befa55eaaa2581|7f1561504c3a057e|9b507fc0b2d3cfa2|458147421||t19423.8428785981s|e2756f71d795f0e2|2553|qs|local|vector|||0.333||
+blot_files|stem|764da0b1a7d341d7|2f746f0a5597332f|1f1b433262b484bd|1784125424|data-raw/blots*data-raw/blots/lf_02_hif1a_ldha_immunoblots_2018-04-24.csv*data-raw/blots/lf_05_hif1a_ldha_immunoblots_2018-04-24.csv*data-raw/blots/lf_05-bay_hif2a_myc_immunoblots_2021-01-04.csv*data-raw/blots/lf_05-simyc_hif1a_myc_ldha_immunoblots_2023-04-03.csv*data-raw/blots/lf_05-siphd_hif1a_phd_ldha_immunoblots_2023-04-03.csv*data-raw/blots/lf_bay_hif1a_ldha_immunoblots_2018-12-17.csv*data-raw/blots/lf_bay-myc_hif1a_ldha_immunoblots_2023-04-03.csv*data-raw/blots/pasmc_05_hif1a_ldha_immunoblots_2020-10-08.csv|t19451.5900837484s|99e4cfd57def18d6|1803322213|file|local|vector|||0.005||
+blot_norm|stem|d8b7e71b35586ca0|50759731e2ed97f6|0c6823fc10f5cff2|909302314||t19451.5941899785s|d34fc04ec3dfc8bf|12304|qs|local|vector|||3.193||
+blot_raw|stem|a5b3eb42a616d949|7f1561504c3a057e|1b728f14b4f28c2d|458147421||t19451.590631424s|826b23fb744f06f7|3574|qs|local|vector|||0.202||
 calc_metab_pca|function|d1814593b9452907|||||||||||||||
 calculate_biomass|function|129badc3007b94f7|||||||||||||||
 calculate_biomass_equations|function|01a45c416edcb23e|||||||||||||||
@@ -246,9 +246,9 @@ model_mids|stem|f491e9026a55fe9a|d1e512c8484a52fe|ee8105957e4cc105|-340166807||t
 model_mids_out|stem|67bd1426409b1781|5c4e5c4dad62b81c|7362edbd43e8825a|2018258261|analysis/modeling/matlab-input/pasmc_mids.csv*analysis/modeling/matlab-input/lf_mids.csv|t19404.666036299s|f069a629ebfe774c|327631|file|local|vector|||0.071||
 model_reactions|stem|abcad759df1e0788|93d916a53247b31e|f8a2c39d7d2762e3|-1973607873||t19423.1380324074s|d8460029be42b5ef|1063|qs|local|vector|||0.01||
 model_reactions_data|stem|6dd71d12008128c1|236724d8db356d74|ba39d35e17036238|272489467||t19423.1383680556s|de1c6d017cb4e8a8|38|qs|local|vector|||0.034||
-mrna_files|stem|c12ec856cfe75715|9dcdf413a1c53cf8|1f1b433262b484bd|996236131|data-raw/mrna*data-raw/mrna/lf_02_glut1_ldha_serpine1_mrna_2018-04-11.csv*data-raw/mrna/lf_05_glut1_ldha_mrna_2018-04-11.csv*data-raw/mrna/lf_05-simyc_glut1_ldha_mrna_2023-03-07.csv*data-raw/mrna/lf_05-siphd_glut1_ldha_mrna_2023-03-07.csv*data-raw/mrna/lf_bay_glut1_ldha_mrna_2018-09-24.csv*data-raw/mrna/lf_oemyc_glut1_ldha_mrna_2023-03-07.csv*data-raw/mrna/pasmc_05_glut1_ldha_mrna_2020-09-24.csv|t19423.8820816925s|eefab90ddfcfad30|73120|file|local|vector|||0.501||
-mrna_norm|stem|5fff459e33a928a3|fafa2630884df542|90f91671ea1b5fcd|1289754718||t19424.5704733999s|c6334043f89fbabd|12100|qs|local|vector|||1.956||
-mrna_raw|stem|da353905b2e45717|ba9df25e5e52d2b8|49429e3420fe4842|1465746294||t19423.8827217324s|40df9b692f4ec5ca|6271|qs|local|vector|||0.184||
+mrna_files|stem|c12ec856cfe75715|9dcdf413a1c53cf8|1f1b433262b484bd|996236131|data-raw/mrna*data-raw/mrna/lf_02_glut1_ldha_serpine1_mrna_2018-04-11.csv*data-raw/mrna/lf_05_glut1_ldha_mrna_2018-04-11.csv*data-raw/mrna/lf_05-simyc_glut1_ldha_mrna_2023-03-07.csv*data-raw/mrna/lf_05-siphd_glut1_ldha_mrna_2023-03-07.csv*data-raw/mrna/lf_bay_glut1_ldha_mrna_2018-09-24.csv*data-raw/mrna/lf_bay-myc_glut1_ldha_mrna_2023-03-07.csv*data-raw/mrna/pasmc_05_glut1_ldha_mrna_2020-09-24.csv|t19423.8820816925s|eefab90ddfcfad30|73120|file|local|vector|||0.588||
+mrna_norm|stem|6a93eb6a45c81289|fafa2630884df542|673f1bd9fa76c6c6|1289754718||t19451.5892895489s|450d7aec9538fe19|12034|qs|local|vector|||2.75||
+mrna_raw|stem|cbe78ccd229eb1dc|ba9df25e5e52d2b8|466e8521b06e79ff|1465746294||t19451.5843692299s|abae671ba45f936d|6269|qs|local|vector|||0.201||
 msea_tar_file_bay|stem|35cf116024a739f2|bc2e3c0aef89f6f3|422944bdc17d6dad|921863355|analysis/figures/msea/msea_bay.png|t19423.1453125s|f4b11c4d8d6c8a5e|94272|file|local|vector|||1.01||
 msea_tar_file_hyp|stem|aa56f1a8475e0c72|e5053ba7b1a3180c|fa882f7ffc2f4481|642368860|analysis/figures/msea/msea_hyp.png|t19404.6661187564s|9d1760bb787fc547|40643|file|local|vector|||1.067||
 msea_tar_file_hyp_bay|stem|e4671666867bfb16|de021769174ad1af|5a8049445f63f80a|-1922818831|analysis/figures/msea/msea_hyp-bay.png|t19423.1453009259s|ecccda54d46b5740|132196|file|local|vector|||0.961||
@@ -276,9 +276,9 @@ nad_raw|stem|cb09001b81709af8|084d1bb1accbdea7|8b7e7095f59f5ed4|2120180194||t194
 new_tbl_se|function|47a70c0852e2b2ff|||||||||||||||
 node_file|stem|ffbecaeabd42c42b|36cd9e179d170ef5|1f1b433262b484bd|2010719169|data-raw/model/nodes.csv|t18723.8707638889s|3ec09374b5058a60|507|file|local|vector|||0.003||
 nodes|stem|a0b421d4186a669c|837eeab90a1fdb81|0e35bf651e220aba|541325533||t19423.1380208333s|bea4075b4710d630|650|qs|local|vector|||0.006||
-normalize_densities|function|2a849ab41c9e65f2|||||||||||||||
+normalize_densities|function|0f464fbb5e6f241f|||||||||||||||
 normalize_fluxes|function|8f9bb789a8024b3a|||||||||||||||
-normalize_qpcr|function|59ef2af542f553c3|||||||||||||||
+normalize_qpcr|function|d6bfa8a542b6b376|||||||||||||||
 parse_eq|function|117ec544e9425564|||||||||||||||
 pca_data|stem|843b33c47096850c|5a4ce968cb3220c0|618c926252c0183c|-1002720476||t19423.0582523148s|8fdac5baae0b04f8|526|qs|local|vector|||5.089||
 pkg_citations|stem|faba6040e67ff8d8|a2f226044966232e|876d1acb77ae4eb9|-1198984887||t19423.8598304795s|41006800a27df92d|7233|qs|local|vector|||0.377||
@@ -333,12 +333,12 @@ qbias_report|stem|3edc983e5c60ae05|3038a2ae98aefb9b|30de60104661398c|-1959225300
 quality_control|function|03e72f569c34a813|||||||||||||||
 raw_data_path|function|dd6d707fa46ccd8d|||||||||||||||
 reactions_file|stem|c0473ca781c34be1|dd199de459d6fc3b|21a73c45efe680cd|-2142469955|analysis/modeling/matlab-input/reactions.csv|t18528.922962963s|4ecf27c6a66c02e3|2761|file|local|vector|||0||
-read_data|function|0ecebc62b25a82d9|||||||||||||||
+read_data|function|a46081b778671e12|||||||||||||||
 read_metab_pathways|function|53fec95c35a0a20f|||||||||||||||
 read_ms_excel|function|78901cbb9be4a9b4|||||||||||||||
 read_multi_excel|function|e8c0481446ac49d1|||||||||||||||
 read_qbias|function|88ebf74e1c30dbf5|||||||||||||||
-refs|stem|6b95c78f54d26657|0a2d2f95e9e7113b|62c69f4c6e4f1bc1|1506054218||t19423.8597975216s|e0224cf10db1a05d|62|qs|local|vector|||0.319||
+refs|stem|6b95c78f54d26657|0a2d2f95e9e7113b|62c69f4c6e4f1bc1|1506054218||t19423.8597975216s||62|qs|local|vector|||0.075||not found semenza2012b, lee2019, lee2020b, kaelin2008a, wheaton2011, hubbi2015, gardner2001, koshiji2004, jain2020, wise2011, metallo2011, melendezrodriguez2019, garciabermudez2018, lee2019a, jiang2016, gameiro2013a, scott2011, flamme2014, antoniewicz2018, young2014, buescher2015, ahn2011, wenger2015
 remove_mid_outliers|function|3e68cd162c909339|||||||||||||||
 remove_missing_metab|function|d1093160fe65a9ad|||||||||||||||
 replace_outliers|function|63479239bd6f774b|||||||||||||||
