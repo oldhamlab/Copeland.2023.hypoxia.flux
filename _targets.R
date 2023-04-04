@@ -999,6 +999,29 @@ list(
     format = "file"
   ),
 
+  # figure 3 ----------------------------------------------------------------
+
+  tar_target(
+    lf_hyp_05_high,
+    plot_high_fluxes(fluxes, "lf", "05")
+  ),
+  tar_target(
+    lf_hyp_05_low,
+    plot_low_fluxes(fluxes, "lf", "05")
+  ),
+  tar_target(
+    f3_05_fluxes,
+    arrange_fluxes(
+      lf_hyp_05_high,
+      lf_hyp_05_low
+    )
+  ),
+  tar_target(
+    f3,
+    write_figures(f3_05_fluxes, "Figure 3.png"),
+    format = "file"
+  ),
+
   # manuscript --------------------------------------------------------------
 
   tar_target(

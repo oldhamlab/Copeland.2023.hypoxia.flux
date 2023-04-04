@@ -48,8 +48,7 @@ A data set containing metabolite fluxes.
 \code{-GLC}    = MCDB131 medium lacking glucose \cr
 \code{-GLN}    = MCDB131 medium lacking glutamine \cr
 \code{GLC6}    = MDCB131 medium supplemented with [U-\if{html}{\out{<sup>}}13\if{html}{\out{</sup>}}C\if{html}{\out{<sub>}}6\if{html}{\out{</sub>}}]-glucose}
-\item{group}{
-}
+\item{group}{group labels for statistical comparisons}
 \item{flux}{fmol / cell / h, positive fluxes indicate secretion, negative fluxes
 indicate uptake}
 }

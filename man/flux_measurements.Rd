@@ -5,7 +5,7 @@
 \alias{flux_measurements}
 \title{Measurements for extracellular flux calculations}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 26498 rows and 17 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 26606 rows and 17 columns.
 }
 \usage{
 flux_measurements

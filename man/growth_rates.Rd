@@ -5,7 +5,7 @@
 \alias{growth_rates}
 \title{Growth rate parameters}
 \format{
-An object of class \code{grouped_df} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 220 rows and 10 columns.
+An object of class \code{grouped_df} (inherits from \code{tbl_df}, \code{tbl}, \code{data.frame}) with 232 rows and 10 columns.
 }
 \usage{
 growth_rates

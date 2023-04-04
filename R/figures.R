@@ -326,3 +326,238 @@ arrange_hif_targets <- function(p1, p2, p3, p4, p5) {
       legend.box.margin = ggplot2::margin(t = -10)
     )
 }
+
+plot_high_fluxes <- function(
+    df,
+    cell = c("lf", "pasmc"),
+    exper = c("02", "05", "bay")
+) {
+
+  x <-
+    df |>
+    dplyr::filter(
+      cell_type %in% cell &
+        experiment %in% exper &
+        metabolite %in% c("lactate", "glucose")
+    )
+
+  annot <-
+    x |>
+    dplyr::group_by(abbreviation) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      model = purrr::map(
+        data,
+        ~lmerTest::lmer(flux ~ group + (1 | date), data = .x) |>
+          emmeans::emmeans(~ group) |>
+          pairs() |>
+          broom::tidy()
+      )
+    ) |>
+    tidyr::unnest(c(model)) |>
+    dplyr::mutate(
+      group = stringr::str_extract(contrast, "(?<= - ).*"),
+      y = Inf,
+      vjust = 1,
+      label = annot_p(p.value)
+    )
+
+  ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = reorder(toupper(abbreviation), flux),
+      y = flux
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(fill = group),
+      geom = "col",
+      fun = "mean",
+      # width = 0.6,
+      position = ggplot2::position_dodge2(),
+      show.legend = TRUE,
+      alpha = 0.5
+    ) +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      color = "black",
+      lwd = 0.25
+    ) +
+    ggbeeswarm::geom_beeswarm(
+      ggplot2::aes(fill = group),
+      method = "center",
+      dodge.width = 0.9,
+      pch = 21,
+      size = 1,
+      stroke = 0.2,
+      cex = 4,
+      color = "white",
+      show.legend = FALSE
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(group = group),
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      position = ggplot2::position_dodge(width = 0.9),
+      width = 0.3,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = annot,
+      ggplot2::aes(
+        x = abbreviation,
+        label = label,
+        y = y,
+        vjust = vjust
+      ),
+      family = "Calibri",
+      size = 8/ggplot2::.pt,
+      inherit.aes = FALSE
+    ) +
+    ggplot2::labs(
+      x = NULL,
+      y = "Flux (fmol/cell/h)",
+      fill = NULL
+    ) +
+    ggplot2::scale_fill_manual(values = clrs, limits = force) +
+    ggplot2::scale_y_continuous(
+      expand = ggplot2::expansion(mult = 0.2),
+      breaks = scales::extended_breaks(n = 7)
+    ) +
+    ggplot2::guides(
+      fill = ggplot2::guide_legend(override.aes = list(alpha = 1))
+    ) +
+    theme_plots() +
+    ggplot2::theme(
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+plot_low_fluxes <- function(
+    df,
+    cell = c("lf", "pasmc"),
+    exper = c("02", "05", "bay")
+) {
+
+  x <-
+    df |>
+    dplyr::filter(
+      cell_type %in% cell &
+        experiment %in% exper &
+        metabolite %nin% c("lactate", "glucose")
+    ) |>
+    dplyr::filter(
+      !(metabolite == "glutamine" & flux > 0)
+    ) |>
+    dplyr::mutate(width = 0.3)
+
+  annot <-
+    x |>
+    dplyr::group_by(abbreviation) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      model = purrr::map(
+        data,
+        ~lmerTest::lmer(flux ~ group + (1 | date), data = .x) |>
+          emmeans::emmeans(~ group) |>
+          pairs() |>
+          broom::tidy()
+      )
+    ) |>
+    tidyr::unnest(c(model)) |>
+    dplyr::mutate(
+      group = stringr::str_extract(contrast, "(?<= - ).*"),
+      y = Inf,
+      vjust = 1,
+      label = annot_p(p.value)
+    )
+
+    ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = reorder(toupper(abbreviation), flux),
+      y = flux
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(fill = group),
+      geom = "col",
+      fun = "mean",
+      position = ggplot2::position_dodge2(width = 1),
+      alpha = 0.5,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      color = "black",
+      lwd = 0.25
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(
+        group = group,
+        width = width
+      ),
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      position = ggplot2::position_dodge(width = 0.9),
+      width = 0.35,
+      linewidth = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = annot,
+      ggplot2::aes(
+        x = abbreviation,
+        y = y,
+        vjust = vjust,
+        label = label,
+        group = group
+      ),
+      family = "Calibri",
+      size = 8/ggplot2::.pt
+    ) +
+    ggplot2::labs(
+      x = NULL,
+      y = "Flux (fmol/cell/h)",
+      fill = NULL
+    ) +
+    ggplot2::scale_fill_manual(values = clrs, limits = force) +
+    ggplot2::scale_y_continuous(
+      trans = ggallin::pseudolog10_trans,
+      breaks = c(-100, -10, 0, 10),
+      limits = c(-250, 50)
+    ) +
+    ggplot2::guides(
+      fill = ggplot2::guide_legend(override.aes = list(alpha = 1))
+    ) +
+    theme_plots() +
+    ggplot2::theme(
+      panel.grid.major.x = ggplot2::element_line(color = "gray80", size = 0.1),
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
+      legend.box.margin = ggplot2::margin(t = -10),
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 0.5, vjust = 0.5)
+    )
+}
+
+arrange_fluxes <- function(p1, p2) {
+  layout <- "
+  a#
+  bb
+  "
+
+  p1 + p2 +
+    theme_patchwork(
+      design = layout,
+      widths = ggplot2::unit(c(1, 1.5), "in"),
+      heights = ggplot2::unit(1, "in"),
+      guides = "collect"
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}

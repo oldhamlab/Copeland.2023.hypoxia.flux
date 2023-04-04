@@ -182,8 +182,7 @@
 #'   `-GLC`    = MCDB131 medium lacking glucose \cr
 #'   `-GLN`    = MCDB131 medium lacking glutamine \cr
 #'   `GLC6`    = MDCB131 medium supplemented with \[U-<sup>13</sup>C<sub>6</sub>\]-glucose}
-#'   \item{group}{
-#'   }
+#'   \item{group}{group labels for statistical comparisons}
 #'   \item{flux}{fmol / cell / h, positive fluxes indicate secretion, negative fluxes
 #'   indicate uptake}
 #'   }
