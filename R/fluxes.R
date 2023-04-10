@@ -542,6 +542,8 @@ assemble_flux_measurements <- function(conc_clean, evap_clean) {
         .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
         .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
         .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
+        .data$treatment == "GLC6" & .data$oxygen == "21%" ~ "21%",
+        .data$treatment == "GLC6" & .data$oxygen == "0.5%" ~ "0.5%"
       ),
       group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY")),
       metabolite = replace(.data$metabolite, .data$metabolite == "dna", "cells"),
@@ -873,6 +875,8 @@ calculate_fluxes <- function(flux_curves) {
         .data$experiment %in% c("02", "05", "bay") & .data$treatment == "BAY" ~ "BAY",
         .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.5%" ~ "0.5%",
         .data$experiment %in% c("02", "05", "bay") & .data$oxygen == "0.2%" ~ "0.2%",
+        .data$treatment == "GLC6" & .data$oxygen == "21%" ~ "21%",
+        .data$treatment == "GLC6" & .data$oxygen == "0.5%" ~ "0.5%"
       ),
       group = factor(.data$group, levels = c("21%", "0.5%", "0.2%", "DMSO", "BAY"))
     ) |>

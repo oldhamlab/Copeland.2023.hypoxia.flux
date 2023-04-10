@@ -137,7 +137,7 @@ plot_time_lines <- function(
       color = "white",
       size = 1.5,
       stroke = 0.4,
-      show.legend = TRUE
+      show.legend = FALSE
     ) +
     ggplot2::labs(
       x = "Time (h)",
@@ -276,27 +276,17 @@ plot_expression <- function(
     plot_time_lines(y = "fold_change", ylab = ylab, clr = "group")
 }
 
+arrange_f1_s1 <- function(p1, p2, p3) {
+  layout <- "
+  ab#
+  ccc
+  "
 
-arrange_growth <- function(p1, p2, p3) {
   p1 + p2 + p3 +
     theme_patchwork(
-      widths = ggplot2::unit(c(1.5, 1, 1), "in"),
+      design = layout,
+      widths = ggplot2::unit(c(1, 1, 1.25), "in"),
       heights = ggplot2::unit(1, "in")
-    ) &
-    ggplot2::theme(
-      legend.position = "bottom",
-      legend.key.width = ggplot2::unit(0.5, "lines"),
-      legend.key.height = ggplot2::unit(0.5, "lines"),
-      legend.box.margin = ggplot2::margin(t = -10)
-    )
-}
-
-arrange_viability <- function(p1) {
-  p1 +
-    theme_patchwork(
-      widths = ggplot2::unit(1, "in"),
-      heights = ggplot2::unit(1, "in"),
-      tags = NULL
     ) &
     ggplot2::theme(
       legend.position = "bottom",
@@ -474,7 +464,7 @@ plot_low_fluxes <- function(
       label = annot_p(p.value)
     )
 
-    ggplot2::ggplot(x) +
+  ggplot2::ggplot(x) +
     ggplot2::aes(
       x = reorder(toupper(abbreviation), flux),
       y = flux
@@ -536,21 +526,172 @@ plot_low_fluxes <- function(
       legend.key.width = ggplot2::unit(0.5, "lines"),
       legend.key.height = ggplot2::unit(0.5, "lines"),
       legend.position = "bottom",
-      legend.box.margin = ggplot2::margin(t = -10),
-      axis.text.x = ggplot2::element_text(angle = 45, hjust = 0.5, vjust = 0.5)
+      legend.box.margin = ggplot2::margin(t = -10)
     )
 }
 
-arrange_fluxes <- function(p1, p2) {
+arrange_fluxes <- function(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) {
   layout <- "
-  a#
-  bb
+  abc
+  def
+  ghi
+  jjj
   "
 
-  p1 + p2 +
+  p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 +
     theme_patchwork(
       design = layout,
-      widths = ggplot2::unit(c(1, 1.5), "in"),
+      widths = unit(1, "in"),
+      heights = unit(1, "in"),
+      guides = "collect"
+    ) &
+    theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+plot_glc6_curve <- function(conc_std) {
+  conc_std |>
+    dplyr::ungroup() |>
+    dplyr::filter(experiment == "substrate" & metabolite == "lactate") |>
+    dplyr::select(date, data) |>
+    tidyr::unnest(c("data")) |>
+    ggplot2::ggplot() +
+    ggplot2::aes(
+      x = conc / 1000,
+      y = value
+    ) +
+    ggplot2::geom_smooth(
+      method = "lm",
+      formula = y ~ x,
+      color = clrs[[2]],
+      linewidth = 0.25,
+      se = FALSE
+    ) +
+    ggplot2::geom_point(
+      pch = 21,
+      color = "white",
+      fill = "black",
+      size = 1,
+      stroke = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::labs(
+      x = "Lactate (mM)",
+      y = "Peak area ratio"
+    ) +
+    theme_plots() +
+    ggplot2::coord_cartesian(xlim = c(0, NA), clip = "off") +
+    NULL
+}
+
+plot_glc6_mass <- function(flux_measurements) {
+  flux_measurements |>
+    dplyr::filter(experiment == "substrate" & metabolite == "lactate") |>
+    dplyr::group_by(dplyr::across(cell_type:time)) |>
+    wmo::remove_nested_outliers("nmol", remove = TRUE) |>
+    dplyr::summarise(umol = mean(nmol) / 1000) |>
+    plot_time_lines(y = "umol", ylab = bquote("[U-"^13 * "C"[3] * "]-Lactate (μmol)"), clr = "oxygen")
+}
+
+plot_glc6_fluxes <- function(df) {
+  x <-
+    df |>
+    dplyr::filter(experiment == "substrate" & metabolite == "lactate")
+
+  annot <-
+    lmerTest::lmer(flux ~ group + (1 | date), data = x) |>
+    emmeans::emmeans(~ group) |>
+    pairs() |>
+    broom::tidy()|>
+    dplyr::mutate(
+      group = stringr::str_extract(contrast, "(?<= - ).*"),
+      y = Inf,
+      vjust = 1,
+      label = annot_p(p.value),
+      abbreviation = "LAC"
+    )
+
+  ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = group,
+      y = flux
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(fill = group),
+      geom = "col",
+      fun = "mean",
+      # width = 0.6,
+      position = ggplot2::position_dodge2(),
+      show.legend = FALSE,
+      alpha = 0.5
+    ) +
+    ggbeeswarm::geom_beeswarm(
+      ggplot2::aes(fill = group),
+      method = "center",
+      dodge.width = 0.9,
+      pch = 21,
+      size = 1,
+      stroke = 0.2,
+      cex = 4,
+      color = "white",
+      show.legend = FALSE
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(group = group),
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      position = ggplot2::position_dodge(width = 0.9),
+      width = 0.3,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = annot,
+      ggplot2::aes(
+        x = 1.5,
+        label = label,
+        y = y,
+        vjust = vjust
+      ),
+      family = "Calibri",
+      size = 8/ggplot2::.pt,
+      inherit.aes = FALSE
+    ) +
+    ggplot2::labs(
+      x = "Treatment",
+      title = bquote("[U-"^13 * "C"[6] * "]-GLC → [U-"^13 * "C"[3] * "]-LAC"),
+      y = "Flux (fmol/cell/h)",
+      fill = NULL
+    ) +
+    ggplot2::scale_fill_manual(values = clrs, limits = force) +
+    ggplot2::scale_y_continuous(
+      breaks = scales::extended_breaks(n = 7)
+    ) +
+    ggplot2::guides(
+      fill = ggplot2::guide_legend(override.aes = list(alpha = 1))
+    ) +
+    theme_plots() +
+    ggplot2::theme(
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
+      legend.box.margin = ggplot2::margin(t = -10),
+      plot.title = ggplot2::element_text(size = 8, hjust = 1),
+      plot.title.position = "plot"
+    )
+}
+
+arrange_glc6_flux <- function(p1, p2, p3) {
+  layout <- "abc"
+
+  p1 + p2 + p3 +
+    theme_patchwork(
+      design = layout,
+      widths = ggplot2::unit(1, "in"),
       heights = ggplot2::unit(1, "in"),
       guides = "collect"
     ) &
@@ -558,6 +699,146 @@ arrange_fluxes <- function(p1, p2) {
       legend.position = "bottom",
       legend.key.width = ggplot2::unit(0.5, "lines"),
       legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+plot_evap_data <- function(evap_clean) {
+  evap_clean |>
+    dplyr::filter(experiment == "05" & cell_type == "lf") |>
+    dplyr::mutate(
+      oxygen = factor(oxygen, levels = c("21%", "0.5%"))
+    ) |>
+    ggplot2::ggplot() +
+    ggplot2::aes(
+      x = time,
+      y = volume,
+      color = oxygen,
+      fill = oxygen
+    ) +
+    ggplot2::geom_smooth(
+      method = "lm",
+      formula = y ~ x,
+      se = FALSE,
+      size = 0.5,
+      show.legend = FALSE
+    ) +
+    # ggplot2::stat_summary(
+    #   geom = "linerange",
+    #   fun.data = "mean_se",
+    #   size = 0.5,
+    #   show.legend = FALSE
+    # ) +
+    ggplot2::stat_summary(
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      color = "black",
+      width = 2,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::stat_summary(
+      geom = "point",
+      fun = "mean",
+      pch = 21,
+      color = "white",
+      size = 1.5,
+      stroke = 0.2,
+      show.legend = FALSE
+    ) +
+    ggplot2::labs(
+      x = "Time (h)",
+      y = "Volume (mL)"
+    ) +
+    ggplot2::scale_x_continuous(breaks = seq(0, 96, 24)) +
+    ggplot2::scale_color_manual(values = clrs) +
+    ggplot2::scale_fill_manual(values = clrs) +
+    theme_plots()
+}
+
+plot_k <- function(degradation_rates, k) {
+  annot <-
+    k |>
+    dplyr::select(-k) |>
+    dplyr::mutate(
+      label = "*",
+      ypos = Inf,
+      vjust = 1
+    )
+
+  degradation_rates |>
+    dplyr::mutate(
+      group = dplyr::case_when(
+        oxygen == "21%" & treatment == "None" ~ "21%",
+        oxygen == "0.5%" ~ "0.5%",
+        treatment == "DMSO" ~ "DMSO"
+      ),
+      group = factor(group, levels = c("21%", "0.5%", "DMSO"))
+    ) |>
+    dplyr::left_join(annot, by = c("metabolite", "oxygen", "treatment")) |>
+    ggplot2::ggplot() +
+    ggplot2::aes(
+      x = reorder(toupper(abbreviation), k),
+      y = k
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(fill = group),
+      geom = "col",
+      fun = "mean",
+      position = ggplot2::position_dodge(width = 0.6),
+      width = 0.6,
+      show.legend = TRUE
+    ) +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      color = "black",
+      lwd = 0.25
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(group = group),
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      position = ggplot2::position_dodge(width = 0.6),
+      width = 0.2,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      ggplot2::aes(
+        color = group,
+        label = label,
+        y = ypos,
+        vjust = vjust
+      ),
+      family = "Calibri",
+      size = 6/ggplot2::.pt,
+      position = ggplot2::position_dodge(width = 0.6),
+      show.legend = FALSE
+    ) +
+    ggplot2::labs(
+      x = "Metabolite",
+      y = "Rate constant (/h)",
+      fill = NULL,
+      color = NULL
+    ) +
+    ggplot2::scale_color_manual(
+      values = clrs,
+      limits = force
+    ) +
+    ggplot2::scale_fill_manual(
+      values = clrs,
+      limits = force
+    ) +
+    ggplot2::guides(
+      fill = ggplot2::guide_legend(override.aes = list(alpha = 1))
+    ) +
+    # ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = 0.2)) +
+    theme_plots() +
+    ggplot2::theme(
+      panel.grid.major.x = ggplot2::element_line(color = "gray90"),
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
       legend.box.margin = ggplot2::margin(t = -10)
     )
 }

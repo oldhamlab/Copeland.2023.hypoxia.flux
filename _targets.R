@@ -909,118 +909,173 @@ list(
 
   # figure1 -----------------------------------------------------------------
 
-  tar_target(
-    lf_hyp_05_timeline_png,
-    system.file(
-      "manuscript/figs-raw/lf_hyp_05_timeline.png",
-      package = "Copeland.2023.hypoxia.flux"
+  tar_map(
+    values = list(
+      names = list(
+        "lf_hyp_05",
+        "lf_hyp_02",
+        "pasmc_hyp_05",
+        "lf_bay"
+      ),
+      timeline_path = list(
+        "manuscript/figs-raw/lf_hyp_05_timeline.png",
+        "manuscript/figs-raw/lf_hyp_02_timeline.png",
+        "manuscript/figs-raw/pasmc_hyp_05_timeline.png",
+        "manuscript/figs-raw/lf_bay_timeline.png"
+      ),
+      blot_path = list(
+        "manuscript/figs-raw/lf_05_hif1a-ldha-blots.png",
+        "manuscript/figs-raw/lf_02_hif1a-ldha-blots.png",
+        "manuscript/figs-raw/pasmc_05_hif1a-ldha-blots.png",
+        "manuscript/figs-raw/lf_bay_hif1a-ldha-blots.png"
+      ),
+      cell = c("lf", "lf", "pasmc", "lf"),
+      exp1 = c("05", "02", "05", "bay"),
+      exp2 = c("lf_05", "lf_02", "pasmc_05", "lf_bay"),
+      filename = list(
+        "Figure 1.png",
+        "Figure 1 - figure supplement 3.png",
+        "Figure 1 - figure supplement 4.png",
+        "Figure 2.png"
+      )
     ),
-    format = "file"
-  ),
-  tar_target(
-    lf_hyp_05_timeline,
-    plot_image(lf_hyp_05_timeline_png, scale = 1, hjust = 0, vjust = 0)
-  ),
-  tar_target(
-    lf_hyp_05_growth_curve,
-    plot_growth_curve(flux_measurements, cell = "lf", exp = "05")
-  ),
-  tar_target(
-    lf_hyp_05_growth_rate,
-    plot_growth_rates(growth_rates, cell = "lf", exp = "05")
-  ),
-  tar_target(
-    f1_growth,
-    arrange_growth(
-      lf_hyp_05_timeline,
-      lf_hyp_05_growth_curve,
-      lf_hyp_05_growth_rate
-    )
-  ),
-  tar_target(
-    f1,
-    write_figures(f1_growth, "Figure 1.png"),
-    format = "file"
+    names = names,
+    tar_target(
+      timeline_png,
+      system.file(
+        timeline_path,
+        package = "Copeland.2023.hypoxia.flux"
+      ),
+      format = "file"
+    ),
+    tar_target(
+      timeline,
+      plot_image(timeline_png, scale = 1.6, hjust = 0.2, vjust = 0.1)
+    ),
+    tar_target(
+      growth_curve,
+      plot_growth_curve(flux_measurements, cell = cell, exp = exp1)
+    ),
+    tar_target(
+      growth_rate,
+      plot_growth_rates(growth_rates, cell = cell, exp = exp1)
+    ),
+    tar_target(
+      blot_png,
+      system.file(
+        blot_path,
+        package = "Copeland.2023.hypoxia.flux"
+      ),
+      format = "file"
+    ),
+    tar_target(
+      blot,
+      plot_image(blot_png, scale = 1.3, hjust = 0.2, vjust = 0)
+    ),
+    tar_target(
+      hif1a_prot,
+      plot_expression(blot_norm, exp2, "hif1a", "HIF-1α protein\n(normalized)")
+    ),
+    tar_target(
+      ldha_prot,
+      plot_expression(blot_norm, exp2, "ldha", "LDHA protein\n(normalized)")
+    ),
+    tar_target(
+      glut1_rna,
+      plot_expression(mrna_norm, exp2, "glut1", "GLUT1 mRNA\n(normalized)")
+    ),
+    tar_target(
+      ldha_rna,
+      plot_expression(mrna_norm, exp2, "ldha", "LDHA mRNA\n(normalized)")
+    ),
+    tar_target(
+      high,
+      plot_high_fluxes(fluxes, cell, exp1)
+    ),
+    tar_target(
+      low,
+      plot_low_fluxes(fluxes, cell, exp1)
+    ),
+    tar_target(
+      fluxes_panel,
+      arrange_fluxes(
+        timeline,
+        growth_curve,
+        growth_rate,
+        blot,
+        hif1a_prot,
+        ldha_prot,
+        glut1_rna,
+        ldha_rna,
+        high,
+        low
+      )
+    ),
+    tar_target(
+      flux_figures,
+      write_figures(fluxes_panel, filename = filename),
+      format = "file"
+    ),
+    NULL
   ),
   tar_target(
     viability_plot,
     plot_time_lines(viability, y = "viability", ylab = "Cell viability (%)", clr = "oxygen")
   ),
   tar_target(
-    f1_viability,
-    arrange_viability(viability_plot)
+    evap_plot,
+    plot_evap_data(evap_clean)
+  ),
+  tar_target(
+    k_plot,
+    plot_k(degradation_rates, k)
+  ),
+  tar_target(
+    f1_s1_plot,
+    arrange_f1_s1(
+      viability_plot,
+      evap_plot,
+      k_plot
+    )
   ),
   tar_target(
     f1_s1,
-    write_figures(f1_viability, "Figure 1 - figure supplement 1.png"),
-    format = "file"
-  ),
-
-  # figure2 -----------------------------------------------------------------
-
-  tar_target(
-    lf_hyp_05_blot_png,
-    manuscript_path("figs-raw/lf_05_hif1a-ldha-blots.png"),
+    write_figures(f1_s1_plot, "Figure 1 - figure supplement 1.png"),
     format = "file"
   ),
   tar_target(
-    lf_hyp_05_blot,
-    plot_image(lf_hyp_05_blot_png, scale = 1.3, hjust = 0.2, vjust = 0)
+    glc6_std_curve,
+    plot_glc6_curve(conc_std)
   ),
   tar_target(
-    lf_hyp_05_hif1a_prot,
-    plot_expression(blot_norm, "lf_05", "hif1a", "HIF-1α protein\n(normalized)")
+    glc6_mass,
+    plot_glc6_mass(flux_measurements)
   ),
   tar_target(
-    lf_hyp_05_ldha_prot,
-    plot_expression(blot_norm, "lf_05", "ldha", "LDHA protein\n(normalized)")
+    glc6_flux,
+    plot_glc6_fluxes(fluxes)
   ),
   tar_target(
-    lf_hyp_05_glut1_rna,
-    plot_expression(mrna_norm, "lf_05", "glut1", "GLUT1 mRNA\n(normalized)")
-  ),
-  tar_target(
-    lf_hyp_05_ldha_rna,
-    plot_expression(mrna_norm, "lf_05", "ldha", "LDHA mRNA\n(normalized)")
-  ),
-  tar_target(
-    f2_hif_targets,
-    arrange_hif_targets(
-      lf_hyp_05_blot,
-      lf_hyp_05_hif1a_prot,
-      lf_hyp_05_glut1_rna,
-      lf_hyp_05_ldha_rna,
-      lf_hyp_05_ldha_prot
+    f1_lcms_lactate,
+    arrange_glc6_flux(
+      glc6_std_curve,
+      glc6_mass,
+      glc6_flux
     )
   ),
   tar_target(
-    f2,
-    write_figures(f2_hif_targets, "Figure 2.png"),
+    f1_s2,
+    write_figures(f1_lcms_lactate, "Figure 1 - figure supplement 2.png"),
     format = "file"
   ),
+
+  # figure 2 ----------------------------------------------------------------
+
+
 
   # figure 3 ----------------------------------------------------------------
 
-  tar_target(
-    lf_hyp_05_high,
-    plot_high_fluxes(fluxes, "lf", "05")
-  ),
-  tar_target(
-    lf_hyp_05_low,
-    plot_low_fluxes(fluxes, "lf", "05")
-  ),
-  tar_target(
-    f3_05_fluxes,
-    arrange_fluxes(
-      lf_hyp_05_high,
-      lf_hyp_05_low
-    )
-  ),
-  tar_target(
-    f3,
-    write_figures(f3_05_fluxes, "Figure 3.png"),
-    format = "file"
-  ),
+
 
   # manuscript --------------------------------------------------------------
 
@@ -1050,7 +1105,7 @@ list(
     rbbt::bbt_update_bib(
       path = "manuscript/manuscript.qmd",
       ignore = c("R-base"),
-      path_bib = "manuscript/library.json"
+      path_bib = "manuscript/library.bib"
     ),
     cue = tar_cue("always")
   ),
