@@ -59,9 +59,10 @@ targets::tar_load(refs)
 # ensure figures are up-to-date
 targets::tar_load(
   c(
-    f1,
-    f1_s1,
-    f2
+    fluxes_panel_lf_hyp_05,
+    table_lf_hyp, 
+    table_lf_bay, 
+    table_pasmc_hyp
   )
 )
 ```
@@ -106,15 +107,36 @@ Since hypoxia did not increase glycolysis in LFs, we wanted to determine how the
 
 In addition to glucose and lactate, we also determined the extracellular fluxes of pyruvate and amino acids (**Figure 1J, Figure 1 - figure supplement 3J, Figure 1 - figure supplement 4J, Figure 2J**). To our knowledge, this is the first comprehensive extracellular flux profiling of key metabolic substrates in primary cells. In LFs, overall, changes in extracellular fluxes were modest, with hypoxia generally decreasing the fluxes of all measured metabolites. These findings were similar with 0.2% oxygen exposure (**Figure 1 - figure supplement 3J**).
 
-Notably, we observed a significant decrease in glutamine consumption in hypoxic LFs. This finding contrasts with previous studies of cancer cell metabolism demonstrating increased glutamine uptake as a key feature of the metabolic response to hypoxia [@metallo2011; @wise2011; @gameiro2013]. In these systems, glutamine-derived α-ketoglutarate was reductively carboxylated by isocitrate dehydrogenase enzymes to generate citrate for lipogenesis. In addition, glutamine has been shown to support TCA cycling in hypoxia in a Burkitt lymphoma model [@le2012]. Unlike LFs, PASMCs did exhibit a trend toward increased glutamine uptake (**Figure 1 - figure supplement 4J**), suggesting a greater reliance on these metabolic pathways in their adaptive response to hypoxia.
+Notably, we observed a significant decrease in glutamine consumption in hypoxic LFs. This finding contrasts with previous studies of cancer cell metabolism demonstrating increased glutamine uptake as a key feature of the metabolic response to hypoxia [@metallo2011; @wise2011; @gameiro2013]. In these systems, glutamine-derived α-ketoglutarate was reductively carboxylated by isocitrate dehydrogenase enzymes to generate citrate for lipogenesis. In addition, glutamine has been shown to support TCA cycling in hypoxia in a Burkitt lymphoma model [@le2012]. Unlike LFs, PASMCs did exhibit a trend toward increased glutamine uptake (**Figure 1 - figure supplement 4J**). To examine the relative importance of glucose and glutamine to the proliferation of these cells in hypoxia, we measured LF and PASMC growth rates in the absence of either substrate (**Figure 3**). In LFs, absence of either glucose or glutamine reduced cell proliferation to a similar extent (**Figure 3A**). In hypoxia, glucose deficiency decreased LF proliferation rate further, while glutamine deficiency had no additional impact. These findings are consistent with extracellular flux measurements demonstrating decreased glutamine consumption by LFs in hypoxia. Interestingly, neither glucose nor glutamine deficiency decreased PASMC proliferation (**Figure 3B**), suggesting a high degree of metabolic flexibility in these cells. 
 
-<!-- Data Here -->
+In LFs, among all of the measured amino acid fluxes, proline consumption uniquely increased (**Figure 1J**). Hypoxia increases collagen expression in these cells [@liu2013] and proline constitutes ~ 10% of the total amino acid content of collagens. Together, these data suggest an important contribution of extracellular proline to collagen production in hypoxic LFs as has been observed in other fibroblast cell lineages [@szoka2017].
 
-In LFs, among all of the measured amino acid fluxes, proline consumption uniquely increased (**Fig \@ref(fig:m1)J**). Hypoxia increases collagen expression in these cells [@liu2013] and proline constitutes ~ 10% of the total amino acid content of collagens. Together, these data suggest an important contribution of extracellular proline to collagen production in hypoxic LFs as has been observed in other fibroblast cell lineages [@szoka2017].
+In PASMCs, we observed increased consumption of the branched-chain amino acids (BCAAs) leucine and valine as well as arginine (**Figure 1 - figure supplement 4J**), which was not observed in LFs. BCAAs are transaminated by branch chain amino transferase enzymes to branched chain α-keto acids (BCKAs). BCKAs are further metabolized to yield acyl-CoA derivatives for lipogenesis or oxidation [@mann2021; @crown2015]. Previous studies have shown that hypoxia up-regulates arginase expression in hypoxic PASMCs [@chen2009; @xue2017] to support polyamine and proline synthesis required for cell proliferation [@li2001]. Interestingly, activation of these metabolic pathways in hypoxia was not observed in LFs and suggests distinct metabolic dependencies of these different cell types.
 
-In PASMCs, we observed increased consumption of the branched-chain amino acids (BCAAs) leucine and valine as well as arginine (**Figure S3J**), which was not observed in LFs. BCAAs are transaminated by branch chain amino transferase enzymes to branched chain α-keto acids (BCKAs). BCKAs are further metabolized to yield acyl-CoA derivatives for lipogenesis or oxidation [@mann2021; @crown2015]. Previous studies have shown that hypoxia up-regulates arginase expression in hypoxic PASMCs [@chen2009; @xue2017] to support polyamine and proline synthesis required for cell proliferation [@li2001]. Interestingly, activation of these metabolic pathways in hypoxia was not observed in LFs and suggests distinct metabolic vulnerabilities of these different cell types.
+Compared to hypoxia treatment, BAY demonstrated more modest effects on amino acid fluxes generally (**Figure 2J**). In particular, glutamate efflux was not affected by BAY treatment, while it was reduced by hypoxia. Alanine efflux was increased by BAY treatment, but decreased by hypoxia. In addition to the glucose and lactate fluxes noted above, these findings further highlight fundamental differences in the metabolic consequences of HIF-1α activation in normoxia and hypoxia. 
 
-Compared to hypoxia treatment, BAY demonstrated more modest effects on amino acid fluxes generally (**Figure \@ref(fig:m2)J**). In particular, glutamate efflux was not affected by BAY treatment, while it was reduced by hypoxia. Alanine efflux was increased by BAY treatment, but decreased by hypoxia. In addition to the glucose and lactate fluxes noted above, these findings further highlight fundamental differences in the metabolic consequences of HIF-1α activation in normoxia and hypoxia. 
+## Isotope tracing reveals altered substrate utilization in hypoxia
+
+To investigate intracellular metabolic reprogramming in hypoxic cells, we performed ^13^C stable isotope tracing with [U-^13^C~6~]-glucose, [1,2-^13^C~2~]-glucose, and [U-^13^C~5~]-glutamine. Isotopic enrichment of downstream metabolites in glycolysis and the TCA cycle were determined by LC-MS (**Figure 4 - figure supplement 1**, **Figure 4 - figure supplement 2**). Overall, relatively small changes in the patterns of isotope incorporation were observed following hypoxia or BAY treatment. The most substantial differences were observed in pyruvate (PYR), the terminal product of glycolysis, and citrate (CIT), a central metabolic node in TCA and fatty acid metabolism (**Figure 4A-C**). Both hypoxia and BAY treatments decreased incorporation of glucose-derived carbon into pyruvate (**Figure 4A**) (*i.e.,* the unlabeled, or M0, fraction was greater). This suggests a greater contribution from an unlabeled carbon source, such as extracellular pyruvate, lactate, or alanine, than from glucose, to the intracellular pyruvate pool following PHD inhibition.
+
+Total citrate labeling from [U-^13^C~6~]-glucose was unchanged across the treatment conditions (**Figure 4B**). As expected, we observed decreased M2 and M4 citrate isotopes, consistent with decreased pyruvate dehydrogenase activity in hypoxia. Interestingly, we observed increased M3 and M5 citrate isotopes. Pyruvate carboxylase catalyzes the carboxylation of pyruvate to oxaloacetate after which all three pyruvate carbons are incorporated into citrate by citrate synthase. Thus, this labeling pattern suggests a more prominent contribution of pyruvate carboxylase to sustain TCA cycle anaplerosis despite pyruvate dehydrogenase inhibition following HIF-1α activation. By contrast to glucose labeling, much less citrate was labeled by glutamine with hypoxia or BAY with a more pronounced effect of BAY treatment (**Figure 4C**), suggesting a less important contribution of glutamine to TCA anaplerosis under these conditions. In addition, the overall fraction of M5 citrate resulting from reductive carboxylation of glutamine-derived α-ketoglutarate was low (< 7%) (**Figure 4D**). Although a hypoxia-mediated increase in M5 citrate was observed, the overall fraction was much less than the 10-20% levels previously reported in cancer cells [@wise2011; @metallo2011]. 
+
+The stable isotope labeling patterns in PASMCs were generally similar to LFs (**Figure 4 - figure supplement 2**). The most notable differences between LF and PASMC labeling were observed in citrate. Compared with LFs, a much lower fraction of total citrate was labeled by glucose in PASMCs. Less activity of pyruvate carboxylase in these cells was suggested by decreased M3 and M5 citrate isotopes after glucose labeling. Interestingly, the M5 citrate fraction in PASMCs was more consistent with previous reports from the cancer literature (**Figure 4D**), suggesting activation of glutamine anaplerosis for biomass synthesis in these cells. 
+
+## Glycolytic flux in hypoxia is closely coupled to cell growth rate
+
+The mass isotopomer distribution for a given metabolite is determined by the complex relationship among the rate of isotope incorporation into the metabolic network, the contributions of unlabeled substrates, and fluxes through related pathways. To clarify how these labeling patterns reflect changes in intracellular metabolite fluxes, we next generated metabolic flux models incorporating the extracellular flux measurements and stable isotope tracing data described above. Preliminary labeling time courses indicated that, even after 72 h of labeling, intracellular metabolites did not reach isotopic steady state (**Figure 5 - figure supplement 1**). Thus, we performed isotopically non-stationary metabolic flux analysis as implemented by Isotopomer Network Compartment Analysis (INCA) [@murphy2013; @young2014a; @jazmin2013]. 
+
+Overall, LF and PASMC metabolic fluxes were dominated by high rates of glucose uptake and glycolysis (**Figure 5 - figure supplement 2**). Approximately 10% of cytoplasmic pyruvate enters the TCA cycle with the balance converted to lactate. Consistent with extracellular flux measurements and isotope labeling patterns described above, hypoxia significantly decreased glycolysis, the TCA cycle, and amino acid metabolism (**Figure 5A**). A significant increase in pentose phosphate pathway flux was also observed, although the absolute flux through this pathway is low. By contrast, HIF-1α activation by BAY in 21% oxygen increased glycolysis and lactate fermentation by nearly 50% (**Figure 5B**), but had a similar effect on decreasing serine and glutamine uptake as hypoxia. Metabolite fluxes in DMSO-treated cells were similar to 21% oxygen controls (**Table 1**, **Table 2**). 
+
+In normoxia, the magnitude of intracellular metabolite fluxes was generally similar in LFs and PASMCs (**Figure 5 - figure supplement 2**, **Table 1**, **Table 3**). Compared to LFs, PASMCs had slower rates of glycolysis and faster rates of TCA metabolism driven, in part, by increased glutamine uptake (**Figure 5 - figure supplement 3**). In hypoxia, PASMCs exhibited similar decreases in glycolytic flux as LFs but also a marked, and unexpected, increase in TCA flux (**Figure 5 - figure supplement 4**). The increased TCA flux in PASMCs was driven by increased glutamine consumption. This finding is similar to a prior report of glutamine-driven oxidative phosphorylation in hypoxic cancer cells [@fan2013], where oxidative phosphorylation continued to provide the majority of cellular ATP even at 1% oxygen. 
+
+Given the global decrease in bioenergetic metabolic flux in hypoxic LFs, we hypothesized that these differences may be a consequence of decreased growth rate. After normalizing metabolite fluxes in normoxia and hypoxia to the cell growth rate, a modest increase (~10%) in glycolytic flux was observed (**Figure 5 - figure supplement 5**). This finding suggests that, while glycolysis increases relative to growth rate in hypoxic cells, regulators of cell proliferation rate override the anti-proliferative effects of the HIF-1α transcriptional program. Indeed, even after adjusting for cell growth rate, the relative increase in glycolytic flux is modest compared to the marked up-regulation of glycolytic protein levels and the glycolytic potential of these cells demonstrated by BAY treatment in normoxia. BAY treatment decreased cell proliferation rate (**Figure 2B-C**), indicating that, unlike hypoxia, BAY treatment in normoxia uncouples cell proliferation and metabolic flux. 
+
+## Hypoxia and BAY treatment increase lactate oxidation
+
+Although the metabolite exchange fluxes for bidirectional reactions tend to be poorly resolved by metabolic flux analysis [@wiechert2007], two observations are worth highlighting (**Table 1**, **Table 2**, **Table 3**). First, consistent with the stable isotope tracing results, the modeled rate of reductive carboxylation through reverse flux by isocitrate dehydrogenase in LFs is low (~4 fmol/cell/h), unchanged by hypoxia, and modestly increased by BAY treatment. By contrast, the rate of reductive carboxylation increases 6-fold in PASMCs in hypoxia, highlighting a potentially important role for this pathway in the metabolic response of PASMCs to decreased oxygen availability (**Figure 6**).
+
 
 \newpage
 
@@ -141,8 +163,46 @@ The authors declare that they have no conflicts of interest.
 
 # Figures
 
-![**Figure 1 -  **](figs/Figure 1.png)
+![**Figure 1 -  **](figs/Figure 1.tif)
 
 \newpage
 
-![**Figure 1 - figure supplement 1**](figs/Figure 1 - figure supplement 1.png)
+![**Figure 1 - figure supplement 1**](figs/Figure 1 - figure supplement 1.tif)
+
+![**Figure 4 - supplemental figure 1**](figs/Figure 4 - figure supplement 1.tif)
+
+\newpage
+
+![**Figure 6 -**](figs/Figure 6.pdf)
+
+\newpage
+
+# Tables
+
+```{r}
+#| results: asis
+#| tbl-cap: "Table 1: LF fluxes in 21% and 0.5% oxygen"
+
+table_lf_hyp |> 
+  flextable::flextable_to_rmd()
+```
+
+\newpage
+
+```{r}
+#| results: asis
+#| tbl-cap: "Table 2: LF fluxes following DMSO and BAY treatment"
+
+table_lf_bay |> 
+  flextable::flextable_to_rmd()
+```
+
+\newpage
+
+```{r}
+#| results: asis
+#| tbl-cap: "Table 3: PASMC fluxes in 21% and 0.5% oxygen"
+
+table_pasmc_hyp |> 
+  flextable::flextable_to_rmd()
+```

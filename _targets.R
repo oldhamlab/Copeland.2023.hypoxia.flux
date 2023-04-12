@@ -28,6 +28,8 @@ options(
   dplyr.summarise.inform = FALSE
 )
 
+extrafont::loadfonts(quiet = TRUE)
+
 
 # targets -----------------------------------------------------------------
 
@@ -583,6 +585,32 @@ list(
       plot_network(gr, caption)
     )
   ),
+  tar_map(
+    values = list(
+      cell = c("lf", "lf", "pasmc"),
+      experiment = c("0.5%", "BAY", "0.5%"),
+      ssr1 = c(
+        " SSR 391.7 [311.2-416.6] (95% CI, 362 DOF)",
+        " SSR 393.5 [311.2-416.6] (95% CI, 362 DOF)",
+        " SSR 575.6 [499.1-630.6] (95% CI, 563 DOF)"
+      ),
+      ssr2 = c(
+        " SSR 334.3 [311.2-416.6] (95% CI, 362 DOF)",
+        " SSR 392.4 [308.4-413.4] (95% CI, 359 DOF)",
+        " SSR 521.3 [482.2-611.6] (95% CI, 545 DOF)"
+      ),
+      names = c(
+        "lf_hyp",
+        "lf_bay",
+        "pasmc_hyp"
+      )
+    ),
+    names = names,
+    tar_target(
+      table,
+      format_flux_table(flux_differences, cell, experiment, ssr1, ssr2)
+    )
+  ),
 
   # nadp --------------------------------------------------------------------
 
@@ -933,10 +961,10 @@ list(
       exp1 = c("05", "02", "05", "bay"),
       exp2 = c("lf_05", "lf_02", "pasmc_05", "lf_bay"),
       filename = list(
-        "Figure 1.png",
-        "Figure 1 - figure supplement 3.png",
-        "Figure 1 - figure supplement 4.png",
-        "Figure 2.png"
+        "Figure 1.tif",
+        "Figure 1 - figure supplement 3.tif",
+        "Figure 1 - figure supplement 4.tif",
+        "Figure 2.tif"
       )
     ),
     names = names,
@@ -1040,7 +1068,7 @@ list(
   ),
   tar_target(
     f1_s1,
-    write_figures(f1_s1_plot, "Figure 1 - figure supplement 1.png"),
+    write_figures(f1_s1_plot, "Figure 1 - figure supplement 1.tif"),
     format = "file"
   ),
   tar_target(
@@ -1065,17 +1093,157 @@ list(
   ),
   tar_target(
     f1_s2,
-    write_figures(f1_lcms_lactate, "Figure 1 - figure supplement 2.png"),
+    write_figures(f1_lcms_lactate, "Figure 1 - figure supplement 2.tif"),
     format = "file"
   ),
 
-  # figure 2 ----------------------------------------------------------------
-
-
-
   # figure 3 ----------------------------------------------------------------
 
+  tar_map(
+    values = list(
+      cell = c("lf", "pasmc"),
+      title = c("LFs", "PASMCs")
+    ),
+    names = cell,
+    tar_target(
+      substrate_plot,
+      plot_substrate(growth_rates, cell, title)
+    )
+  ),
+  tar_target(
+    f3_substrate,
+    arrange_substrate(substrate_plot_lf, substrate_plot_pasmc)
+  ),
+  tar_target(
+    f3,
+    write_figures(f3_substrate, "Figure 3.tif"),
+    format = "file"
+  ),
 
+  # figure 4 ----------------------------------------------------------------
+
+  tar_map(
+    values = list(
+      metab = c("PYR", "CIT", "CIT"),
+      track = c("glc6", "glc6", "q5"),
+      names = c("pyr_glc6", "cit_glc6", "cit_q5")
+    ),
+    names = names,
+    tar_target(
+      mid,
+      plot_mids(pruned_mids, "lf", metab, track = track)
+    )
+  ),
+  tar_target(
+    mid_cit_q5_m5,
+    plot_m5_citrate(pruned_mids)
+  ),
+  tar_target(
+    f4_mids,
+    arrange_f4(
+      mid_pyr_glc6,
+      mid_cit_glc6,
+      mid_cit_q5,
+      mid_cit_q5_m5
+    )
+  ),
+  tar_target(
+    f4_mids_figure,
+    write_figures(f4_mids, "Figure 4.tif"),
+    format = "file"
+  ),
+  tar_map(
+    values = list(
+      cell = c("lf", "pasmc"),
+      time = c(72, 36),
+      title = c("LFs", "PASMCs"),
+      filename = c(
+        "Figure 4 - figure supplement 1.tif",
+        "Figure 4 - figure supplement 2.tif"
+      )
+    ),
+    names = cell,
+    tar_target(
+      mids,
+      plot_all_mids(pruned_mids, cell, time, title)
+    ),
+    tar_target(
+      mids_figure,
+      write_figures(mids, filename),
+      format = "file"
+    )
+  ),
+
+  # figure 5 ----------------------------------------------------------------
+
+  tar_target(
+    time_course_mids,
+    format_time_course_mids(model_mids)
+  ),
+  tar_target(
+    mid_time_course,
+    plot_mid_time_course(time_course_mids, "lf", c("21%", "0.5%"), "None")
+  ),
+  tar_target(
+    f5_s1,
+    write_figures(mid_time_course, "Figure 5 - figure supplement 1.tif"),
+    format = "file"
+  ),
+  tar_target(
+    f5_s2,
+    arrange_f5_s2(graph_raw_lf_norm, graph_raw_pasmc_norm)
+  ),
+  tar_target(
+    f5_s2_figure,
+    write_figures(f5_s2, "Figure 5 - figure supplement 2.tif")
+  ),
+  tar_target(
+    f5,
+    arrange_f5_s2(graph_ratio_lf_hyp_ratio, graph_ratio_lf_bay_ratio)
+  ),
+  tar_target(
+    f5_figure,
+    write_figures(f5, "Figure 5.tif")
+  ),
+  tar_target(
+    f5_s3_figure,
+    write_figures(graph_ratio_cells_norm_none_ratio, "Figure 5 - figure supplement 3.tif")
+  ),
+  tar_target(
+    f5_s4_figure,
+    write_figures(graph_ratio_pasmc_hyp_ratio, "Figure 5 - figure supplement 4.tif")
+  ),
+  tar_target(
+    f5_s5_figure,
+    write_figures(graph_ratio_lf_hyp_growth_ratio, "Figure 5 - figure supplement 5.tif")
+  ),
+
+  # figure 6 ----------------------------------------------------------------
+
+  tar_target(
+    rc_scheme_png,
+    system.file(
+      "manuscript/figs-raw/13c.png",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    rc_scheme,
+    plot_image(rc_scheme_png, scale = 1.3, hjust = 0, vjust = 0)
+  ),
+  tar_target(
+    rc_fluxes,
+    plot_exch_flux(graph_fluxes, "IDH")
+  ),
+  tar_target(
+    f6_rc,
+    arrange_rc(rc_scheme, rc_fluxes)
+  ),
+  tar_target(
+    f6_rc_figure,
+    write_figures(f6_rc, "Figure 6.pdf")
+  ),
 
   # manuscript --------------------------------------------------------------
 

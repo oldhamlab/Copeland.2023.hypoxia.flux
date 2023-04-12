@@ -354,6 +354,7 @@ plot_ratio_network <- function(graph, caption, edges = TRUE) {
       ),
       linejoin = "mitre",
       lineend = "butt",
+      linemitre = 10,
       key_glyph = "custom",
       show.legend = TRUE
     ) +
@@ -438,6 +439,7 @@ plot_network <- function(gr, caption) {
       ),
       linejoin = "mitre",
       lineend = "butt",
+      linemitre = 10,
       key_glyph = "custom"
     ) +
     ggraph::geom_node_text(
