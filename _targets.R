@@ -961,10 +961,10 @@ list(
       exp1 = c("05", "02", "05", "bay"),
       exp2 = c("lf_05", "lf_02", "pasmc_05", "lf_bay"),
       filename = list(
-        "Figure 1.tif",
-        "Figure 1 - figure supplement 3.tif",
-        "Figure 1 - figure supplement 4.tif",
-        "Figure 2.tif"
+        "Figure 1.pdf",
+        "Figure 1 - figure supplement 3.pdf",
+        "Figure 1 - figure supplement 4.pdf",
+        "Figure 2.pdf"
       )
     ),
     names = names,
@@ -1032,9 +1032,9 @@ list(
         growth_rate,
         blot,
         hif1a_prot,
-        ldha_prot,
         glut1_rna,
         ldha_rna,
+        ldha_prot,
         high,
         low
       )
@@ -1067,8 +1067,8 @@ list(
     )
   ),
   tar_target(
-    f1_s1,
-    write_figures(f1_s1_plot, "Figure 1 - figure supplement 1.tif"),
+    f1_s1_figure,
+    write_figures(f1_s1_plot, "Figure 1 - figure supplement 1.pdf"),
     format = "file"
   ),
   tar_target(
@@ -1092,8 +1092,8 @@ list(
     )
   ),
   tar_target(
-    f1_s2,
-    write_figures(f1_lcms_lactate, "Figure 1 - figure supplement 2.tif"),
+    f1_s2_figure,
+    write_figures(f1_lcms_lactate, "Figure 1 - figure supplement 2.pdf"),
     format = "file"
   ),
 
@@ -1115,8 +1115,8 @@ list(
     arrange_substrate(substrate_plot_lf, substrate_plot_pasmc)
   ),
   tar_target(
-    f3,
-    write_figures(f3_substrate, "Figure 3.tif"),
+    f3_figure,
+    write_figures(f3_substrate, "Figure 3.pdf"),
     format = "file"
   ),
 
@@ -1149,7 +1149,7 @@ list(
   ),
   tar_target(
     f4_mids_figure,
-    write_figures(f4_mids, "Figure 4.tif"),
+    write_figures(f4_mids, "Figure 4.pdf"),
     format = "file"
   ),
   tar_map(
@@ -1158,8 +1158,8 @@ list(
       time = c(72, 36),
       title = c("LFs", "PASMCs"),
       filename = c(
-        "Figure 4 - figure supplement 1.tif",
-        "Figure 4 - figure supplement 2.tif"
+        "Figure 4 - figure supplement 1.pdf",
+        "Figure 4 - figure supplement 2.pdf"
       )
     ),
     names = cell,
@@ -1185,8 +1185,8 @@ list(
     plot_mid_time_course(time_course_mids, "lf", c("21%", "0.5%"), "None")
   ),
   tar_target(
-    f5_s1,
-    write_figures(mid_time_course, "Figure 5 - figure supplement 1.tif"),
+    f5_s1_figure,
+    write_figures(mid_time_course, "Figure 5 - figure supplement 1.pdf"),
     format = "file"
   ),
   tar_target(
@@ -1195,7 +1195,7 @@ list(
   ),
   tar_target(
     f5_s2_figure,
-    write_figures(f5_s2, "Figure 5 - figure supplement 2.tif")
+    write_figures(f5_s2, "Figure 5 - figure supplement 2.pdf")
   ),
   tar_target(
     f5,
@@ -1203,19 +1203,22 @@ list(
   ),
   tar_target(
     f5_figure,
-    write_figures(f5, "Figure 5.tif")
+    write_figures(f5, "Figure 5.pdf")
   ),
   tar_target(
     f5_s3_figure,
-    write_figures(graph_ratio_cells_norm_none_ratio, "Figure 5 - figure supplement 3.tif")
+    arrange_graphs(graph_ratio_cells_norm_none_ratio) |>
+      write_figures("Figure 5 - figure supplement 3.pdf")
   ),
   tar_target(
     f5_s4_figure,
-    write_figures(graph_ratio_pasmc_hyp_ratio, "Figure 5 - figure supplement 4.tif")
+    arrange_graphs(graph_ratio_pasmc_hyp_ratio) |>
+      write_figures("Figure 5 - figure supplement 4.pdf")
   ),
   tar_target(
     f5_s5_figure,
-    write_figures(graph_ratio_lf_hyp_growth_ratio, "Figure 5 - figure supplement 5.tif")
+    arrange_graphs(graph_ratio_lf_hyp_growth_ratio) |>
+      write_figures("Figure 5 - figure supplement 5.pdf")
   ),
 
   # figure 6 ----------------------------------------------------------------
@@ -1243,6 +1246,28 @@ list(
   tar_target(
     f6_rc_figure,
     write_figures(f6_rc, "Figure 6.pdf")
+  ),
+
+  # figure 7 ----------------------------------------------------------------
+
+  tar_target(
+    mct_fluxes,
+    plot_exch_flux(graph_fluxes, "MCT")
+  ),
+  tar_target(
+    lactate_mids,
+    plot_lactate_mids(pruned_mids, "lf")
+  ),
+  tar_target(
+    f7_lactate_ox,
+    arrange_f7(
+      mct_fluxes,
+      lactate_mids
+    )
+  ),
+  tar_target(
+    f7_lactate_ox_figure,
+    write_figures(f7_lactate_ox, "Figure 7.pdf")
   ),
 
   # manuscript --------------------------------------------------------------

@@ -1656,3 +1656,149 @@ arrange_rc <- function(p1, p2) {
       legend.box.margin = ggplot2::margin(t = -10)
     )
 }
+
+arrange_graphs <- function(p1) {
+  p1 +
+    theme_patchwork(
+      widths = unit(3.5, "in"),
+      heights = unit(3.5, "in"),
+      tags = NULL,
+      guides = "collect"
+    )
+}
+
+plot_lactate_mids <- function(df, cell, t = 72) {
+  tracer_labels <- c(
+    expression(paste("[1,2-"^13, "C"[2], "]-glucose")),
+    expression(paste("[U-"^13, "C"[6], "]-glucose")),
+    expression(paste("[U-"^13, "C"[5], "]-glutamine")),
+    expression(paste("[U-"^13, "C"[3], "]-lactate"))
+  )
+  tracer_levels <- c("glc2", "glc6", "q5", "lac3")
+  metab <- c(
+    "LAC",
+    "FBP",
+    "PYR",
+    "CIT"
+  )
+
+  x <-
+    df |>
+    dplyr::filter(
+      cell_type == cell &
+        time == t &
+        metabolite %in% metab &
+        tracer == "lac3"
+    ) |>
+    dplyr::filter(
+      !(metabolite == "CIT" & isotope == "M6")
+    ) |>
+    dplyr::mutate(
+      metabolite = factor(metabolite, levels = metab),
+      metabolite = forcats::fct_recode(metabolite, "`3PG`" = "3PG"),
+      tracer = factor(tracer, levels = tracer_levels, labels = tracer_labels),
+      isotope = stringr::str_replace(isotope, "M", ""),
+      group = dplyr::case_when(
+        oxygen == "21%" & treatment == "None" ~ "21%",
+        oxygen == "0.5%" & treatment == "None" ~ "0.5%",
+        oxygen == "21%" & treatment == "DMSO" ~ "DMSO",
+        oxygen == "21%" & treatment == "BAY" ~ "BAY"
+      ),
+      group = factor(group, levels = c("21%", "0.5%", "DMSO", "BAY"))
+    )
+
+  annot <-
+    x |>
+    dplyr::group_by(tracer, metabolite) |>
+    tidyr::nest() |>
+    dplyr::mutate(annot = purrr::map(data, annot_mids_main)) |>
+    tidyr::unnest(c(annot))
+
+  ggplot2::ggplot(x) +
+    ggplot2::aes(
+      x = isotope,
+      y = mid
+    ) +
+    ggplot2::facet_grid(
+      tracer ~ metabolite,
+      labeller = ggplot2::label_parsed,
+      # switch = "y",
+      scales = "free_x",
+      space = "free_x"
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(fill = group),
+      geom = "col",
+      fun = "mean",
+      position = ggplot2::position_dodge(width = 0.6),
+      width = 0.6,
+      show.legend = TRUE
+    ) +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      color = "black",
+      lwd = 0.1
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(group = group),
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      position = ggplot2::position_dodge(width = 0.6),
+      width = 0.2,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = annot,
+      ggplot2::aes(
+        x = -Inf,
+        y = Inf,
+        vjust = 1.5,
+        hjust = -0.3,
+        label = annot
+      ),
+      family = "Calibri",
+      size = 8/ggplot2::.pt
+    ) +
+    ggplot2::labs(
+      x = "Isotope",
+      y = "Mole fraction",
+      fill = NULL
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = seq(0, 1, 0.25),
+      limits = c(0, 1.1)
+    ) +
+    ggplot2::theme(
+      strip.placement = "outside",
+      legend.title = ggplot2::element_blank()
+    ) +
+    ggplot2::scale_fill_manual(values = clrs, limits = force) +
+    theme_plots() +
+    ggplot2::theme(
+      panel.grid.major.y = ggplot2::element_line(color = "grey80", size = 0.1),
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
+      legend.box.margin = ggplot2::margin(t = -10),
+      axis.line = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.25)
+    )
+}
+
+arrange_f7 <- function(p1, p2) {
+  layout <- "ab"
+
+  p1 + p2 +
+    theme_patchwork(
+      design = layout,
+      widths = unit(c(1, 2.5), "in"),
+      heights = unit(1, "in")
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}

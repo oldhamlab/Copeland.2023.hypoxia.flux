@@ -59,7 +59,24 @@ targets::tar_load(refs)
 # ensure figures are up-to-date
 targets::tar_load(
   c(
-    fluxes_panel_lf_hyp_05,
+    flux_figures_lf_hyp_05, 
+    f1_s1_figure, 
+    f1_s2_figure, 
+    flux_figures_lf_hyp_02, 
+    flux_figures_pasmc_hyp_05, 
+    flux_figures_lf_bay, 
+    f3_figure, 
+    f4_mids_figure, 
+    mids_figure_lf, 
+    mids_figure_pasmc,
+    f5_figure, 
+    f5_s1_figure, 
+    f5_s2_figure, 
+    f5_s3_figure, 
+    f5_s4_figure, 
+    f5_s5_figure, 
+    f6_rc_figure, 
+    f7_lactate_ox_figure, 
     table_lf_hyp, 
     table_lf_bay, 
     table_pasmc_hyp
@@ -137,6 +154,9 @@ Given the global decrease in bioenergetic metabolic flux in hypoxic LFs, we hypo
 
 Although the metabolite exchange fluxes for bidirectional reactions tend to be poorly resolved by metabolic flux analysis [@wiechert2007], two observations are worth highlighting (**Table 1**, **Table 2**, **Table 3**). First, consistent with the stable isotope tracing results, the modeled rate of reductive carboxylation through reverse flux by isocitrate dehydrogenase in LFs is low (~4 fmol/cell/h), unchanged by hypoxia, and modestly increased by BAY treatment. By contrast, the rate of reductive carboxylation increases 6-fold in PASMCs in hypoxia, highlighting a potentially important role for this pathway in the metabolic response of PASMCs to decreased oxygen availability (**Figure 6**).
 
+Second, PHD inhibition is associated with a marked increase in the lactate transport exchange flux in LFs from ~ 0 to 1,500 and 700 fmol/cell/h in 0.5% oxygen and BAY treatment conditions, respectively, with similar results in PASMCs (**Figure 7A**). Since the net lactate transport flux is secretion, this observation suggests increased lactate uptake with hypoxia or BAY treatment, a finding that may be consistent with the HIF-driven increased expression of the reversible lactate transporter MCT4 [@contreras-baeza2019]. To investigate this hypothesis, LFs and PASMCs were treated with [U-^13^C~3~] lactate (2 mM) and ^13^C incorporation into intracellular metabolites was analyzed by LC-MS (**Figure 7B**, **Figure 4 - figure supplement 1**, **Figure 4 - figure supplement 2**). Lactate labeled ~50% of citrate and ~20% of downstream TCA cycle metabolites in both LFs and PASMCs, indicating that lactate may be an important respiratory fuel source in these cells even though lactate efflux is high. Although lactate has been used less commonly than glucose and glutamine in stable isotope tracing studies, Faubert and colleagues [-@faubert2017] demonstrated lactate incorporation in human lung adenocarcinoma *in vivo*. In this study, lactate incorporation corresponded to regions of high glucose uptake as determined by [¹⁸F]-fluorodeoxyglucose positron emission tomography, suggesting that lactate consumption can occur even in areas of high glucose utilization. Subsequently, investigators have demonstrated the importance of lactate as a metabolic fuel *in vivo* [@hui2017; @hui2020]. As predicted from our metabolic flux analysis, with hypoxia or BAY treatment, we observed increased labeling of the TCA metabolites citrate (CIT), α-ketoglutarate (AKG), malate (MAL), and aspartate (ASP) in LFs. Interestingly, although increased labeling of pyruvate was observed in hypoxic PASMCs, the label was not incorporated into the TCA cycle as observed in LFs (**Figure 4 - figure supplement 2**). 
+
+In addition to downstream metabolites, we also observed hypoxia- and BAY-dependent increases in lactate incorporation in fructose bisphosphate (FBP) and 3-phosphoglycerate (3PG). This observation is consistent with prior reports describing hypoxia-mediated increases in gluconeogenesis and glycogen synthesis [@owczarek2020; @pelletier2012; @favaro2012]. These data suggest that lactate also makes a small (~5% carbon) contribution to glycogen precursors. Together, these findings from stable isotope tracing of lactate reveal its important contribution to primary cell metabolism under standard culture conditions, but also reveal increased utilization of this substrate in hypoxia. 
 
 \newpage
 
@@ -163,17 +183,71 @@ The authors declare that they have no conflicts of interest.
 
 # Figures
 
-![**Figure 1 -  **](figs/Figure 1.tif)
+![**Figure 1 - Effects of 0.5% oxygen on extracellular metabolite fluxes in lung fibroblasts.** (**A**) Lung fibroblasts (LFs) were cultured in 21% or 0.5% oxygen beginning 24 h prior to time 0. Samples were collected every 24 h for 72 h. (**B**) Growth curves of LFs in each experimental condition (n = 8). (**C**) Growth rates from (B) were determined by robust linear modeling of log-transformed growth curves. (**D**) Representative immunoblot of LF protein lysates cultured as in (A). (**E**) Relative change in HIF-1α protein levels from (D) normalized to 21% oxygen at time 0 (n = 4). (**F**) Relative change in GLUT1 mRNA levels normalized to 21% oxygen treatment at time 0 (n = 4). (**G**) Relative change in LDHA mRNA levels as in (F). (**H**) Relative change in LDHA protein levels as in (E). (**I**) Extracellular fluxes of glucose (GLC) and lactate (LAC) (n = 8). By convention, negative fluxes indicate metabolite consumption. (**J**) Extracellular fluxes of pyruvate (PYR) and amino acids. Data are mean ± SEM (* p < 0.05).](figs/Figure 1.pdf)
 
 \newpage
 
-![**Figure 1 - figure supplement 1**](figs/Figure 1 - figure supplement 1.tif)
-
-![**Figure 4 - supplemental figure 1**](figs/Figure 4 - figure supplement 1.tif)
+![**Figure 1 - figure supplement 1 - Supporting data for extracellular flux calculations.** (**A**) Cell viability as assessed by live/dead cell staining with acridine orange plus propidium iodide did not differ between 21% and 0.5% oxygen culture conditions (n = 3 technical replicates). (**B**) Predicted well volumes were estimated from the change in culture plate mass over the experimental time course. Evaporation rates differed depending on the culture conditions and treatment. Although the mean evaporation rate is depicted, experiment-specific evaporation rates were used to calculate fluxes for each biological replicate (**C**) Metabolite accumulation (positive values) and degradation (negative values) rates. Data are mean ± SEM of 3-8 biological replicates. Rates significantly different from 0 (*) based on a probability value < 0.05 using Student's one-sample *t*-test were incorporated into flux calculations.](figs/Figure 1 - figure supplement 1.pdf)
 
 \newpage
 
-![**Figure 6 -**](figs/Figure 6.pdf)
+![**Figure 1 - figure supplement 2 - Quantifying lactate efflux generated by \[U-^13^C~6~\]-glucose.** Cells were cultured in MCDB131 supplemented with 8 mM \[U-^13^C~6~\]-glucose. Conditioned medium was collected, spiked with \[D~8~\]-ᴅʟ-valine internal standard, and analyzed by LC-MS. (**A**) A standard curve was generated from the peak area ratios of lactate and the internal standard prepared in unconditioned MCDB131 medium. (**B**) Lactate accumulates more slowly in the conditioned medium from hypoxic cells (n = 3 biological replicates). (**C**) Lactate efflux was decreased in hypoxia, similar to the data obtained from enzymatic lactate assay. Data are mean ± SEM (* p < 0.05).](figs/Figure 1 - figure supplement 2.tif)
+
+\newpage
+
+![**Figure 1 - figure supplement 3 - Effects of 0.2% oxygen on extracellular metabolite fluxes in lung fibroblasts.** (**A**) Lung fibroblasts (LFs) were cultured in 21% or 0.2% oxygen beginning 24 h prior to time 0. Samples were collected every 24 h for 72 h. (**B**) Growth curves of LFs in each experimental condition (n = 4). (**C**) Growth rates from (B) were determined by robust linear modeling of log-transformed growth curves. (**D**) Representative immunoblot of LF protein lysates cultured as in (A). (**E**) Relative change in HIF-1α protein levels from (D) normalized to 21% oxygen at time 0 (n = 4). (**F**) Relative change in GLUT1 mRNA levels normalized to 21% oxygen treatment at time 0 (n = 4). (**G**) Relative change in LDHA mRNA levels as in (F). (**H**) Relative change in LDHA protein levels as in (E). (**I**) Extracellular fluxes of glucose (GLC) and lactate (LAC) (n = 4). By convention, negative fluxes indicate metabolite consumption. (**J**) Extracellular fluxes of pyruvate (PYR) and amino acids. Data are mean ± SEM (* p < 0.05).](figs/Figure 1 - figure supplement 3.pdf)
+
+\newpage
+
+![**Figure 1 - figure supplement 4 - Effects of 0.5% oxygen on extracellular metabolite fluxes in pulmonary artery smooth muscle cells.** (**A**) Pulmonary artery smooth muscle cells (PASMCs) were cultured in 21% or 0.5% oxygen beginning 24 h prior to time 0. Samples were collected every 24 h for 72 h. (**B**) Growth curves of LFs in each experimental condition (n = 4). (**C**) Growth rates from (B) were determined by robust linear modeling of log-transformed growth curves. (**D**) Representative immunoblot of LF protein lysates cultured as in (A). (**E**) Relative change in HIF-1α protein levels from (D) normalized to 21% oxygen at time 0 (n = 4). (**F**) Relative change in GLUT1 mRNA levels normalized to 21% oxygen treatment at time 0 (n = 4). (**G**) Relative change in LDHA mRNA levels as in (F). (**H**) Relative change in LDHA protein levels as in (E). (**I**) Extracellular fluxes of glucose (GLC) and lactate (LAC) (n = 4). By convention, negative fluxes indicate metabolite consumption. (**J**) Extracellular fluxes of pyruvate (PYR) and amino acids. Data are mean ± SEM (* p < 0.05).](figs/Figure 1 - figure supplement 4.pdf)
+
+\newpage
+
+![**Figure 2 - Effects of pharmacologic prolyl hydroxylase inhibition on extracellular metabolite fluxes in lung fibroblasts.** (**A**) Lung fibroblasts (LFs) were treated with the prolyl hydroxlyase inhibitor molidustat (BAY, 10 μM) or DMSO beginning 24 h prior to time 0. Samples were collected every 24 h for 72 h. (**B**) Growth curves of LFs in each experimental condition (n = 8). (**C**) Growth rates from (B). (**D**) Representative immunoblot of LF protein lysates cultured as in (A). (**E**) Relative change in HIF-1α protein levels from (D) normalized to DMSO at time 0 (n = 4). (**F**) Relative change in GLUT1 mRNA levels normalized to DMSO at time 0 (n = 4). (**G**) Relative change in LDHA mRNA levels as in (F). (**H**) Relative change in LDHA protein levels as in (E). (**I**) Extracellular fluxes of glucose (GLC) and lactate (LAC) (n = 8). By convention, negative fluxes indicate metabolite consumption. (**J**) Extracellular fluxes of pyruvate (PYR) and amino acids. Data are mean ± SEM (* p < 0.05).](figs/Figure 2.pdf)
+
+\newpage
+
+![**Figure 3 - Cell growth rates following substrate deprivation.** (**A**, **B**) Lung fibroblasts (n = 8 biological replicates) (A) and pulmonary artery smooth muscle cells (n = 4 biological replicates) (B) were cultured in MCDB131 medium lacking either glucose (-GLC) or glutamine (-GLN) for 72 h. Growth rates were calculated from total DNA quantification. Data are mean ± SEM (* p < 0.05; black compares 21% and 0.5% oxygen within a given treatment, red and blue compare substrate deficiency to replete medium in 21% and 0.5% oxygen, respectively.](figs/Figure 3.pdf)
+
+\newpage
+
+![**Figure 4 - Stable isotope labeling of lung fibroblasts following hypoxic and pharmacologic PHD inhibition.** (**A**) Mass isotopomer distribution (MID) of pyruvate (PYR) following 72 h labeling with \[U-^13^C~6~\]-glucose (GLC). (**B**) MID of citrate after 72 h labeling with \[U-^13^C~6~\]-GLC (**C**) MID of citrate after 72 h labeling with \[U-^13^C~5~\]-glutamine (GLN). Data are mean ± SEM (n = 4, p < 0.05 indicated as * 0.5% *v.* 21% oxygen, † BAY *v.* DMSO, ‡ Δoxygen *v.* ΔBAY). (**D**) Fraction of M5 citrate indicating reductive carboxylation after labeling with \[U-^13^C~5~\]-GLN in LFs and PASMCs (n = 3-4, * p < 0.05).](figs/Figure 4.pdf)
+
+\newpage
+
+![**Figure 4 - supplemental figure 1 - Mass isotopomer distributions after 72 h of labeling in lung fibroblasts.** Lung fibroblasts (LFs) were labeled with the indicated tracers and intracellular metabolites were analyzed by LC-MS after 72 h. Mass isotopomer distributions were adjusted for natural abundance. Data are the mean ± SEM of 4 biological replicates. Significant differences in labeling patterns between 21% and 0.5% oxygen (*), DMSO and BAY treatment (†), and 0.5% oxygen and BAY treatment (‡) for each combination of metabolite and tracer are highlighted.](figs/Figure 4 - figure supplement 1.tif)
+
+\newpage
+
+![**Figure 4 - supplemental figure 2 - Mass isotopomer distributions after 36 h of labeling in pulmonary artery smooth muscle cells.** Pulmonary artery smooth muscle cells (PASMCs) were labeled with the indicated tracers and intracellular metabolites were analyzed by LC-MS after 36 h. Mass isotopomer distributions were adjusted for natural abundance. Data are the mean ± SEM of 4 biological replicates. Significant differences in labeling patterns between 21% and 0.5% oxygen (*) for each combination of metabolite and tracer are highlighted.](figs/Figure 4 - figure supplement 2.tif)
+
+\newpage
+
+![**Figure 5 = Metabolic flux analysis of lung fibroblasts following hypoxic and pharmacologic PHD inhibition.** (**A**) Ratio of modeled metabolic fluxes in 0.5% oxygen compared to 21% oxygen. Fluxes with non-overlapping confidence intervals are highlighted with arrows colored according to the magnitude of the fold change. Arrow thickness corresponds to the absolute flux measured in hypoxia. (**B**) Ratio of metabolic fluxes in BAY-treated cells compared to DMSO-treated control. Arrows are colored as in (A) and arrow weights correspond to the absolute flux as measured in BAY-treated cells.](figs/Figure 5.tif)
+
+\newpage
+
+![**Figure 5 - figure supplement 1 - Isotope incorporation over the labeling time course.** LFs were cultured in 21% or 0.5% oxygen and labeled with the indicated tracers. Intracellular metabolites were analyzed by LC-MS (FBP, fructose-bisphosphate; PYR, pyruvate; CIT, citrate; MAL, malate). Mass isotopomer distributions were calculated and adjusted for natural abundance. Data show the total amount of metabolite labeling (*i.e.,* 1 - M0 fractional abundance). Data are the mean ± SEM of 4 biological replicates.](figs/Figure 5 - figure supplement 1.tif)
+
+\newpage
+
+![**Figure 5 - figure supplement 2 - Isotopically non-stationary metabolic flux analysis of cell metabolism in 21% oxygen.** (**A**) Metabolic flux model of LF metabolism in 21% oxygen. Arrows are colored by log~10~(flux). (**B**) Metabolic flux model of PASMC metabolism in 21% oxygen as in (A).](figs/Figure 5 - figure supplement 2.tif)
+
+\newpage
+
+![**Figure 5 - figure supplement 3 - Comparison of lung fibroblast and pulmonary artery smooth muscle cell metabolic fluxes.** Ratio of metabolic fluxes in PASMCs compared to LFs. Fluxes with non-overlapping confidence intervals are highlighted with arrows colored according to the magnitude of the change. Arrow thickness corresponds to the absolute flux measured in LFs.](figs/Figure 5 - figure supplement 3.tif)
+
+\newpage
+
+![**Figure 5 - figure supplement 4 - Comparison of pulmonary artery smooth muscle cell metabolic fluxes in 21% and 0.5% oxygen.** Ratio of modeled metabolic fluxes in 0.5% oxygen compared to 21% oxygen. Fluxes with non-overlapping confidence intervals are highlighted with arrows colored according to the magnitude of the fold change. Arrow thickness corresponds to the absolute flux measured in hypoxia.](figs/Figure 5 - figure supplement 4.tif)
+
+\newpage
+
+![**Figure 5 - figure supplement 5 - Growth rate adjusted changes in hypoxic lung fibroblast metabolism.** LF fluxes were normalized to cell growth rate. Graph depicts the ratio of normalized metabolic fluxes in LFs cultured in 0.5% oxygen compared to 21% oxygen control. Fluxes with non-overlapping confidence intervals are highlighted to indicate significant changes.](figs/Figure 5 - figure supplement 5.tif)
+
+\newpage
+
+![**Figure 6 - Hypoxia increases reductive carboxylation in pulmonary artery smooth muscle cells.** (**A**) Reductive carboxylation describes the converstion of α-ketoglutarate (AKG) to isocitrate by reverse flux through isocitrate dehydrogenase (IDH). This yields M+5 citrate. (**B**) Exchange flux estimates for reductive carboxylation. Data show the model estimate with upper and lower bounds for LFs and PASMCs. ](figs/Figure 6.pdf)
 
 \newpage
 
