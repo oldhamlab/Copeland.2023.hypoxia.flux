@@ -158,6 +158,12 @@ Second, PHD inhibition is associated with a marked increase in the lactate trans
 
 In addition to downstream metabolites, we also observed hypoxia- and BAY-dependent increases in lactate incorporation in fructose bisphosphate (FBP) and 3-phosphoglycerate (3PG). This observation is consistent with prior reports describing hypoxia-mediated increases in gluconeogenesis and glycogen synthesis [@owczarek2020; @pelletier2012; @favaro2012]. These data suggest that lactate also makes a small (~5% carbon) contribution to glycogen precursors. Together, these findings from stable isotope tracing of lactate reveal its important contribution to primary cell metabolism under standard culture conditions, but also reveal increased utilization of this substrate in hypoxia. 
 
+## Hypoxia prevents BAY from increasing glycolysis
+
+To reconcile the differential effects of prolyl hydroxylase inhibition by hypoxia and BAY, we next addressed whether hypoxia could suppress the effects of BAY on glucose and lactate fluxes (**Figure 8**). LFs cultured in standard growth medium were treated with BAY and placed in either 21% or 0.5% oxygen. Similar to previous experiments, BAY treatment decreased cell growth rate, increased glucose uptake, and increased lactate efflux in 21% oxygen. However, when combined with 0.5% oxygen, BAY treatment was unable to enhance lactate efflux. These data demonstrate that hypoxia antagonizes the effects of HIF-1α activation on glycolytic flux in these cells. 
+
+We observed a similar pattern using RNA interference to silence PHD2 expression (**Figure 8 - figure supplement 1**). 
+
 \newpage
 
 # Acknowledgements

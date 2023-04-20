@@ -890,3 +890,41 @@ calculate_fluxes <- function(flux_curves) {
       .data$date
     )
 }
+
+analyze_hyp_bay_fluxes <- function(growth, fluxes) {
+  df <-
+    growth |>
+    dplyr::filter(experiment == "05-bay") |>
+    dplyr::rename(flux = mu) |>
+    dplyr::select(-X0) |>
+    dplyr::mutate(metabolite = "growth") |>
+    dplyr::bind_rows(dplyr::filter(fluxes, experiment == "05-bay"))
+
+  annot <-
+    df |>
+    dplyr::group_by(metabolite) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      m = purrr::map(data, ~lmerTest::lmer(flux ~ oxygen * treatment + (1 | date), data = .x)),
+      res = purrr::map(m, ~emmeans::emmeans(
+        .x,
+        "pairwise" ~ oxygen * treatment,
+        simple = "each",
+        adjust = "mvt",
+        combine = TRUE
+      )[["contrasts"]]
+      ),
+      out = purrr::map(res, broom::tidy)
+    ) |>
+    tidyr::unnest(c(out)) |>
+    dplyr::filter(oxygen != ".") |>
+    dplyr::select(metabolite, oxygen, adj.p.value) |>
+    dplyr::mutate(
+      oxygen = factor(oxygen, levels = c("21%", "0.5%")),
+      y_pos = Inf,
+      vjust = 1,
+      lab = annot_p(adj.p.value)
+    )
+
+  list(data = df, annot = annot)
+}

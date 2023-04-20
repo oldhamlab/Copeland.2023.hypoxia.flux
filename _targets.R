@@ -935,7 +935,7 @@ list(
     NULL
   ),
 
-  # figure1 -----------------------------------------------------------------
+  # figure 1 ----------------------------------------------------------------
 
   tar_map(
     values = list(
@@ -1268,6 +1268,40 @@ list(
   tar_target(
     f7_lactate_ox_figure,
     write_figures(f7_lactate_ox, "Figure 7.pdf")
+  ),
+
+  # figure 8 ----------------------------------------------------------------
+
+  tar_target(
+    hyp_bay_fluxes_stats,
+    analyze_hyp_bay_fluxes(growth_rates, fluxes)
+  ),
+  tar_map(
+    values = list(
+      metab = c("growth", "glucose", "lactate"),
+      ylab = c(
+        "Growth Rate (/h)",
+        "Glucose\n(fmol/cell/h)",
+        "Lactate\n(fmol/cell/h)"
+      )
+    ),
+    names = metab,
+    tar_target(
+      hyp_bay_fluxes,
+      plot_hyp_bay_fluxes(hyp_bay_fluxes_stats$data, hyp_bay_fluxes_stats$annot, metab, ylab)
+    )
+  ),
+  tar_target(
+    f8_hyp_bay,
+    arrange_f8(
+      hyp_bay_fluxes_growth,
+      hyp_bay_fluxes_glucose + ggplot2::scale_y_reverse(),
+      hyp_bay_fluxes_lactate
+    )
+  ),
+  tar_target(
+    f8_hyp_bay_figure,
+    write_figures(f8_hyp_bay, "Figure 8.pdf")
   ),
 
   # manuscript --------------------------------------------------------------
