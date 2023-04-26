@@ -1272,36 +1272,89 @@ list(
 
   # figure 8 ----------------------------------------------------------------
 
-  tar_target(
-    hyp_bay_fluxes_stats,
-    analyze_hyp_bay_fluxes(growth_rates, fluxes)
+  tar_map(
+    values = list(
+      names = c("05_bay", "05_siphd"),
+      exp = c("05-bay", "05-siphd")
+    ),
+    names = names,
+    tar_target(
+      fluxes_stats,
+      analyze_hyp_bay_fluxes(growth_rates, fluxes, exp)
+    )
   ),
   tar_map(
     values = list(
-      metab = c("growth", "glucose", "lactate"),
+      df = rlang::syms(
+        c(
+          rep("fluxes_stats_05_bay", 3),
+          rep("fluxes_stats_05_siphd", 2)
+        )
+      ),
+      metab = c("growth", "glucose", "lactate", "growth", "lactate"),
       ylab = c(
         "Growth Rate (/h)",
         "Glucose\n(fmol/cell/h)",
+        "Lactate\n(fmol/cell/h)",
+        "Growth Rate (/h)",
         "Lactate\n(fmol/cell/h)"
+      ),
+      names = c(
+        "bay_growth",
+        "bay_glucose",
+        "bay_lactate",
+        "phd_growth",
+        "phd_lactate"
       )
     ),
-    names = metab,
+    names = names,
     tar_target(
       hyp_bay_fluxes,
-      plot_hyp_bay_fluxes(hyp_bay_fluxes_stats$data, hyp_bay_fluxes_stats$annot, metab, ylab)
+      plot_hyp_bay_fluxes(df$data, df$annot, metab, ylab)
     )
   ),
   tar_target(
     f8_hyp_bay,
     arrange_f8(
-      hyp_bay_fluxes_growth,
-      hyp_bay_fluxes_glucose + ggplot2::scale_y_reverse(),
-      hyp_bay_fluxes_lactate
+      hyp_bay_fluxes_bay_growth,
+      hyp_bay_fluxes_bay_glucose + ggplot2::scale_y_reverse(),
+      hyp_bay_fluxes_bay_lactate
     )
   ),
   tar_target(
     f8_hyp_bay_figure,
     write_figures(f8_hyp_bay, "Figure 8.pdf")
+  ),
+  tar_map(
+    values = list(
+      df = rlang::syms(
+        c(
+          "blot_norm",
+          "mrna_norm",
+          "mrna_norm"
+        )
+      ),
+      protein = c(
+        "ldha",
+        "glut1",
+        "ldha"
+      ),
+      label = c(
+        "LDHA protein\n(normalized)",
+        "GLUT1 mRNA\n(normalized)",
+        "LDHA mRNA\n(normalized)"
+      ),
+      names = c(
+        "prot_ldha",
+        "mrna_glut1",
+        "mrna_ldha"
+      )
+    ),
+    names = names,
+    tar_target(
+      siphd_annot,
+      analyze_siphd_expression(df, exp = "lf_05-siphd", prot = protein)
+    )
   ),
 
   # manuscript --------------------------------------------------------------

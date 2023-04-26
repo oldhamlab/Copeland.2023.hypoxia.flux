@@ -138,3 +138,51 @@ normalize_qpcr <- function(raw_mrna) {
     dplyr::relocate("group", .after = "treatment") |>
     dplyr::rename(protein = "gene")
 }
+
+analyze_siphd_expression <- function(x, prot, exp) {
+  df <-
+    x |>
+    dplyr::filter(experiment == exp) |>
+    dplyr::filter(protein == prot) |>
+    dplyr::group_by(protein, oxygen, treatment) |>
+    wmo::remove_nested_outliers(fold_change, remove = TRUE) |>
+    identity()
+
+  if ("date" %in% names(df)) {
+    fo <- as.formula(fold_change ~ oxygen * treatment + (1 | date))
+  } else if ("gel" %in% names(df)) {
+    fo <- as.formula(fold_change ~ oxygen * treatment + (1 | gel))
+  }
+
+  annot <-
+    df |>
+    dplyr::group_by(protein) |>
+    tidyr::nest() |>
+    dplyr::mutate(
+      m = purrr::map(data, ~lmerTest::lmer(fo, data = .x)),
+      res = purrr::map(m, ~emmeans::emmeans(
+        .x,
+        "pairwise" ~ oxygen * treatment,
+        simple = "each",
+        adjust = "mvt",
+        combine = TRUE
+      )[["contrasts"]]
+      ),
+      out = purrr::map(res, broom::tidy)
+    ) |>
+    tidyr::unnest(c(out)) |>
+    dplyr::select(protein, oxygen, treatment, adj.p.value) |>
+    dplyr::mutate(
+      oxygen = replace(oxygen, oxygen == ".", "0.5%"),
+      oxygen = factor(oxygen, levels = c("21%", "0.5%")),
+      treatment = factor(treatment, levels = c("DMSO", "BAY", "siCTL", "siPHD2")),
+      y_pos = Inf,
+      vjust = 1,
+      lab = dplyr::case_when(
+        adj.p.value < 0.05 ~ "*",
+        TRUE ~ NA_character_
+      )
+    )
+
+  list(data = df, annot = annot)
+}

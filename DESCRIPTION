@@ -51,6 +51,7 @@ Imports:
     msigdbr,
     mzrtools,
     patchwork,
+    pbkrtest,
     pcaMethods,
     purrr,
     qs,

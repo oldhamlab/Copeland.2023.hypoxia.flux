@@ -891,14 +891,14 @@ calculate_fluxes <- function(flux_curves) {
     )
 }
 
-analyze_hyp_bay_fluxes <- function(growth, fluxes) {
+analyze_hyp_bay_fluxes <- function(growth, fluxes, exp) {
   df <-
     growth |>
-    dplyr::filter(experiment == "05-bay") |>
+    dplyr::filter(experiment == exp) |>
     dplyr::rename(flux = mu) |>
     dplyr::select(-X0) |>
     dplyr::mutate(metabolite = "growth") |>
-    dplyr::bind_rows(dplyr::filter(fluxes, experiment == "05-bay"))
+    dplyr::bind_rows(dplyr::filter(fluxes, experiment == exp))
 
   annot <-
     df |>

@@ -8,10 +8,11 @@ clrs <- c(
   "BAY"    = "#984EA3",
   "siCTL"  = "#999999",
   "siMYC"  = "#F781BF",
+  "siPHD2" = "#984EA3",
   "N.DMSO" = "#b2df8a",
   "H.DMSO" = "#33a02c",
-  "N.BAY" =  "#cab2d6",
-  "H.BAY" =  "#6a3d9a"
+  "N.BAY"  = "#cab2d6",
+  "H.BAY"  = "#6a3d9a"
 )
 
 theme_plots <- function() {
