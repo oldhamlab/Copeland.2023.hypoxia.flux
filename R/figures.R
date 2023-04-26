@@ -1905,3 +1905,113 @@ arrange_f8 <- function(p1, p2, p3) {
       legend.box.margin = ggplot2::margin(t = -10)
     )
 }
+
+plot_siphd <- function(df, annot, prot, ylab) {
+  ggplot2::ggplot(df) +
+    ggplot2::aes(
+      x = oxygen,
+      y = fold_change
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(fill = treatment),
+      geom = "col",
+      fun = "mean",
+      # width = 0.6,
+      position = ggplot2::position_dodge2(),
+      show.legend = TRUE,
+      alpha = 0.5
+    ) +
+    ggbeeswarm::geom_beeswarm(
+      ggplot2::aes(fill = treatment),
+      method = "center",
+      dodge.width = 0.9,
+      pch = 21,
+      size = 1,
+      stroke = 0.2,
+      cex = 4,
+      color = "white",
+      show.legend = FALSE
+    ) +
+    ggplot2::stat_summary(
+      ggplot2::aes(group = treatment),
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      position = ggplot2::position_dodge(width = 0.9),
+      width = 0.2,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = dplyr::filter(annot, !is.na(treatment)),
+      ggplot2::aes(
+        x = oxygen,
+        y = y_pos,
+        color = treatment,
+        vjust = vjust,
+        label = lab,
+      ),
+      position = position_dodge(width = 0.9),
+      family = "Calibri",
+      size = 8/ggplot2::.pt,
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_text(
+      data = dplyr::filter(annot, is.na(treatment)),
+      ggplot2::aes(
+        x = oxygen,
+        y = y_pos,
+        vjust = vjust,
+        label = lab,
+      ),
+      family = "Calibri",
+      size = 8/ggplot2::.pt,
+      show.legend = FALSE
+    ) +
+    ggplot2::labs(
+      x = "Oxygen",
+      y = ylab,
+      fill = NULL
+    ) +
+    ggplot2::scale_fill_manual(
+      values = clrs,
+      limits = force,
+      aesthetics = c("fill", "color")
+    ) +
+    ggplot2::scale_y_continuous(
+      expand = ggplot2::expansion(mult = c(0.05, 0.1)),
+      breaks = scales::pretty_breaks(n = 6)
+    ) +
+    ggplot2::guides(
+      fill = ggplot2::guide_legend(override.aes = list(alpha = 1)),
+      color = "none"
+    ) +
+    theme_plots() +
+    ggplot2::theme(
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.position = "bottom",
+      legend.box.margin = ggplot2::margin(t = -10)
+    ) +
+    NULL
+}
+
+arrange_f8_s1 <- function(p1, p2, p3, p4, p5, p6) {
+  layout <- "
+  abc
+  def
+  "
+
+  p1 + p2 + p3 + p4 + p5 + p6 +
+    theme_patchwork(
+      design = layout,
+      widths = unit(c(1, 1), "in"),
+      heights = unit(1, "in"),
+      guides = "collect"
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}

@@ -162,9 +162,7 @@ In addition to downstream metabolites, we also observed hypoxia- and BAY-depende
 
 To reconcile the differential effects of prolyl hydroxylase inhibition by hypoxia and BAY, we next addressed whether hypoxia could suppress the effects of BAY on glucose and lactate fluxes (**Figure 8**). LFs cultured in standard growth medium were treated with BAY and placed in either 21% or 0.5% oxygen. Similar to previous experiments, BAY treatment decreased cell growth rate, increased glucose uptake, and increased lactate efflux in 21% oxygen. However, when combined with 0.5% oxygen, BAY treatment was unable to enhance lactate efflux. These data demonstrate that hypoxia antagonizes the effects of HIF-1α activation on glycolytic flux in these cells. 
 
-We observed a similar effect of hypoxia on glycolysis when using RNA interference to silence PHD2 expression and activate HIF-1α gene transcription (**Figure 8 - figure supplement 1**). 
-
-These data indicate that the metabolic effects that we observe are not a consequence of off-target effects of BAY treatment.
+We observed a similar effect of hypoxia on glycolysis when using RNA interference to silence PHD2 expression and activate HIF-1α gene transcription (**Figure 8 - figure supplement 1**). As with BAY treatment, siPHD2 stabilized HIF-1α in normoxia and increased glycolytic gene expression (**Figure 8 - figure supplement 1B-E**); however, hypoxia inhibited siPHD2-dependent increaes in glycolysis (**Figure 8 - figure supplement 1F**). These data indicate that the metabolic consequences of PHD2 inhibition in normoxia and hypoxia are not simply a consequence of off-target effects of BAY treatment.
 
 \newpage
 

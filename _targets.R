@@ -1354,8 +1354,37 @@ list(
     tar_target(
       siphd_annot,
       analyze_siphd_expression(df, exp = "lf_05-siphd", prot = protein)
+    ),
+    tar_target(
+      siphd_plot,
+      plot_siphd(siphd_annot$data, siphd_annot$annot, prot = protein, ylab = label)
     )
   ),
+  tar_target(
+    siphd_blot_1_png,
+    system.file(
+      "manuscript/figs-raw/lf_05-siphd_phd-hif-ldha-blots.png",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    siphd_blot_1,
+    plot_image(siphd_blot_1_png, scale = 1.25, hjust = 0.1, vjust = 0)
+  ),
+  tar_target(
+    f8_s1_figure,
+    arrange_f8_s1(
+      hyp_bay_fluxes_phd_growth,
+      siphd_blot_1,
+      siphd_plot_prot_ldha,
+      siphd_plot_mrna_glut1,
+      siphd_plot_mrna_ldha,
+      hyp_bay_fluxes_phd_lactate
+      ) |>
+      write_figures("Figure 8 - figure supplement 1.pdf")
+  ),
+
 
   # manuscript --------------------------------------------------------------
 

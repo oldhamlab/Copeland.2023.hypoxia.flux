@@ -144,14 +144,13 @@ analyze_siphd_expression <- function(x, prot, exp) {
     x |>
     dplyr::filter(experiment == exp) |>
     dplyr::filter(protein == prot) |>
-    dplyr::group_by(protein, oxygen, treatment) |>
-    wmo::remove_nested_outliers(fold_change, remove = TRUE) |>
-    identity()
+    dplyr::group_by(protein, oxygen, treatment)
 
   if ("date" %in% names(df)) {
     fo <- as.formula(fold_change ~ oxygen * treatment + (1 | date))
   } else if ("gel" %in% names(df)) {
     fo <- as.formula(fold_change ~ oxygen * treatment + (1 | gel))
+    df <- wmo::remove_nested_outliers(df, fold_change, remove = TRUE)
   }
 
   annot <-
