@@ -521,7 +521,7 @@ plot_metab_volcano <- function(
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(n = 7),
       limits = c(-nudge - 0.25, nudge + 0.25),
-      labels = scales::label_math(2 ^ ".x")
+      labels = scales::label_math(2 ^ .x)
     ) +
     ggplot2::labs(
       x = xlab,
@@ -624,7 +624,7 @@ plot_metab_venn <- function(hyp, bay) {
       set_names = c("0.5%", "BAY"),
       digits = 0,
       show_percentage = TRUE,
-      fill_color = clrs[c(2, 4)],
+      fill_color = clrs[c("0.5%", "BAY")],
       fill_alpha = 0.25,
       stroke_size = 0.25,
       set_name_size = 8/ggplot2::.pt,
@@ -632,8 +632,8 @@ plot_metab_venn <- function(hyp, bay) {
     ) +
     ggplot2::annotate(
       geom = "text",
-      x = 1,
-      y = -1.2,
+      x = 1.3,
+      y = -1.4,
       label = "133 total",
       size = 6/ggplot2::.pt
     ) +
@@ -729,7 +729,7 @@ plot_leading_edge <- function(tt, pathways, nm) {
       x = .data$x,
       y = .data$y
     ) +
-    ggplot2::geom_line(color = clrs[[3]]) +
+    ggplot2::geom_line(color = clrs[["H.DMSO"]]) +
     ggplot2::geom_hline(
       yintercept = 0,
       colour = "black",

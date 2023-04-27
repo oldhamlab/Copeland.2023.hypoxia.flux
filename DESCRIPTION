@@ -37,6 +37,7 @@ Imports:
     ggrepel,
     ggvenn,
     grDevices,
+    grid,
     gt,
     gtExtras,
     knitr,

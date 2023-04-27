@@ -11,7 +11,8 @@ tar_option_set(
   packages = c(
     "tidyverse",
     "patchwork",
-    "scales"
+    "scales",
+    "grid"
   ),
   format = "qs"
 )
@@ -1381,10 +1382,33 @@ list(
       siphd_plot_mrna_glut1,
       siphd_plot_mrna_ldha,
       hyp_bay_fluxes_phd_lactate
-      ) |>
+    ) |>
       write_figures("Figure 8 - figure supplement 1.pdf")
   ),
 
+  # figure 9 ----------------------------------------------------------------
+
+  tar_target(
+    f9,
+    arrange_f9(
+      metab_tar_pca_plot,
+      metab_tar_vol_hyp_bay,
+      msea_tar_plot_hyp_bay,
+      tca_leading_edge
+    ) |>
+      write_figures("Figure 9.pdf")
+  ),
+  tar_target(
+    f9_s1_figure,
+    arrange_f9_s1(
+      metab_tar_vol_hyp,
+      metab_tar_vol_bay,
+      metab_venn,
+      msea_tar_plot_hyp,
+      msea_tar_plot_bay
+    ) |>
+      write_figures("Figure 9 - figure supplement 1.pdf")
+  ),
 
   # manuscript --------------------------------------------------------------
 

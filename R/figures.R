@@ -2015,3 +2015,39 @@ arrange_f8_s1 <- function(p1, p2, p3, p4, p5, p6) {
       legend.box.margin = ggplot2::margin(t = -10)
     )
 }
+
+arrange_f9 <- function(p1, p2, p3, p4) {
+  layout <- "
+  ab
+  cd
+  "
+
+  p1 + p2 + p3 + p4 +
+    theme_patchwork(
+      design = layout,
+      widths = unit(2.5, "in"),
+      heights = unit(1.5, "in"),
+      guides = "collect"
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+arrange_f9_s1 <- function(p1, p2, p3, p4, p5) {
+  layout <- "
+  ad
+  be
+  ce
+  "
+
+  p1 + p2 + p3 + p4 + p5 +
+    theme_patchwork(
+      design = layout,
+      widths = unit(2.5, "in"),
+      heights = unit(c(1.5), "in")
+    )
+}
