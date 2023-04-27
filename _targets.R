@@ -672,12 +672,16 @@ list(
         "NADPH/NADP"
       ),
       ylab = list(
-        "NAD\n(nmol/cell)",
+        # "NAD\n(nmol/cell)",
+        "NAD<sup>+</sup><br>(nmol/cell)",
         "NADH\n(nmol/cell)",
-        "NADH/NAD ratio",
-        "NADP\n(nmol/cell)",
+        # "NADH/NAD ratio",
+        "NADH/NAD<sup>+</sup> ratio",
+        # "NADP\n(nmol/cell)",
+        "NADP<sup>+</sup><br>(nmol/cell)",
         "NADPH\n(nmol/cell)",
-        "NADPH/NADP ratio"
+        # "NADPH/NADP ratio",
+        "NADPH/NADP<sup>+</sup> ratio"
       )
     ),
     names = names,
@@ -1408,6 +1412,18 @@ list(
       msea_tar_plot_bay
     ) |>
       write_figures("Figure 9 - figure supplement 1.pdf")
+  ),
+  tar_target(
+    f9_s2_figure,
+    arrange_f9_s2(
+      plot_nad,
+      plot_nadh,
+      plot_nadh_ratio,
+      plot_nadp,
+      plot_nadph,
+      plot_nadph_ratio
+    ) |>
+      write_figures("Figure 9 - figure supplement 2.pdf")
   ),
 
   # manuscript --------------------------------------------------------------

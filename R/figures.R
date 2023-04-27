@@ -2051,3 +2051,24 @@ arrange_f9_s1 <- function(p1, p2, p3, p4, p5) {
       heights = unit(c(1.5), "in")
     )
 }
+
+arrange_f9_s2 <- function(p1, p2, p3, p4, p5, p6) {
+  layout <- "
+  abc
+  def
+  "
+
+  p1 + p2 + p3 + p4 + p5 + p6 +
+    theme_patchwork(
+      design = layout,
+      widths = unit(1, "in"),
+      heights = unit(1, "in"),
+      guides = "collect"
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}

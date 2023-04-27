@@ -35,6 +35,7 @@ Imports:
     ggplot2,
     ggraph,
     ggrepel,
+    ggtext,
     ggvenn,
     grDevices,
     grid,

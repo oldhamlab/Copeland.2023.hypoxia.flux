@@ -153,6 +153,7 @@ plot_nad <- function(df, annot, metab, ylab) {
     ) +
     ggbeeswarm::geom_beeswarm(
       # ggplot2::aes(fill = treatment),
+      method = "center",
       dodge.width = 0.9,
       pch = 21,
       size = 1,
@@ -214,7 +215,7 @@ plot_nad <- function(df, annot, metab, ylab) {
       legend.key.width = ggplot2::unit(0.5, "lines"),
       legend.key.height = ggplot2::unit(0.5, "lines"),
       legend.position = "bottom",
-      legend.box.margin = ggplot2::margin(t = -10)
+      legend.box.margin = ggplot2::margin(t = -10),
+      axis.title.y.left = ggtext::element_markdown(margin = ggplot2::margin(r = 3))
     )
-
 }
