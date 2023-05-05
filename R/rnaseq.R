@@ -249,7 +249,14 @@ index_tfea <- function(tfea, comp) {
     tibble::as_tibble(rownames = "tf")
 }
 
-plot_rnaseq_volcano <- function(results, gois = NULL, xlab = NULL, nudge = 8) {
+plot_rnaseq_volcano <- function(
+    results,
+    gois = NULL,
+    xlab = NULL,
+    nudge = 8,
+    binx = 50,
+    biny = 4
+) {
   .x <- NULL
   df <-
     tibble::as_tibble(results)
@@ -302,7 +309,7 @@ plot_rnaseq_volcano <- function(results, gois = NULL, xlab = NULL, nudge = 8) {
       show.legend = FALSE
     ) +
     ggplot2::geom_hex(
-      bins = c(50, 4),
+      bins = c(binx, biny),
       show.legend = FALSE
     ) +
     ggplot2::scale_fill_viridis_c(trans = "log10") +
@@ -527,7 +534,7 @@ plot_tfea_volcanoes <- function(tf, xlab, colors, nudge = 5) {
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(n = 7),
       limits = c(-nudge - 0.25, nudge + 0.25),
-      labels = \(x) scales::math_format(2 ^ x)
+      labels = scales::label_math(2 ^ .x)
     ) +
     ggplot2::labs(
       x = xlab,
@@ -566,7 +573,7 @@ plot_rnaseq_venn <- function(hyp, bay) {
       set_names = c("0.5%", "BAY"),
       digits = 0,
       show_percentage = TRUE,
-      fill_color = clrs[c(2, 4)],
+      fill_color = clrs[c("0.5%", "BAY")],
       fill_alpha = 0.25,
       stroke_size = 0.25,
       set_name_size = 8/ggplot2::.pt,
@@ -574,9 +581,9 @@ plot_rnaseq_venn <- function(hyp, bay) {
     ) +
     ggplot2::annotate(
       geom = "text",
-      x = 1,
-      y = -1.2,
-      label = "20609 total",
+      x = 1.3,
+      y = -1.4,
+      label = "20,609 total",
       size = 6/ggplot2::.pt
     ) +
     theme_plots() +
@@ -619,7 +626,7 @@ plot_gsea_venn <- function(hyp, bay) {
       set_names = c("0.5%", "BAY"),
       digits = 0,
       show_percentage = TRUE,
-      fill_color = clrs[c(2, 4)],
+      fill_color = clrs[c("0.5%", "BAY")],
       fill_alpha = 0.25,
       stroke_size = 0.25,
       set_name_size = 8/ggplot2::.pt,
@@ -627,8 +634,8 @@ plot_gsea_venn <- function(hyp, bay) {
     ) +
     ggplot2::annotate(
       geom = "text",
-      x = 1,
-      y = -1.2,
+      x = 1.3,
+      y = -1.4,
       label = "50 total",
       size = 6/ggplot2::.pt
     ) +
@@ -672,7 +679,7 @@ plot_tfea_venn <- function(hyp, bay) {
       set_names = c("0.5%", "BAY"),
       digits = 0,
       show_percentage = TRUE,
-      fill_color = clrs[c(2, 4)],
+      fill_color = clrs[c("0.5%", "BAY")],
       fill_alpha = 0.25,
       stroke_size = 0.25,
       set_name_size = 8/ggplot2::.pt,
@@ -680,8 +687,8 @@ plot_tfea_venn <- function(hyp, bay) {
     ) +
     ggplot2::annotate(
       geom = "text",
-      x = 1,
-      y = -1.2,
+      x = 1.3,
+      y = -1.4,
       label = "96 total",
       size = 6/ggplot2::.pt
     ) +
@@ -778,6 +785,104 @@ plot_gois <- function(dds, goi) {
       legend.key.height = ggplot2::unit(0.5, "lines"),
       legend.position = "bottom",
       legend.box.margin = ggplot2::margin(t = -10)
+    ) +
+    NULL
+}
+
+plot_pathway_volcanoes <- function(deg, pathways, sets, title, nudge = 3) {
+  targets <-
+    pathways[sets] |>
+    unlist() |>
+    unique()
+
+  results <-
+    deg |>
+    dplyr::filter(symbol %in% targets)
+
+  left <-
+    results |>
+    dplyr::filter(log2FoldChange < 0  & padj < 0.05) |>
+    dplyr::slice_min(stat, n = 10)
+
+  right <-
+    results |>
+    dplyr::filter(log2FoldChange > 0 & padj < 0.05) |>
+    dplyr::slice_max(stat, n = 10)
+
+  ggplot2::ggplot(results) +
+    ggplot2::aes(
+      x = log2FoldChange,
+      y = padj
+    ) +
+    ggrepel::geom_text_repel(
+      data = left,
+      ggplot2::aes(label = symbol),
+      size = 6/ggplot2::.pt,
+      max.overlaps = 20,
+      segment.size = 0.1,
+      nudge_x = -nudge - left$log2FoldChange,
+      hjust = 0,
+      segment.color = "black",
+      direction = "y",
+      family = "Calibri",
+      show.legend = FALSE
+    ) +
+    ggrepel::geom_text_repel(
+      data = right,
+      ggplot2::aes(label = symbol),
+      size = 6/ggplot2::.pt,
+      max.overlaps = 20,
+      segment.size = 0.1,
+      nudge_x = nudge - right$log2FoldChange,
+      hjust = 0,
+      segment.color = "black",
+      direction = "y",
+      family = "Calibri",
+      show.legend = FALSE
+    ) +
+    ggplot2::geom_point(
+      data = subset(results, padj > 0.05),
+      pch = 21,
+      color = "white",
+      fill = "grey80",
+      stroke = 0.2
+    ) +
+    ggplot2::geom_point(
+      data = subset(results, log2FoldChange > 0 & padj < 0.05),
+      pch = 21,
+      color = "white",
+      fill = clrs[["0.5%"]],
+      stroke = 0.2
+    ) +
+    ggplot2::geom_point(
+      data = subset(results, log2FoldChange < 0 & padj < 0.05),
+      pch = 21,
+      color = "white",
+      fill = clrs[["21%"]],
+      stroke = 0.2
+    ) +
+    ggplot2::scale_y_continuous(
+      trans = c("log10", "reverse"),
+      labels = scales::label_log()
+    ) +
+    ggplot2::scale_x_continuous(
+      breaks = scales::pretty_breaks(n = 7),
+      limits = c(-nudge - 0.25, nudge + 0.25),
+      labels = scales::math_format(2^.x)
+    ) +
+    ggplot2::labs(
+      x = "Hypoxia/Normoxia in BAY",
+      y = "Adjusted p-value",
+      title = title
+    ) +
+    theme_plots() +
+    ggplot2::theme(
+      axis.line = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(
+        color = "black",
+        fill = NA,
+        size = 0.25
+      )
     ) +
     NULL
 }

@@ -94,6 +94,7 @@ plot_myc <- function(df, annot, metab, ylab, x, fill) {
     ) +
     ggbeeswarm::geom_beeswarm(
       ggplot2::aes(fill = {{fill}}),
+      method = "center",
       dodge.width = 0.9,
       pch = 21,
       size = 1,

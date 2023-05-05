@@ -738,6 +738,8 @@ list(
         clrs[c("0.5%", "21%")],
         clrs[c("0.5%", "BAY")]
       ),
+      binx = c(50, 50, 50, 50),
+      biny = c(2, 2, 6, 6),
       filename = stringr::str_c("gsea_", c("hyp", "bay", "hyp-bay", "int"))
     ),
     names = names,
@@ -747,7 +749,7 @@ list(
     ),
     tar_target(
       rnaseq_vol,
-      plot_rnaseq_volcano(deg, xlab = xlab)
+      plot_rnaseq_volcano(deg, xlab = xlab, binx = binx, biny = biny)
     ),
     tar_target(
       gsea,
@@ -966,10 +968,10 @@ list(
       exp1 = c("05", "02", "05", "bay"),
       exp2 = c("lf_05", "lf_02", "pasmc_05", "lf_bay"),
       filename = list(
-        "Figure 1.pdf",
-        "Figure 1 - figure supplement 3.pdf",
-        "Figure 1 - figure supplement 4.pdf",
-        "Figure 2.pdf"
+        "Figure 01.pdf",
+        "Figure 01 - figure supplement 3.pdf",
+        "Figure 01 - figure supplement 4.pdf",
+        "Figure 02.pdf"
       )
     ),
     names = names,
@@ -1073,7 +1075,7 @@ list(
   ),
   tar_target(
     f1_s1_figure,
-    write_figures(f1_s1_plot, "Figure 1 - figure supplement 1.pdf"),
+    write_figures(f1_s1_plot, "Figure 01 - figure supplement 1.pdf"),
     format = "file"
   ),
   tar_target(
@@ -1098,7 +1100,7 @@ list(
   ),
   tar_target(
     f1_s2_figure,
-    write_figures(f1_lcms_lactate, "Figure 1 - figure supplement 2.pdf"),
+    write_figures(f1_lcms_lactate, "Figure 01 - figure supplement 2.pdf"),
     format = "file"
   ),
 
@@ -1121,7 +1123,7 @@ list(
   ),
   tar_target(
     f3_figure,
-    write_figures(f3_substrate, "Figure 3.pdf"),
+    write_figures(f3_substrate, "Figure 03.pdf"),
     format = "file"
   ),
 
@@ -1154,7 +1156,7 @@ list(
   ),
   tar_target(
     f4_mids_figure,
-    write_figures(f4_mids, "Figure 4.pdf"),
+    write_figures(f4_mids, "Figure 04.pdf"),
     format = "file"
   ),
   tar_map(
@@ -1163,8 +1165,8 @@ list(
       time = c(72, 36),
       title = c("LFs", "PASMCs"),
       filename = c(
-        "Figure 4 - figure supplement 1.pdf",
-        "Figure 4 - figure supplement 2.pdf"
+        "Figure 04 - figure supplement 1.pdf",
+        "Figure 04 - figure supplement 2.pdf"
       )
     ),
     names = cell,
@@ -1191,7 +1193,7 @@ list(
   ),
   tar_target(
     f5_s1_figure,
-    write_figures(mid_time_course, "Figure 5 - figure supplement 1.pdf"),
+    write_figures(mid_time_course, "Figure 05 - figure supplement 1.pdf"),
     format = "file"
   ),
   tar_target(
@@ -1200,7 +1202,7 @@ list(
   ),
   tar_target(
     f5_s2_figure,
-    write_figures(f5_s2, "Figure 5 - figure supplement 2.pdf")
+    write_figures(f5_s2, "Figure 05 - figure supplement 2.pdf")
   ),
   tar_target(
     f5,
@@ -1208,22 +1210,22 @@ list(
   ),
   tar_target(
     f5_figure,
-    write_figures(f5, "Figure 5.pdf")
+    write_figures(f5, "Figure 05.pdf")
   ),
   tar_target(
     f5_s3_figure,
     arrange_graphs(graph_ratio_cells_norm_none_ratio) |>
-      write_figures("Figure 5 - figure supplement 3.pdf")
+      write_figures("Figure 05 - figure supplement 3.pdf")
   ),
   tar_target(
     f5_s4_figure,
     arrange_graphs(graph_ratio_pasmc_hyp_ratio) |>
-      write_figures("Figure 5 - figure supplement 4.pdf")
+      write_figures("Figure 05 - figure supplement 4.pdf")
   ),
   tar_target(
     f5_s5_figure,
     arrange_graphs(graph_ratio_lf_hyp_growth_ratio) |>
-      write_figures("Figure 5 - figure supplement 5.pdf")
+      write_figures("Figure 05 - figure supplement 5.pdf")
   ),
 
   # figure 6 ----------------------------------------------------------------
@@ -1250,7 +1252,7 @@ list(
   ),
   tar_target(
     f6_rc_figure,
-    write_figures(f6_rc, "Figure 6.pdf")
+    write_figures(f6_rc, "Figure 06.pdf")
   ),
 
   # figure 7 ----------------------------------------------------------------
@@ -1272,7 +1274,7 @@ list(
   ),
   tar_target(
     f7_lactate_ox_figure,
-    write_figures(f7_lactate_ox, "Figure 7.pdf")
+    write_figures(f7_lactate_ox, "Figure 07.pdf")
   ),
 
   # figure 8 ----------------------------------------------------------------
@@ -1328,7 +1330,7 @@ list(
   ),
   tar_target(
     f8_hyp_bay_figure,
-    write_figures(f8_hyp_bay, "Figure 8.pdf")
+    write_figures(f8_hyp_bay, "Figure 08.pdf")
   ),
   tar_map(
     values = list(
@@ -1336,23 +1338,27 @@ list(
         c(
           "blot_norm",
           "mrna_norm",
+          "mrna_norm",
           "mrna_norm"
         )
       ),
       protein = c(
         "ldha",
         "glut1",
-        "ldha"
+        "ldha",
+        "cdkn1a"
       ),
       label = c(
         "LDHA protein\n(normalized)",
         "GLUT1 mRNA\n(normalized)",
-        "LDHA mRNA\n(normalized)"
+        "LDHA mRNA\n(normalized)",
+        "CDKN1A mRNA\n(normalized)"
       ),
       names = c(
         "prot_ldha",
         "mrna_glut1",
-        "mrna_ldha"
+        "mrna_ldha",
+        "mrna_cdkn1a"
       )
     ),
     names = names,
@@ -1387,20 +1393,20 @@ list(
       siphd_plot_mrna_ldha,
       hyp_bay_fluxes_phd_lactate
     ) |>
-      write_figures("Figure 8 - figure supplement 1.pdf")
+      write_figures("Figure 08 - figure supplement 1.pdf")
   ),
 
   # figure 9 ----------------------------------------------------------------
 
   tar_target(
-    f9,
+    f9_figure,
     arrange_f9(
       metab_tar_pca_plot,
       metab_tar_vol_hyp_bay,
       msea_tar_plot_hyp_bay,
       tca_leading_edge
     ) |>
-      write_figures("Figure 9.pdf")
+      write_figures("Figure 09.pdf")
   ),
   tar_target(
     f9_s1_figure,
@@ -1411,7 +1417,7 @@ list(
       msea_tar_plot_hyp,
       msea_tar_plot_bay
     ) |>
-      write_figures("Figure 9 - figure supplement 1.pdf")
+      write_figures("Figure 09 - figure supplement 1.pdf")
   ),
   tar_target(
     f9_s2_figure,
@@ -1423,7 +1429,294 @@ list(
       plot_nadph,
       plot_nadph_ratio
     ) |>
-      write_figures("Figure 9 - figure supplement 2.pdf")
+      write_figures("Figure 09 - figure supplement 2.pdf")
+  ),
+
+  # figure 10 ---------------------------------------------------------------
+
+  tar_map(
+    values = list(
+      sets = list(
+        c("HALLMARK_E2F_TARGETS", "HALLMARK_G2M_CHECKPOINT"),
+        c("HALLMARK_MYC_TARGETS_V1", "HALLMARK_MYC_TARGETS_V2"),
+        "HALLMARK_OXIDATIVE_PHOSPHORYLATION"
+      ),
+      titles = list(
+        "E2F Targets and\nG2/M Checkpoint",
+        "MYC Targets",
+        "Oxidative Phosphorylation"
+      ),
+      names = list(
+        "e2f",
+        "myc",
+        "oxphos")
+    ),
+    names = names,
+    tar_target(
+      gsea_deg,
+      plot_pathway_volcanoes(
+        deg_hyp_bay,
+        hallmark_pathways,
+        sets = sets,
+        title = titles
+      )
+    )
+  ),
+  tar_target(
+    f10_figure,
+    arrange_f10(
+      rnaseq_pca,
+      rnaseq_vol_hyp_bay,
+      gsea_plot_hyp_bay,
+      gsea_deg_e2f,
+      gsea_deg_myc,
+      tfea_plot_hyp_bay
+    ) |>
+      write_figures("Figure 10.pdf")
+  ),
+  tar_target(
+    f10_s1_figure,
+    arrange_f10_s1(
+      rnaseq_vol_hyp,
+      rnaseq_vol_bay,
+      rnaseq_venn,
+      gsea_venn,
+      gsea_plot_hyp,
+      gsea_plot_bay,
+      tfea_plot_hyp,
+      tfea_plot_bay,
+      tfea_venn
+    ) |>
+      write_figures("Figure 10 - figure supplement 1.pdf")
+  ),
+  tar_target(
+    cdkn1a,
+    plot_cdkn1a(dds)
+  ),
+  tar_target(
+    f10_s2_figure,
+    arrange_f10_s2(
+      cdkn1a,
+      siphd_plot_mrna_cdkn1a
+    ) |>
+      write_figures("Figure 10 - figure supplement 2.pdf")
+  ),
+
+  # figure 11 ---------------------------------------------------------------
+
+  tar_target(
+    myc_blot_file,
+    manuscript_path("figs-raw/lf_05-bay_myc-blots.png"),
+    format = "file"
+  ),
+  tar_target(
+    myc_blot,
+    plot_image(myc_blot_file)
+  ),
+  tar_target(
+    myc_blot_quant,
+    analyze_hyp_bay_densities(blot_norm, "myc")
+  ),
+  tar_target(
+    myc_blot_plot,
+    plot_hyp_bay_densities(
+      myc_blot_quant$data,
+      myc_blot_quant$annot,
+      "myc",
+      "MYC protein\n(normalized)"
+    )
+  ),
+  tar_target(
+    model_image_file,
+    manuscript_path("figs-raw/working-model_2.png"),
+    format = "file"
+  ),
+  tar_target(
+    model_image,
+    plot_image(model_image_file, scale = 1.7, hjust = 0.2, vjust = 0.2)
+  ),
+  tar_target(
+    simyc_image_file,
+    manuscript_path("figs-raw/lf_05-simyc_myc-blots.png"),
+    format = "file"
+  ),
+  tar_target(
+    simyc_image,
+    plot_image(simyc_image_file)
+  ),
+  tar_target(
+    oemyc_image_file,
+    manuscript_path("figs-raw/lf_bay-myc_myc-blots.png"),
+    format = "file"
+  ),
+  tar_target(
+    oemyc_image,
+    plot_image(oemyc_image_file)
+  ),
+  tar_target(
+    f11_figure,
+    arrange_f11(
+      myc_blot,
+      myc_blot_plot,
+      model_image,
+      simyc_image,
+      myc_growth_plot_simyc + ggplot2::geom_hline(yintercept = 0, size = 0.25),
+      myc_lactate_plot_simyc,
+      oemyc_image,
+      myc_growth_plot_oemyc,
+      myc_lactate_plot_oemyc
+    ) |>
+      write_figures("Figure 11.pdf")
+  ),
+  tar_target(
+    simyc_blot_2_png,
+    system.file(
+      "manuscript/figs-raw/lf_05-simyc_hif-ldha-blots.png",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    simyc_blot_2,
+    plot_image(simyc_blot_2_png, scale = 1.25, hjust = -0.15, vjust = 0)
+  ),
+  tar_map(
+    values = list(
+      df = rlang::syms(
+        c(
+          "blot_norm",
+          "blot_norm",
+          "mrna_norm",
+          "mrna_norm"
+        )
+      ),
+      protein = c(
+        "hif1a",
+        "ldha",
+        "glut1",
+        "ldha"
+      ),
+      label = c(
+        "HIF-1α protein\n(normalized)",
+        "LDHA protein\n(normalized)",
+        "GLUT1 mRNA\n(normalized)",
+        "LDHA mRNA\n(normalized)"
+      ),
+      names = c(
+        "simyc_prot_hif1a",
+        "simyc_prot_ldha",
+        "simyc_mrna_glut1",
+        "simyc_mrna_ldha"
+      )
+    ),
+    names = names,
+    tar_target(
+      stats,
+      analyze_siphd_expression(df, exp = "lf_05-simyc", prot = protein)
+    ),
+    tar_target(
+      plot,
+      plot_simyc(stats$data, stats$annot, prot = protein, ylab = label)
+    )
+  ),
+  tar_target(
+    oemyc_blot_2_png,
+    system.file(
+      "manuscript/figs-raw/lf_bay-myc_hif-ldha-blots.png",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    oemyc_blot_2,
+    plot_image(oemyc_blot_2_png, scale = 1.25, hjust = -0.15, vjust = 0)
+  ),
+  tar_map(
+    values = list(
+      df = rlang::syms(
+        c(
+          "blot_norm",
+          "blot_norm",
+          "mrna_norm",
+          "mrna_norm"
+        )
+      ),
+      protein = c(
+        "hif1a",
+        "ldha",
+        "glut1",
+        "ldha"
+      ),
+      label = c(
+        "HIF-1α protein\n(normalized)",
+        "LDHA protein\n(normalized)",
+        "GLUT1 mRNA\n(normalized)",
+        "LDHA mRNA\n(normalized)"
+      ),
+      names = c(
+        "oemyc_prot_hif1a",
+        "oemyc_prot_ldha",
+        "oemyc_mrna_glut1",
+        "oemyc_mrna_ldha"
+      )
+    ),
+    names = names,
+    tar_target(
+      stats,
+      analyze_oemyc_expression(df, prot = protein)
+    ),
+    tar_target(
+      plot,
+      plot_oemyc(stats$data, stats$annot, prot = protein, ylab = label)
+    )
+  ),
+  tar_target(
+    f11_s1_figure,
+    arrange_f11_s1(
+      simyc_blot_2,
+      plot_simyc_prot_hif1a,
+      plot_simyc_prot_ldha,
+      plot_simyc_mrna_glut1,
+      plot_simyc_mrna_ldha,
+      oemyc_blot_2,
+      plot_oemyc_prot_hif1a,
+      plot_oemyc_prot_ldha,
+      plot_oemyc_mrna_glut1,
+      plot_oemyc_mrna_ldha
+    ) |>
+      write_figures("Figure 11 - figure supplement 1.pdf")
+  ),
+
+  # figure 12 ---------------------------------------------------------------
+
+  tar_map(
+    values = list(cell = c("lf", "pasmc")),
+    tar_target(
+      dna_curve,
+      plot_cells_per_dna(dna_per_cell_clean, cell)
+    )
+  ),
+  tar_target(
+    f12_figure,
+    arrange_f12(
+      dna_curve_lf,
+      dna_curve_pasmc
+    ) |>
+      write_figures("Figure 12.pdf")
+  ),
+
+  # resources table ---------------------------------------------------------
+
+  tar_target(
+    resources_file,
+    system.file(
+      "manuscript/figs-raw/resources.csv",
+      package = "Copeland.2023.hypoxia.flux"
+    )
+  ),
+  tar_target(
+    resources_table,
+    create_resources(resources_file)
   ),
 
   # manuscript --------------------------------------------------------------

@@ -25,3 +25,55 @@ calculate_cells_per_dna <- function(df) {
     dplyr::ungroup()
 }
 
+plot_cells_per_dna <- function(dna_per_cell_clean, cell = c("lf", "pasmc")) {
+  dna_per_cell_clean |>
+    dplyr::filter(cell_type == cell) |>
+    dplyr::filter(.data$volume == 200 & cells < 400000) |>
+    ggplot2::ggplot() +
+    ggplot2::facet_wrap(~cell_type, labeller = ggplot2::as_labeller(toupper)) +
+    ggplot2::aes(
+      x = cells,
+      y = conc
+    ) +
+    ggplot2::geom_smooth(
+      formula = y ~ 0 + x,
+      method = "lm",
+      color = clrs[[2]],
+      size = 0.5,
+      se = FALSE
+    ) +
+    # ggplot2::stat_summary(
+    #   geom = "linerange",
+    #   fun.data = "mean_se",
+    #   size = 0.5,
+    #   show.legend = FALSE
+    # ) +
+    ggplot2::stat_summary(
+      geom = "errorbar",
+      fun.data = ggplot2::mean_se,
+      color = "black",
+      width = 7500,
+      size = 0.25,
+      show.legend = FALSE
+    ) +
+    ggplot2::stat_summary(
+      geom = "point",
+      fun = "mean",
+      pch = 21,
+      color = "white",
+      fill = "black",
+      size = 1.5,
+      show.legend = FALSE,
+      stroke = 0.2
+    ) +
+    ggplot2::labs(
+      x = "Cell count",
+      y = "DNA (ng)"
+    ) +
+    ggplot2::scale_x_continuous(
+      labels = scales::label_number(scale_cut = scales::cut_short_scale())
+    ) +
+    theme_plots() +
+    ggplot2::coord_cartesian(xlim = c(0, NA), clip = "off") +
+    NULL
+}
