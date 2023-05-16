@@ -1653,7 +1653,7 @@ list(
   ),
   tar_target(
     oemyc_blot_2,
-    plot_image(oemyc_blot_2_png, scale = 1.25, hjust = -0.15, vjust = 0)
+    plot_image(oemyc_blot_2_png, scale = 1.2, hjust = -0.07, vjust = 0)
   ),
   tar_map(
     values = list(
