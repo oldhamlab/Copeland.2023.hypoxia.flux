@@ -14,6 +14,7 @@ Bacterial and virus strains,YFP adenovirus,"Oldham et al., 2015",
 Critical commercial assays,Glucose colorimetric assay kit,Cayman,10009582
 Critical commercial assays,ʟ-Lactate assay kit,Cayman,700510
 Critical commercial assays,Pyruvate assay kit,Cayman,700470
+Critical commercial assays,NADP/NADPH-Glo Assay,Promega,G9081
 Depositied data,Raw and analyzed data,This paper,https://github.com/oldhamlab/Copeland.2023.hypoxia.flux
 Depositied data,RNA-seq reads,This paper,SRA: PRJNA721596
 Depositied data,Summarized RNA-seq data,This paper,https://github.com/oldhamlab/rnaseq.lf.hypoxia.molidustat

@@ -1680,7 +1680,9 @@ plot_lactate_mids <- function(df, cell, t = 72) {
     "LAC",
     "FBP",
     "PYR",
-    "CIT"
+    "CIT",
+    "AKG",
+    "MAL"
   )
 
   x <-
@@ -1793,7 +1795,7 @@ arrange_f7 <- function(p1, p2) {
   p1 + p2 +
     theme_patchwork(
       design = layout,
-      widths = unit(c(1, 2.5), "in"),
+      widths = unit(c(1, 3), "in"),
       heights = unit(1, "in")
     ) &
     ggplot2::theme(
@@ -2572,7 +2574,24 @@ arrange_f11 <- function(p1, p2, p3, p4, p5, p6, p7, p8, p9) {
     )
 }
 
-arrange_f11_s1 <- function(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) {
+arrange_f11_s1 <- function(p1, p2) {
+  layout <- "ab"
+
+  p1 + p2 +
+    theme_patchwork(
+      design = layout,
+      widths = unit(c(1, 1), "in"),
+      heights = unit(1, "in")
+    ) &
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.key.width = ggplot2::unit(0.5, "lines"),
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      legend.box.margin = ggplot2::margin(t = -10)
+    )
+}
+
+arrange_f11_s2 <- function(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10) {
   layout <- "
   abbbb
   cdddd

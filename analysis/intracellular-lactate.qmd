@@ -1,0 +1,158 @@
+---
+title: "Intracellular Lactate Labeling"
+date-modified: today
+format: html
+excecute:
+  message: false
+---
+
+```{r}
+#| label: setup
+#| output: false
+
+devtools::load_all()
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(wmo)
+  library(targets)
+})
+
+here::i_am("analysis/flux-differences.qmd")
+
+theme_set(theme_wmo())
+```
+
+```{r}
+#| label: data
+
+withr::with_dir(here::here(), {
+  metab <- tar_read(metab_tar_clean)
+  mid <- tar_read(mid_clean)
+  counts <- tar_read(flux_measurements)
+})
+```
+
+## Overview
+
+Query increased abundance of lactate intracellularly in hypoxia.
+
+## MIDs
+
+```{r}
+#| label: mids
+
+mids <- 
+  mid |> 
+  filter(
+    method == "sim" & 
+      metabolite == "lactate" & 
+      tracer == "glc6" & 
+      isotope == "M3"
+  ) |> 
+  mutate(
+    group = case_when(
+      treatment == "DMSO" ~ "DMSO", 
+      treatment == "BAY" ~ "BAY", 
+      treatment == "None" ~ oxygen
+    ), 
+    group = factor(group, levels = c("21%", "0.5%", "DMSO", "BAY"))
+  ) |> 
+  filter(!is.na(group)) |> 
+  select(cell_type, date, group, batch, time, well, peak_area)
+```
+
+```{r}
+#| label: counts
+
+cells <-
+  counts |> 
+  filter(
+    experiment %in% c("05", "bay") & 
+      metabolite == "cells"
+  ) |> 
+  mutate(
+    group = case_when(
+      treatment == "DMSO" ~ "DMSO", 
+      treatment == "BAY" ~ "BAY", 
+      treatment == "None" ~ oxygen
+    ), 
+    group = factor(group, levels = c("21%", "0.5%", "DMSO", "BAY")), 
+  ) |> 
+  group_by(across(cell_type:time)) |> 
+  summarize(conc = mean(conc)) |> 
+  filter(!is.na(group) & time != 0) |> 
+  ungroup() |> 
+  select(cell_type, group, time, conc) |> 
+  group_by(cell_type, group, time) |> 
+  summarize(conc = mean(conc))
+```
+
+
+
+```{r}
+#| label: graph
+
+left_join(mids, cells) |> 
+  mutate(ratio = peak_area / conc) |> 
+  group_by(cell_type) |> 
+  mutate(norm = ratio / mean(ratio[time == min(time) & group == "21%"])) |> 
+  ggplot() +
+  facet_wrap(
+    ~ cell_type, 
+    scales = "free", 
+    labeller = as_labeller(toupper)
+  ) +
+  aes(
+    x = time, 
+    y = norm
+  ) +
+  stat_summary(
+    aes(group = group), 
+    fun.data = "mean_se", 
+    geom = "errorbar", 
+    width = 1, 
+    linewidth = 0.25
+  ) +
+  stat_summary(
+    aes(color = group), 
+    geom = "line", 
+    fun = "mean", 
+    show.legend = FALSE
+  ) +
+  stat_summary(
+    aes(fill = group), 
+    geom = "point", 
+    fun = "mean", 
+    pch = 21, 
+    color = "white", 
+    size = 2
+  ) +
+  scale_fill_manual(
+    values = clrs, 
+    aesthetics = c("color", "fill")
+  ) +
+  scale_x_continuous(breaks = seq(0, 72, 12)) +
+  labs(
+    x = "Time (h)", 
+    y = expression(paste("[U-"^13, "C"[3], "]-Lactate / Cell")), 
+    fill = NULL
+  ) +
+  theme_plots() +
+  theme(
+    legend.position = "bottom"
+  )
+```
+
+```{r}
+#| label: write-figure
+
+ggsave(
+  here::here("manuscript/figs/Response 01.pdf"), 
+  width = 3,
+  height = 3,
+  units = "in",
+  device = cairo_pdf
+)
+```
+
+

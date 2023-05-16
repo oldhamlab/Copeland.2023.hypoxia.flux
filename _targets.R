@@ -1337,6 +1337,7 @@ list(
       df = rlang::syms(
         c(
           "blot_norm",
+          "blot_norm",
           "mrna_norm",
           "mrna_norm",
           "mrna_norm"
@@ -1344,18 +1345,21 @@ list(
       ),
       protein = c(
         "ldha",
+        "myc",
         "glut1",
         "ldha",
         "cdkn1a"
       ),
       label = c(
         "LDHA protein\n(normalized)",
+        "MYC protein\n(normalized)",
         "GLUT1 mRNA\n(normalized)",
         "LDHA mRNA\n(normalized)",
         "CDKN1A mRNA\n(normalized)"
       ),
       names = c(
         "prot_ldha",
+        "prot_myc",
         "mrna_glut1",
         "mrna_ldha",
         "mrna_cdkn1a"
@@ -1620,6 +1624,26 @@ list(
     )
   ),
   tar_target(
+    siphd_blot_2_png,
+    system.file(
+      "manuscript/figs-raw/lf_05-siphd_myc-blots.png",
+      package = "Copeland.2023.hypoxia.flux"
+    ),
+    format = "file"
+  ),
+  tar_target(
+    siphd_blot_2,
+    plot_image(siphd_blot_2_png, scale = 1.25, hjust = -0.15, vjust = 0)
+  ),
+  tar_target(
+    f11_s1_figure,
+    arrange_f11_s1(
+      siphd_blot_2,
+      siphd_plot_prot_myc
+    ) |>
+      write_figures("Figure 11 - figure supplement 1.pdf")
+  ),
+  tar_target(
     oemyc_blot_2_png,
     system.file(
       "manuscript/figs-raw/lf_bay-myc_hif-ldha-blots.png",
@@ -1671,8 +1695,8 @@ list(
     )
   ),
   tar_target(
-    f11_s1_figure,
-    arrange_f11_s1(
+    f11_s2_figure,
+    arrange_f11_s2(
       simyc_blot_2,
       plot_simyc_prot_hif1a,
       plot_simyc_prot_ldha,
@@ -1684,7 +1708,7 @@ list(
       plot_oemyc_mrna_glut1,
       plot_oemyc_mrna_ldha
     ) |>
-      write_figures("Figure 11 - figure supplement 1.pdf")
+      write_figures("Figure 11 - figure supplement 2.pdf")
   ),
 
   # figure 12 ---------------------------------------------------------------
