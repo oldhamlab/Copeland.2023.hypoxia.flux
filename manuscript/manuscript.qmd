@@ -45,8 +45,8 @@ crossref:
   title-delim: ""
 
 filters:
-    - scholarly-metadata.lua
-    - author-info-blocks.lua
+- scholarly-metadata.lua
+- author-info-blocks.lua
 ---
 
 ```{r}
@@ -55,6 +55,7 @@ filters:
 
 # ensure refs are up-to-date
 targets::tar_load(refs)
+targets::tar_load(pkg_citations)
 
 # load data for paper
 biomass <- 
@@ -368,7 +369,7 @@ RNA was collected from LFs treated for three days ± hypoxia ± BAY as described
 
 ## Quantification and Statistical Analysis
 
-The raw data and annotated analysis code necessary to reproduce this manuscript are contained in an R package research compendium available from the Oldham Lab GitHub repository (https://github.com/oldhamlab/Copeland.2023.hypoxia.flux). Data analysis, statistical comparisons, and visualization were performed in R [@R-base] using the packages referenced in the data supplement. Experiments included technical and biological replicates as noted above. The number of biological replicates (n) is indicated in the figure legends. Summary data show the mean ± SEM. Outliers were identified using twice the median absolute deviation as a cutoff threshold. Comparisons were performed using linear mixed-effects models with oxygen, treatment, and their interaction as fixed effects and biological replicate as a random effect. Significant differences in estimated marginal means were identified by comparisons to the multivariate *t* distribution. Metabolomics and RNA-seq data were analyzed as described above. Probability values less than 0.05 were considered statistically significant.  
+The raw data and annotated analysis code necessary to reproduce this manuscript are contained in an R package research compendium available from the Oldham Lab GitHub repository (https://github.com/oldhamlab/Copeland.2023.hypoxia.flux). Data analysis, statistical comparisons, and visualization were performed in R [@R-base]. Experiments included technical and biological replicates as noted above. The number of biological replicates (n) is indicated in the figure legends. Summary data show the mean ± SEM. Outliers were identified using twice the median absolute deviation as a cutoff threshold. Comparisons were performed using linear mixed-effects models with oxygen, treatment, and their interaction as fixed effects and biological replicate as a random effect. Significant differences in estimated marginal means were identified by comparisons to the multivariate *t* distribution. Metabolomics and RNA-seq data were analyzed as described above. Probability values less than 0.05 were considered statistically significant.  
 
 \newpage
 
