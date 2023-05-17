@@ -968,10 +968,10 @@ list(
       exp1 = c("05", "02", "05", "bay"),
       exp2 = c("lf_05", "lf_02", "pasmc_05", "lf_bay"),
       filename = list(
-        "Figure 01.pdf",
-        "Figure 01 - figure supplement 3.pdf",
-        "Figure 01 - figure supplement 4.pdf",
-        "Figure 02.pdf"
+        "Figure 01",
+        "Figure 01 - figure supplement 3",
+        "Figure 01 - figure supplement 4",
+        "Figure 02"
       )
     ),
     names = names,
@@ -1075,7 +1075,7 @@ list(
   ),
   tar_target(
     f1_s1_figure,
-    write_figures(f1_s1_plot, "Figure 01 - figure supplement 1.pdf"),
+    write_figures(f1_s1_plot, "Figure 01 - figure supplement 1"),
     format = "file"
   ),
   tar_target(
@@ -1100,7 +1100,7 @@ list(
   ),
   tar_target(
     f1_s2_figure,
-    write_figures(f1_lcms_lactate, "Figure 01 - figure supplement 2.pdf"),
+    write_figures(f1_lcms_lactate, "Figure 01 - figure supplement 2"),
     format = "file"
   ),
 
@@ -1123,7 +1123,7 @@ list(
   ),
   tar_target(
     f3_figure,
-    write_figures(f3_substrate, "Figure 03.pdf"),
+    write_figures(f3_substrate, "Figure 03"),
     format = "file"
   ),
 
@@ -1156,7 +1156,7 @@ list(
   ),
   tar_target(
     f4_mids_figure,
-    write_figures(f4_mids, "Figure 04.pdf"),
+    write_figures(f4_mids, "Figure 04"),
     format = "file"
   ),
   tar_map(
@@ -1165,8 +1165,8 @@ list(
       time = c(72, 36),
       title = c("LFs", "PASMCs"),
       filename = c(
-        "Figure 04 - figure supplement 1.pdf",
-        "Figure 04 - figure supplement 2.pdf"
+        "Figure 04 - figure supplement 1",
+        "Figure 04 - figure supplement 2"
       )
     ),
     names = cell,
@@ -1193,7 +1193,7 @@ list(
   ),
   tar_target(
     f5_s1_figure,
-    write_figures(mid_time_course, "Figure 05 - figure supplement 1.pdf"),
+    write_figures(mid_time_course, "Figure 05 - figure supplement 1"),
     format = "file"
   ),
   tar_target(
@@ -1202,7 +1202,7 @@ list(
   ),
   tar_target(
     f5_s2_figure,
-    write_figures(f5_s2, "Figure 05 - figure supplement 2.pdf")
+    write_figures(f5_s2, "Figure 05 - figure supplement 2")
   ),
   tar_target(
     f5,
@@ -1210,22 +1210,22 @@ list(
   ),
   tar_target(
     f5_figure,
-    write_figures(f5, "Figure 05.pdf")
+    write_figures(f5, "Figure 05")
   ),
   tar_target(
     f5_s3_figure,
     arrange_graphs(graph_ratio_cells_norm_none_ratio) |>
-      write_figures("Figure 05 - figure supplement 3.pdf")
+      write_figures("Figure 05 - figure supplement 3")
   ),
   tar_target(
     f5_s4_figure,
     arrange_graphs(graph_ratio_pasmc_hyp_ratio) |>
-      write_figures("Figure 05 - figure supplement 4.pdf")
+      write_figures("Figure 05 - figure supplement 4")
   ),
   tar_target(
     f5_s5_figure,
     arrange_graphs(graph_ratio_lf_hyp_growth_ratio) |>
-      write_figures("Figure 05 - figure supplement 5.pdf")
+      write_figures("Figure 05 - figure supplement 5")
   ),
 
   # figure 6 ----------------------------------------------------------------
@@ -1252,7 +1252,7 @@ list(
   ),
   tar_target(
     f6_rc_figure,
-    write_figures(f6_rc, "Figure 06.pdf")
+    write_figures(f6_rc, "Figure 06")
   ),
 
   # figure 7 ----------------------------------------------------------------
@@ -1274,7 +1274,7 @@ list(
   ),
   tar_target(
     f7_lactate_ox_figure,
-    write_figures(f7_lactate_ox, "Figure 07.pdf")
+    write_figures(f7_lactate_ox, "Figure 07")
   ),
 
   # figure 8 ----------------------------------------------------------------
@@ -1330,7 +1330,7 @@ list(
   ),
   tar_target(
     f8_hyp_bay_figure,
-    write_figures(f8_hyp_bay, "Figure 08.pdf")
+    write_figures(f8_hyp_bay, "Figure 08")
   ),
   tar_map(
     values = list(
@@ -1397,7 +1397,7 @@ list(
       siphd_plot_mrna_ldha,
       hyp_bay_fluxes_phd_lactate
     ) |>
-      write_figures("Figure 08 - figure supplement 1.pdf")
+      write_figures("Figure 08 - figure supplement 1")
   ),
 
   # figure 9 ----------------------------------------------------------------
@@ -1410,7 +1410,7 @@ list(
       msea_tar_plot_hyp_bay,
       tca_leading_edge
     ) |>
-      write_figures("Figure 09.pdf")
+      write_figures("Figure 09")
   ),
   tar_target(
     f9_s1_figure,
@@ -1421,7 +1421,7 @@ list(
       msea_tar_plot_hyp,
       msea_tar_plot_bay
     ) |>
-      write_figures("Figure 09 - figure supplement 1.pdf")
+      write_figures("Figure 09 - figure supplement 1")
   ),
   tar_target(
     f9_s2_figure,
@@ -1433,7 +1433,7 @@ list(
       plot_nadph,
       plot_nadph_ratio
     ) |>
-      write_figures("Figure 09 - figure supplement 2.pdf")
+      write_figures("Figure 09 - figure supplement 2")
   ),
 
   # figure 10 ---------------------------------------------------------------
@@ -1476,7 +1476,7 @@ list(
       gsea_deg_myc,
       tfea_plot_hyp_bay
     ) |>
-      write_figures("Figure 10.pdf")
+      write_figures("Figure 10")
   ),
   tar_target(
     f10_s1_figure,
@@ -1491,7 +1491,7 @@ list(
       tfea_plot_bay,
       tfea_venn
     ) |>
-      write_figures("Figure 10 - figure supplement 1.pdf")
+      write_figures("Figure 10 - figure supplement 1")
   ),
   tar_target(
     cdkn1a,
@@ -1503,7 +1503,7 @@ list(
       cdkn1a,
       siphd_plot_mrna_cdkn1a
     ) |>
-      write_figures("Figure 10 - figure supplement 2.pdf")
+      write_figures("Figure 10 - figure supplement 2")
   ),
 
   # figure 11 ---------------------------------------------------------------
@@ -1570,7 +1570,7 @@ list(
       myc_growth_plot_oemyc,
       myc_lactate_plot_oemyc
     ) |>
-      write_figures("Figure 11.pdf")
+      write_figures("Figure 11")
   ),
   tar_target(
     simyc_blot_2_png,
@@ -1641,7 +1641,7 @@ list(
       siphd_blot_2,
       siphd_plot_prot_myc
     ) |>
-      write_figures("Figure 11 - figure supplement 1.pdf")
+      write_figures("Figure 11 - figure supplement 1")
   ),
   tar_target(
     oemyc_blot_2_png,
@@ -1708,7 +1708,7 @@ list(
       plot_oemyc_mrna_glut1,
       plot_oemyc_mrna_ldha
     ) |>
-      write_figures("Figure 11 - figure supplement 2.pdf")
+      write_figures("Figure 11 - figure supplement 2")
   ),
 
   # figure 12 ---------------------------------------------------------------
@@ -1726,7 +1726,7 @@ list(
       dna_curve_lf,
       dna_curve_pasmc
     ) |>
-      write_figures("Figure 12.pdf")
+      write_figures("Figure 12")
   ),
 
   # resources table ---------------------------------------------------------

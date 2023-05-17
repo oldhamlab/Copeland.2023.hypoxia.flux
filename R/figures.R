@@ -76,11 +76,11 @@ write_figures <- function(plot, filename, path = "manuscript/figs") {
     )
 
   ggplot2::ggsave(
-    filename = filename,
+    filename = stringr::str_c(filename, ".png"),
     plot = plot,
-    # device = ragg::agg_png,
+    device = ragg::agg_png,
     # device = ragg::agg_tiff,
-    device = cairo_pdf,
+    # device = cairo_pdf,
     path = path,
     width = overall_width,
     height = overall_height,
@@ -90,7 +90,7 @@ write_figures <- function(plot, filename, path = "manuscript/figs") {
 
   if (file.exists("Rplots.pdf")) unlink("Rplots.pdf")
 
-  stringr::str_c(path, "/", filename)
+  stringr::str_c(path, "/", filename, ".png")
 }
 
 
