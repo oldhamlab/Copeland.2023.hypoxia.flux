@@ -79,6 +79,7 @@ Imports:
     tidyselect,
     usethis,
     viridis,
+    webshot2,
     wmo
 Depends: 
     R (>= 4.2.0)
