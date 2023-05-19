@@ -687,7 +687,7 @@ list(
     names = names,
     tar_target(
       plot,
-      plot_nad(nad_final, nad_annot, metab, ylab)
+      plot_nads(nad_final, nad_annot, metab, ylab)
     )
   ),
 

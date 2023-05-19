@@ -1,29 +1,26 @@
-category,Reagent/Resource,Source,Identifier
-Antibodies,HIF-1α,BD Biosciences,610958
-Antibodies,c-MYC,Cell Signaling Technologies,D84C12
-Antibodies,LDHA,Cell Signaling Technologies,2012
-Antibodies,HRP-α-Rabbit IgG,Cell Signaling Technologies,7074
-Antibodies,HRP-α-Mouse IgG,Cell Signaling Technologies,7076
-Bacterial and virus strains,c-MYC adenovirus,Vector Biolabs,1285
-Bacterial and virus strains,YFP adenovirus,"Oldham et al., 2015",
-"Chemicals, peptides, and recombinant proteins","[1,2-^13^C~1~]-glucose",Cambridge Isotope Labs,CLM-504-PK
-"Chemicals, peptides, and recombinant proteins",[U-^13^C~6~]-glucose,Cambridge Isotope Labs,CLM-1396-PK
-"Chemicals, peptides, and recombinant proteins",[U-^13^C~5~]-glutamine,Cambridge Isotope Labs,CLM-1822-H-PK
-"Chemicals, peptides, and recombinant proteins",[U-^13^C~3~]-lactate,Sigma,485926
-"Chemicals, peptides, and recombinant proteins",Molidustat (BAY-85-3934),Cayman,15297
-Critical commercial assays,Glucose colorimetric assay kit,Cayman,10009582
-Critical commercial assays,ʟ-Lactate assay kit,Cayman,700510
-Critical commercial assays,Pyruvate assay kit,Cayman,700470
-Critical commercial assays,NADP/NADPH-Glo Assay,Promega,G9081
-Depositied data,Raw and analyzed data,This paper,https://github.com/oldhamlab/Copeland.2023.hypoxia.flux
-Depositied data,RNA-seq reads,This paper,SRA: PRJNA721596
-Depositied data,Summarized RNA-seq data,This paper,https://github.com/oldhamlab/rnaseq.lf.hypoxia.molidustat
-Experimental models: Cell lines,Normal human lung fibroblasts,Lonza,CC-2512
-Experimental models: Cell lines,Pulmonary artery smooth muscle cells,Lonza,CC-2581
-Oligonucleotides,ACTB (Hs03023943_g1),Life Technologies,4351370
-Oligonucleotides,GLUT1 (Hs00892681_m1),Life Technologies,4351370
-Oligonucleotides,LDHA (Hs00855332_g1),Life Technologies,4351370
-Oligonucleotides,CDKN1A (Hs00355782_m1),Life Technologies,4351370
-Oligonucleotides,MYC ON-TARGETplus siRNA,Dharmacon,L-003282-02-0005
-Oligonucleotides,PHD2 ON-TARGETplus siRNA,Dharmacon,L-004276-00-0005
-Oligonucleotides,ON-TARGETplus non-targeting control pool,Dharmacon,D-001810-10-05
+Reagent type (species) or resource,Designation,Source or reference,Identifiers,Additional information
+antibody,anti-HIF-1α (Mouse monoclonal),BD Biosciences,610958,1:1000
+antibody,anti-c-MYC (Rabbit monoclonal),Cell Signaling Technologies,D84C12,1:1000
+antibody,anti-LDHA (Rabbit polyclonal),Cell Signaling Technologies,2012,1:1000
+antibody,HRP-anti-Rabbit IgG,Cell Signaling Technologies,7074,1:5000
+antibody,HRP-anti-Mouse IgG,Cell Signaling Technologies,7076,1:5000
+transfected construct (human),MYC,Vector Biolabs,1285,adenovirus to express MYC
+transfected construct (human),YFP,"Oldham et al., 2015",,adenovirus control to express YFP
+"chemical compound, drug","[1,2-^13^C~1~]-glucose",Cambridge Isotope Labs,CLM-504-PK,
+"chemical compound, drug",[U-^13^C~6~]-glucose,Cambridge Isotope Labs,CLM-1396-PK,
+"chemical compound, drug",[U-^13^C~5~]-glutamine,Cambridge Isotope Labs,CLM-1822-H-PK,
+"chemical compound, drug",[U-^13^C~3~]-lactate,Sigma,485926,
+"chemical compound, drug",BAY,Cayman,15297,Molidustat (BAY-85-3934); 10 μM in DMSO
+commercial assay or kit,Glucose colorimetric assay kit,Cayman,10009582,
+commercial assay or kit,ʟ-Lactate assay kit,Cayman,700510,
+commercial assay or kit,Pyruvate assay kit,Cayman,700470,
+commercial assay or kit,NADP/NADPH-Glo Assay,Promega,G9081,
+cell line (human),LFs,Lonza,CC-2512,Normal human lung fibroblasts
+cell line (human),PASMCs,Lonza,CC-2581,Pulmonary artery smooth muscle cells
+sequenced-based reagent,ACTB,Life Technologies,Hs03023943_g1,qPCR probe
+sequenced-based reagent,GLUT1,Life Technologies,Hs00892681_m1,qPCR probe
+sequenced-based reagent,LDHA,Life Technologies,Hs00855332_g1,qPCR probe
+sequenced-based reagent,CDKN1A,Life Technologies,Hs00355782_m1,qPCR probe
+transfected construct (human),siMYC,Dharmacon,L-003282-02-0005,ON-TARGETplus siRNA
+transfected construct (human),siPHD2,Dharmacon,L-004276-00-0005,ON-TARGETplus siRNA
+transfected construct (human),siCTL,Dharmacon,D-001810-10-05,ON-TARGETplus non-targeting control pool

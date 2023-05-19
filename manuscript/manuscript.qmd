@@ -254,6 +254,15 @@ In summary, in this metabolic flux analysis of proliferating human primary cells
 
 # Materials and Methods
 
+```{r}
+#| results: asis
+#| tbl-cap: "Key Resources Table"
+
+flextable::flextable_to_rmd(resources)
+```
+
+\newpage
+
 ## Cell culture
 
 Primary normal human lung fibroblasts (LFs) were purchased from Lonza (CC-2512) and cultured in FGM-2 (Lonza CC-3132). Cells from three donors were used in these studies: #33652 (56 y.o., male), #29132 (19 y.o., female), and #41684 (37 y.o., male). Passages 3-6 were used for experiments. Primary human pulmonary artery smooth muscle cells were purchased from Lonza (CC-2581) and cultured in SmGM-2 (Lonza CC-3182). Cells from three donors were used in these studies: #30020 (64 y.o., male), #27662 (35 y.o., male), #26698 (51 y.o., male), #19828 (51 y.o., male) and #45518 (56 y.o., female). Passages 4-7 were used for experiments. Cell authentication was performed by the vendor. Cells were maintained in a standard tissue culture incubator in 5% CO~2~ at 37 °C. 
@@ -373,24 +382,9 @@ The raw data and annotated analysis code necessary to reproduce this manuscript 
 
 \newpage
 
-## Key Resources Table  
-
-```{r}
-#| results: asis
-#| tbl-cap: "Table: Key reagents and resources."
-
-flextable::flextable_to_rmd(resources)
-```
-
-\newpage
-
 # Acknowledgements
 
 This work was supported by grants from the NIH (K08HL128802), American Lung Association, Pulmonary Hypertension Association, and the American Thoracic Society Foundation to W.M.O and from the NIH (U01HG007690, U54HL119145, R01HL155107, R01HL155096) and the American Heart Association (D700382, CV-19) to J.L.
-
-# Author contributions
-
-W.M.O. conceived and designed the analysis. C.A.C., B.A.O., D.R.Z., S.M., K.L., and W.M.O. collected the data. J.D.Y. and W.M.O. contributed data or analysis tools. W.M.O. performed the analysis. W.M.O. drafted the manuscript. All authors participated in interpreting the results and revising the manuscript. All authors approve the final submission. 
 
 # Conflict of interest
 

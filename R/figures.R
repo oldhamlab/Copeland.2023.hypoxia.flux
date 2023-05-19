@@ -2633,37 +2633,29 @@ arrange_f12 <- function(p1, p2) {
 
 create_resources <- function(path) {
   readr::read_csv(path, show_col_types = FALSE) |>
-    flextable::as_grouped_data(groups = c("category")) |>
-    flextable::as_flextable(hide_grouplabel = TRUE) |>
-    flextable::bold(j = 1, i = ~ !is.na(category), bold = TRUE, part = "body") |>
+    flextable::flextable() |>
     flextable::bold(part = "header", bold = TRUE) |>
-    flextable::colformat_double(
-      i = ~ is.na(category),
-      j = "Reagent/Resource",
-      digits = 0,
-      big.mark = ""
-    ) |>
     flextable::compose(
-      i = 11,
-      j = 1,
+      i = 8,
+      j = 2,
       part = "body",
       value = flextable::as_paragraph("[1,2-", flextable::as_sup("13"), "C", flextable::as_sub("2"), "]-glucose")
     ) |>
     flextable::compose(
-      i = 12,
-      j = 1,
+      i = 9,
+      j = 2,
       part = "body",
       value = flextable::as_paragraph("[U-", flextable::as_sup("13"), "C", flextable::as_sub("6"), "]-glucose")
     ) |>
     flextable::compose(
-      i = 13,
-      j = 1,
+      i = 10,
+      j = 2,
       part = "body",
       value = flextable::as_paragraph("[U-", flextable::as_sup("13"), "C", flextable::as_sub("5"), "]-glutamine")
     ) |>
     flextable::compose(
-      i = 14,
-      j = 1,
+      i = 11,
+      j = 2,
       part = "body",
       value = flextable::as_paragraph("[U-", flextable::as_sup("13"), "C", flextable::as_sub("3"), "]-lactate")
     ) |>

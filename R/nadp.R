@@ -107,7 +107,7 @@ annot_nad <- function(nad_final) {
     )
 }
 
-plot_nad <- function(df, annot, metab, ylab) {
+plot_nads <- function(df, annot, metab, ylab) {
   annot <- dplyr::filter(annot, .data$measurement == metab)
   annot1 <-
     dplyr::filter(annot, .data$oxygen != ".") |>
