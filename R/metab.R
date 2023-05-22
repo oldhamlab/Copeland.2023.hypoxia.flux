@@ -560,6 +560,14 @@ run_msea <- function(tt, pathways) {
     dplyr::arrange(dplyr::desc(.data$NES))
 }
 
+write_msea_table <- function(df, filename) {
+  df |>
+    dplyr::filter(.data$source == "KEGG") |>
+    dplyr::select(Pathway = "pathway", "NES") |>
+    dplyr::mutate(Pathway = stringr::str_replace(.data$Pathway, " - Homo.*$", "")) |>
+    readr::write_csv(stringr::str_c("manuscript/source/", filename, ".csv"))
+}
+
 plot_msea_table <- function(df, title, clr, filename) {
   df |>
     dplyr::filter(.data$source == "KEGG") |>

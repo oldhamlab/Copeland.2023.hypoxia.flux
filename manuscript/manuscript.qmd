@@ -565,6 +565,18 @@ table_pasmc_hyp |>
 
 **Figure 8 - source data 1** Uncropped blot images for Figure 8 - figure supplement 1.
 
+**Figure 9 - source data 1** Source data for Figure 9C. 
+
+**Figure 9 - figure supplement 1 - source data 1** Source data for Figure 9 - figure supplement 1D.
+
+**Figure 9 - figure supplement 1 - source data 2** Source data for Figure 9 - figure supplement 1E.
+
+**Figure 10 - source data 1** Source data for Figure 10C. 
+
+**Figure 10 - figure supplement 1 - source data 1** Source data for Figure 10 - figure supplement 1E.
+
+**Figure 10 - figure supplement 1 - source data 2** Source data for Figure 10 - figure supplement 1F.
+
 **Figure 11 - source data 1** Uncropped blot images for Figure 11A.
 
 **Figure 11 - source data 2** Uncropped blot images for Figures 11D and 11G.

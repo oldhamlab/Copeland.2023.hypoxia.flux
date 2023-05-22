@@ -778,6 +778,22 @@ list(
     ),
     NULL
   ),
+  tar_map(
+    values = list(
+      df = rlang::syms(stringr::str_c("gsea_", list("hyp", "bay", "hyp_bay"))),
+      filename = list(
+        "Figure 10 - figure supplement 1 - source data 1",
+        "Figure 10 - figure supplement 1 - source data 2",
+        "Figure 10 - source data 1"
+      ),
+      names = list("hyp", "bay", "hyp_bay")
+    ),
+    names = names,
+    tar_target(
+      metab_tar_gsea_file,
+      write_gsea_table(df, filename)
+    )
+  ),
   tar_target(
     rnaseq_venn,
     plot_rnaseq_venn(deg_hyp, deg_bay)
@@ -893,6 +909,22 @@ list(
       plot_table(msea_tar_file)
     ),
     NULL
+  ),
+  tar_map(
+    values = list(
+      df = rlang::syms(stringr::str_c("metab_tar_msea_", list("hyp", "bay", "hyp_bay"))),
+      filename = list(
+        "Figure 9 - figure supplement 1 - source data 1",
+        "Figure 9 - figure supplement 1 - source data 2",
+        "Figure 9 - source data 1"
+      ),
+      names = list("hyp", "bay", "hyp_bay")
+    ),
+    names = names,
+    tar_target(
+      metab_tar_msea_file,
+      write_msea_table(df, filename)
+    )
   ),
   tar_target(
     metab_venn,

@@ -83,6 +83,13 @@
       ],
       "Hash": "2c1ffa13c06028def99e049e30f5dbfa"
     },
+    "AsioHeaders": {
+      "Package": "AsioHeaders",
+      "Version": "1.22.1-2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "85bf3bd8fa58da21a22d84fd4f4ef0a8"
+    },
     "BH": {
       "Package": "BH",
       "Version": "1.81.0-1",
@@ -874,6 +881,25 @@
         "tibble"
       ],
       "Hash": "f61dbaec772ccd2e17705c1e872e9e7c"
+    },
+    "chromote": {
+      "Package": "chromote",
+      "Version": "0.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R6",
+        "curl",
+        "fastmap",
+        "jsonlite",
+        "later",
+        "magrittr",
+        "processx",
+        "promises",
+        "rlang",
+        "websocket"
+      ],
+      "Hash": "bb5817af24a2d8e6e33e758eb54978be"
     },
     "cli": {
       "Package": "cli",
@@ -4186,6 +4212,34 @@
         "tibble"
       ],
       "Hash": "2c993415154cdb94649d99ae138ff5e5"
+    },
+    "webshot2": {
+      "Package": "webshot2",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "callr",
+        "chromote",
+        "later",
+        "magrittr",
+        "promises"
+      ],
+      "Hash": "501f4bf937637caf4fc982d264bcc839"
+    },
+    "websocket": {
+      "Package": "websocket",
+      "Version": "1.4.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "AsioHeaders",
+        "R6",
+        "cpp11",
+        "later"
+      ],
+      "Hash": "76e0d400757e318cca33def29ccebbc2"
     },
     "whisker": {
       "Package": "whisker",

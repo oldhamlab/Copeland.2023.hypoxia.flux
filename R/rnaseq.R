@@ -366,6 +366,19 @@ run_gsea <- function(results, pathways) {
     tidyr::separate(.data$pathway, c("source", "pathway"), "_", extra = "merge")
 }
 
+write_gsea_table <- function(gsea, filename) {
+  gsea |>
+    dplyr::filter(.data$padj < 0.05) |>
+    dplyr::filter(.data$source %in% "HALLMARK") |>
+    dplyr::select(Pathway = "pathway", "NES") |>
+    dplyr::mutate(
+      Pathway = stringr::str_replace_all(.data$Pathway, "_", " "),
+      Pathway = toupper(.data$Pathway)
+    ) |>
+    dplyr::distinct() |>
+    readr::write_csv(stringr::str_c("manuscript/source/", filename, ".csv"))
+}
+
 plot_gsea <- function(rnaseq_gsea, sources, lbls, vals) {
   rnaseq_gsea |>
     dplyr::filter(.data$padj < 0.05) |>
